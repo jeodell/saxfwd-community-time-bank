@@ -1,0 +1,181 @@
+{% extends 'base.html' %} {% block title %}{{ profile_user.username }}'s Profile - Saxapahaw Community Time Bank{% endblock %} {% block content %}
+<div class="max-w-7xl mx-auto">
+  <div class="bg-white rounded-lg shadow-sm p-8">
+    <!-- Profile Header -->
+    <div class="border-b border-gray-200 pb-6 mb-6">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div class="flex items-center space-x-4">
+          <div class="flex-shrink-0">
+            <i class="fas fa-user-circle text-6xl text-gray-400"></i>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">{{ profile_user.username }}</h1>
+            <p class="text-gray-500">Member since {{ profile_user.date_joined|date:"F Y" }}</p>
+          </div>
+        </div>
+        {% if user == profile_user %}
+        <div class="mt-4 md:mt-0">
+          <a
+            href="{% url 'profile_edit' %}"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+            <i class="fas fa-edit mr-2"></i>Edit Profile
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Main Content -->
+      <div class="md:col-span-2">
+        <!-- Time Bank Balance -->
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Time Bank Balance</h2>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-500">Available Hours</p>
+              <p class="text-3xl font-bold text-green-700">{{ profile_user.time_balance }}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm text-gray-500">Total Hours Earned</p>
+              <p class="text-3xl font-bold text-gray-900">{{ profile_user.total_hours_earned }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Services Offered -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-semibold text-gray-900">Services Offered</h2>
+            {% if user == profile_user %}
+            <a
+              href="{% url 'service_create' %}"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+              <i class="fas fa-plus-circle mr-2"></i>Offer a Service
+            </a>
+            {% endif %}
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for service in services %}
+            <div
+              class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+              <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ service.title }}</h3>
+                <p class="text-gray-600 mb-4">{{ service.description|truncatewords:20 }}</p>
+                <div class="flex items-center justify-between">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    {{ service.category.name }}
+                  </span>
+                  <div class="text-sm font-medium text-green-700">{{ service.hourly_rate }} hours</div>
+                </div>
+                <div class="mt-4">
+                  <a
+                    href="{% url 'service_detail' service.pk %}"
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+                    <i class="fas fa-arrow-right mr-2"></i>View Details
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full">
+              <div class="text-center py-12">
+                <i class="fas fa-tools text-4xl text-gray-400 mb-4"></i>
+                <p class="text-gray-500">No services offered yet.</p>
+                {% if user == profile_user %}
+                <div class="mt-4">
+                  <a
+                    href="{% url 'service_create' %}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+                    <i class="fas fa-plus-circle mr-2"></i>Offer Your First Service
+                  </a>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
+          <div class="space-y-4">
+            {% for transaction in recent_transactions %}
+            <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+              <div class="p-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <div class="flex-shrink-0">
+                      {% if transaction.type == 'credit' %}
+                      <i class="fas fa-plus-circle text-green-600 text-xl"></i>
+                      {% else %}
+                      <i class="fas fa-minus-circle text-red-500 text-xl"></i>
+                      {% endif %}
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">{{ transaction.description }}</p>
+                      <p class="text-sm text-gray-500">{{ transaction.created_at|date:"F j, Y" }}</p>
+                    </div>
+                  </div>
+                  <div
+                    class="text-sm font-medium {% if transaction.type == 'credit' %}text-green-700{% else %}text-red-600{% endif %}">
+                    {% if transaction.type == 'credit' %}+{% else %}-{% endif %}{{ transaction.amount }} hours
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-12">
+              <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
+              <p class="text-gray-500">No recent activity.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="md:col-span-1">
+        <!-- Profile Info -->
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Profile Information</h3>
+          <dl class="space-y-4">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Email</dt>
+              <dd class="mt-1 text-sm text-gray-900">{{ profile_user.email }}</dd>
+            </div>
+            {% if profile_user.bio %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Bio</dt>
+              <dd class="mt-1 text-sm text-gray-900">{{ profile_user.bio }}</dd>
+            </div>
+            {% endif %}
+          </dl>
+        </div>
+
+        <!-- Stats -->
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Statistics</h3>
+          <dl class="space-y-4">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Services Offered</dt>
+              <dd class="mt-1 text-2xl font-semibold text-gray-900">{{ services.count }}</dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Requests Made</dt>
+              <dd class="mt-1 text-2xl font-semibold text-gray-900">{{ requests_made_count }}</dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Requests Fulfilled</dt>
+              <dd class="mt-1 text-2xl font-semibold text-gray-900">{{ requests_fulfilled_count }}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

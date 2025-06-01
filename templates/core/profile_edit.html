@@ -1,0 +1,110 @@
+{% extends 'base.html' %} {% block title %}Edit Profile - Saxapahaw Community Time Bank{% endblock %} {% block content %}
+<div class="max-w-3xl mx-auto">
+  <div class="bg-white rounded-lg shadow-sm p-8">
+    <!-- Header -->
+    <div class="border-b border-gray-200 pb-6 mb-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Edit Profile</h1>
+          <p class="mt-1 text-sm text-gray-500">Update your profile information and preferences.</p>
+        </div>
+        <a
+          href="{% url 'profile' %}"
+          class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-green-700 transition-colors duration-200">
+          <i class="fas fa-arrow-left mr-2"></i>Back to Profile
+        </a>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      <!-- Email -->
+      <div>
+        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">Email</label>
+        <div class="mt-1">{{ form.email }}</div>
+        {% if form.email.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Bio -->
+      <div>
+        <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium text-gray-700">Bio</label>
+        <div class="mt-1">{{ form.bio }}</div>
+        {% if form.bio.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ form.bio.errors.0 }}</p>
+        {% endif %}
+        <p class="mt-2 text-sm text-gray-500">Tell others about yourself and your skills.</p>
+      </div>
+
+      <!-- Phone Number -->
+      <div>
+        <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium text-gray-700"
+          >Phone Number</label
+        >
+        <div class="mt-1">{{ form.phone_number }}</div>
+        {% if form.phone_number.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ form.phone_number.errors.0 }}</p>
+        {% endif %}
+        <p class="mt-2 text-sm text-gray-500">Optional: Add your phone number for easier communication.</p>
+      </div>
+
+      <!-- Address -->
+      <div>
+        <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-gray-700">Address</label>
+        <div class="mt-1">{{ form.address }}</div>
+        {% if form.address.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ form.address.errors.0 }}</p>
+        {% endif %}
+        <p class="mt-2 text-sm text-gray-500">Optional: Add your address for local service coordination.</p>
+      </div>
+
+      <!-- Notification Preferences -->
+      <div class="bg-gray-50 rounded-lg p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Notification Preferences</h3>
+        <div class="space-y-4">
+          <div class="flex items-start">
+            <div class="flex items-center h-5">{{ form.email_notifications }}</div>
+            <div class="ml-3 text-sm">
+              <label for="{{ form.email_notifications.id_for_label }}" class="font-medium text-gray-700"
+                >Email Notifications</label
+              >
+              <p class="text-gray-500">Receive email notifications for service requests and updates.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+          <i class="fas fa-save mr-2"></i>Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+  /* Form field styling */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  textarea {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-green-600 focus:ring-green-600 sm:text-sm;
+  }
+
+  textarea {
+    @apply h-32;
+  }
+
+  /* Checkbox styling */
+  input[type="checkbox"] {
+    @apply h-4 w-4 text-green-700 focus:ring-green-600 border-gray-300 rounded;
+  }
+</style>
+{% endblock %}
