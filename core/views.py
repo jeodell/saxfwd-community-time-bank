@@ -1,5 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -11,6 +13,26 @@ from .models import (
     TimeBankLedger,
     UserProfile,
 )
+
+
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Create user profile
+            UserProfile.objects.create(user=user)
+            messages.success(
+                request, "Account created successfully! You can now log in."
+            )
+            return redirect("login")
+    else:
+        form = UserCreationForm()
+    return render(request, "registration/register.html", {"form": form})
+
+
+def about(request):
+    return render(request, "core/about.html")
 
 
 def home(request):
@@ -26,7 +48,6 @@ def home(request):
     )
 
 
-@login_required
 def service_list(request):
     services = Service.objects.filter(is_active=True)
     category = request.GET.get("category")
@@ -220,3 +241,39 @@ def ledger(request):
         "-created_at"
     )
     return render(request, "core/ledger.html", {"transactions": transactions})
+
+
+def contact(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+
+        # Send email
+        subject = f"New Contact Form Submission from {name}"
+        email_message = f"""
+        Name: {name}
+        Email: {email}
+
+        Message:
+        {message}
+        """
+
+        try:
+            send_mail(
+                subject=subject,
+                message=email_message,
+                from_email=email,
+                recipient_list=["admin@example.com"],  # Replace with your email
+                fail_silently=False,
+            )
+            messages.success(request, "Your message has been sent successfully!")
+        except Exception:
+            messages.error(
+                request,
+                "There was an error sending your message. Please try again later.",
+            )
+
+        return redirect("home")
+
+    return redirect("home")

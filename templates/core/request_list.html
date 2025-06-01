@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block title %}Service Requests - Saxapahaw Community Time Bank{% endblock %} {% block content %}
+{% extends 'base.html' %} {% block title %}Service Requests - Saxapahaw Timebank{% endblock %} {% block content %}
 <div class="max-w-7xl mx-auto">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
@@ -6,7 +6,7 @@
       <div class="flex space-x-4">
         <a
           href="{% url 'service_list' %}"
-          class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+          class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
           <i class="fas fa-list-ul mr-2"></i>Browse Services
         </a>
       </div>
@@ -17,22 +17,22 @@
       <nav class="-mb-px flex space-x-8">
         <a
           href="{% url 'request_list' %}?status=pending"
-          class="{% if request.GET.status == 'pending' or not request.GET.status %}border-green-600 text-green-700{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+          class="{% if request.GET.status == 'pending' or not request.GET.status %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
           <i class="fas fa-clock mr-2"></i>Pending
         </a>
         <a
           href="{% url 'request_list' %}?status=accepted"
-          class="{% if request.GET.status == 'accepted' %}border-green-600 text-green-700{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+          class="{% if request.GET.status == 'accepted' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
           <i class="fas fa-check-circle mr-2"></i>Accepted
         </a>
         <a
           href="{% url 'request_list' %}?status=completed"
-          class="{% if request.GET.status == 'completed' %}border-green-600 text-green-700{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+          class="{% if request.GET.status == 'completed' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
           <i class="fas fa-flag-checkered mr-2"></i>Completed
         </a>
         <a
           href="{% url 'request_list' %}?status=rejected"
-          class="{% if request.GET.status == 'rejected' %}border-green-600 text-green-700{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+          class="{% if request.GET.status == 'rejected' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
           <i class="fas fa-times-circle mr-2"></i>Rejected
         </a>
       </nav>
@@ -59,7 +59,7 @@
             <div class="mt-4 md:mt-0">
               <a
                 href="{% url 'request_detail' request.pk %}"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
                 <i class="fas fa-eye mr-2"></i>View Details
               </a>
             </div>
@@ -92,7 +92,7 @@
         <div class="mt-4">
           <a
             href="{% url 'service_list' %}"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
             <i class="fas fa-list-ul mr-2"></i>Browse Services
           </a>
         </div>
@@ -112,7 +112,7 @@
         </a>
         {% endif %} {% for i in requests.paginator.page_range %} {% if requests.number == i %}
         <span
-          class="relative inline-flex items-center px-4 py-2 border border-green-600 bg-green-50 text-sm font-medium text-green-700">
+          class="relative inline-flex items-center px-4 py-2 border border-primary bg-green-50 text-sm font-medium text-primary">
           {{ i }}
         </span>
         {% else %}

@@ -1,6 +1,6 @@
-# Saxapahaw Community Time Bank
+# Saxapahaw Timebank
 
-A Django-based Saxapahaw Community Time Bank application where members can offer services, track hours spent and received, and
+A Django-based Saxapahaw Timebank application where members can offer services, track hours spent and received, and
 manage their time bank accounts.
 
 ## Features

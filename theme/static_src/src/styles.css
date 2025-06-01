@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /**
   * A catch-all path to Django template files, JavaScript, and Python files
@@ -8,3 +8,11 @@
   * the scope of this path.
   */
 @source "../../../**/*.{html,py,js}";
+
+@theme {
+  --color-primary: #174443;
+  --color-primary-light: #2a6665;
+  --color-secondary: #e7aa4e;
+  --color-secondary-light: #ebbe7c;
+  --color-cream: #f8f2f2;
+}

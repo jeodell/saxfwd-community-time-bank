@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block title %}Time Bank Ledger - Saxapahaw Community Time Bank{% endblock %} {% block content %}
+{% extends 'base.html' %} {% block title %}Time Bank Ledger - Saxapahaw Timebank{% endblock %} {% block content %}
 <div class="max-w-7xl mx-auto">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Header -->
@@ -11,7 +11,7 @@
         <div class="mt-4 md:mt-0 flex items-center space-x-4">
           <div class="bg-green-50 rounded-lg p-4">
             <p class="text-sm font-medium text-green-800">Current Balance</p>
-            <p class="text-2xl font-bold text-green-700">{{ user.time_balance }} hours</p>
+            <p class="text-2xl font-bold text-primary">{{ user.time_balance }} hours</p>
           </div>
         </div>
       </div>
@@ -22,7 +22,7 @@
       <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Transaction Type</label>
-          <select name="type" id="type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-600 focus:border-green-600 sm:text-sm rounded-md">
+          <select name="type" id="type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
             <option value="">All Types</option>
             <option value="credit" {% if request.GET.type == 'credit' %}selected{% endif %}>Credits</option>
             <option value="debit" {% if request.GET.type == 'debit' %}selected{% endif %}>Debits</option>
@@ -30,10 +30,10 @@
         </div>
         <div>
           <label for="date_from" class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-          <input type="date" name="date_from" id="date_from" value="{{ request.GET.date_from }}" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-600 focus:border-green-600 sm:text-sm rounded-md">
+          <input type="date" name="date_from" id="date_from" value="{{ request.GET.date_from }}" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
         </div>
         <div class="flex items-end">
-          <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+          <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
             <i class="fas fa-filter mr-2"></i>Filter
           </button>
         </div>
@@ -49,7 +49,7 @@
             <div class="flex items-center space-x-3">
               <div class="flex-shrink-0">
                 {% if transaction.type == 'credit' %}
-                <i class="fas fa-plus-circle text-green-600 text-xl"></i>
+                <i class="fas fa-plus-circle text-primary text-xl"></i>
                 {% else %}
                 <i class="fas fa-minus-circle text-red-500 text-xl"></i>
                 {% endif %}
@@ -60,7 +60,7 @@
               </div>
             </div>
             <div class="text-right">
-              <p class="text-sm font-medium {% if transaction.type == 'credit' %}text-green-700{% else %}text-red-600{% endif %}">
+              <p class="text-sm font-medium {% if transaction.type == 'credit' %}text-primary{% else %}text-red-600{% endif %}">
                 {% if transaction.type == 'credit' %}+{% else %}-{% endif %}{{ transaction.amount }} hours
               </p>
               <p class="text-sm text-gray-500">Balance: {{ transaction.balance_after }} hours</p>
@@ -90,7 +90,7 @@
 
         {% for i in transactions.paginator.page_range %}
         {% if transactions.number == i %}
-        <span class="relative inline-flex items-center px-4 py-2 border border-green-600 bg-green-50 text-sm font-medium text-green-700">
+        <span class="relative inline-flex items-center px-4 py-2 border border-primary bg-green-50 text-sm font-medium text-primary">
           {{ i }}
         </span>
         {% else %}

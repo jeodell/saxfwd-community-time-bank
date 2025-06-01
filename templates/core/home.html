@@ -1,140 +1,169 @@
-{% extends 'base.html' %} {% block title %}Home - Saxapahaw Community Time Bank{% endblock %} {% block content %}
-<div class="max-w-7xl mx-auto">
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home - Saxapahaw Timebank{% endblock %}
+{% block content %}
+<div>
   <!-- Hero Section -->
-  <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <div>
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to Saxapahaw Community Time Bank</h1>
-        <p class="text-lg text-gray-600 mb-6">
-          Share your skills, help others, and build a stronger community through time banking.
+  <section class="relative h-[600px]">
+    <div class="absolute inset-0">
+      <img
+        src="{% static 'img/sax_river_and_dam.jpg' %}"
+        alt="Saxapahaw River and Dam"
+        class="w-full h-full object-cover"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-black/50"></div>
+    </div>
+    <div class="relative h-full flex items-center justify-center text-center px-4">
+      <div class="max-w-3/4">
+        <h1 class="text-3xl md:text-5xl font-bold text-white mb-6 uppercase">
+          Neighbors Helping Neighbors
+        </h1>
+        <p class="text-lg md:text-xl text-white mb-8">
+          in SAXAPAHAW, NC
         </p>
-
-        {% if not user.is_authenticated %}
-        <div class="space-x-4">
-          <a
-            href="{% url 'login' %}"
-            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
-            <i class="fas fa-sign-in-alt mr-2"></i>Login
-          </a>
-          <a
-            href="{% url 'service_list' %}"
-            class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
-            <i class="fas fa-search mr-2"></i>Browse Services
-          </a>
-        </div>
-        {% else %}
-        <div class="space-x-4">
-          <a
-            href="{% url 'service_create' %}"
-            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
-            <i class="fas fa-plus-circle mr-2"></i>Offer a Service
-          </a>
-          <a
-            href="{% url 'service_list' %}"
-            class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
-            <i class="fas fa-search mr-2"></i>Browse Services
-          </a>
-        </div>
-        {% endif %}
-      </div>
-
-      <div class="bg-gray-50 rounded-lg p-6">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-4">How It Works</h2>
-        <ol class="space-y-4">
-          <li class="flex items-start">
-            <span
-              class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-700 font-semibold mr-3"
-              >1</span
-            >
-            <span class="text-gray-600">Offer your skills as a service</span>
-          </li>
-          <li class="flex items-start">
-            <span
-              class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-700 font-semibold mr-3"
-              >2</span
-            >
-            <span class="text-gray-600">Request services from others</span>
-          </li>
-          <li class="flex items-start">
-            <span
-              class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-700 font-semibold mr-3"
-              >3</span
-            >
-            <span class="text-gray-600">Earn and spend time credits</span>
-          </li>
-          <li class="flex items-start">
-            <span
-              class="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-700 font-semibold mr-3"
-              >4</span
-            >
-            <span class="text-gray-600">Build community connections</span>
-          </li>
-        </ol>
+        <a
+          href="{% url 'register' %}"
+          class="inline-block bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary transition-colors uppercase"
+        >
+          Get Started
+        </a>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Recent Services Section -->
-  <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
-    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Recent Services</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {% for service in recent_services %}
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ service.title }}</h3>
-          <p class="text-gray-600 mb-4">{{ service.description|truncatewords:20 }}</p>
-          <div class="flex items-center justify-between">
-            <div class="flex items-center text-sm text-gray-500">
-              <i class="fas fa-user-circle mr-2"></i>
-              {{ service.provider.username }}
-            </div>
-            <div class="text-sm font-medium text-green-700">{{ service.hourly_rate }} hours</div>
+  <!-- How It Works Section -->
+  <section class="bg-cream py-16">
+    <div class="text-left max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-primary mb-4 uppercase">How It Works</h2>
+      <p class="text-lg text-gray-600">
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.
+      </p>
+      <a
+        href="{% url 'about' %}"
+        class="inline-block mt-8 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary transition-colors"
+      >
+        Learn More
+      </a>
+    </div>
+  </section>
+
+  <!-- Services Grid -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-3xl font-bold text-secondary text-center uppercase">Services</h2>
+    <div class="border-b-2 border-secondary mt-4 mb-16 w-48 mx-auto"></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% include "components/service_card.html" with title="Garden Help" description="Help with planting, weeding, and garden maintenance" %}
+      {% include "components/service_card.html" with title="Home Repairs" description="Basic home repairs and maintenance tasks" %}
+      {% include "components/service_card.html" with title="Child Care" description="Reliable childcare from trusted community members" %}
+      {% include "components/service_card.html" with title="Tech Support" description="Help with computers, phones, and other devices" %}
+      {% include "components/service_card.html" with title="Meal Sharing" description="Share meals and cooking skills with neighbors" %}
+      {% include "components/service_card.html" with title="Transportation" description="Rides to appointments and errands" %}
+      {% include "components/service_card.html" with title="Pet Care" description="Pet sitting and walking services" %}
+      <a
+        href="{% url 'service_list' %}"
+        class="bg-primary text-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow h-48 flex flex-col justify-end"
+      >
+        <h3 class="text-xl font-semibold text-white mb-2">Explore More</h3>
+        <p class="text-white/80">Discover all the services our community offers</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="bg-cream py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-primary text-center uppercase mb-16">Our Values</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div class="relative h-[500px] rounded-lg overflow-hidden">
+          <img
+            src="{% static 'img/saxpatch.jpg' %}"
+            alt="Saxapahaw Community"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <h3 class="text-2xl font-semibold text-primary">Community</h3>
+            <p class="text-gray-600">
+              Building stronger connections between neighbors through shared experiences and mutual support.
+            </p>
           </div>
-          <div class="mt-4">
-            <a
-              href="{% url 'service_detail' service.pk %}"
-              class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
-              <i class="fas fa-arrow-right mr-2"></i>View Details
-            </a>
+          <div class="space-y-4">
+            <h3 class="text-2xl font-semibold text-primary">Equality</h3>
+            <p class="text-gray-600">
+              Every hour of service is valued equally, recognizing that all contributions strengthen our community.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <h3 class="text-2xl font-semibold text-primary">Reciprocity</h3>
+            <p class="text-gray-600">
+              Giving and receiving in equal measure, creating a sustainable cycle of community support.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <h3 class="text-2xl font-semibold text-primary">Trust</h3>
+            <p class="text-gray-600">
+              Building trust through shared experiences and reliable connections between neighbors.
+            </p>
           </div>
         </div>
       </div>
-      {% empty %}
-      <div class="col-span-full">
-        <div class="text-center py-12">
-          <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
-          <p class="text-gray-500">No services available yet.</p>
-        </div>
-      </div>
-      {% endfor %}
     </div>
-  </div>
+  </section>
 
-  <!-- Categories Section -->
-  <div class="bg-white rounded-lg shadow-sm p-8">
-    <h2 class="text-2xl font-semibold text-gray-900 mb-6">Service Categories</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {% for category in categories %}
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ category.name }}</h3>
-          <p class="text-gray-600 mb-4">{{ category.description|truncatewords:15 }}</p>
-          <a
-            href="{% url 'service_list' %}?category={{ category.name }}"
-            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
-            <i class="fas fa-list-ul mr-2"></i>Browse Category
-          </a>
+  <!-- Contact Form -->
+  <section class="py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-primary text-center uppercase mb-4">Get in Touch</h2>
+      <p class="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+        Have questions about our time bank? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+      </p>
+      <form method="post" action="{% url 'contact' %}" class="bg-white rounded-lg shadow-lg p-8">
+        {% csrf_token %}
+        <div class="space-y-6">
+          <div>
+            <label for="name" class="block text-sm font-medium text-primary mb-2">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
+              required
+            />
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-primary mb-2">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
+              required
+            />
+          </div>
+          <div>
+            <label for="message" class="block text-sm font-medium text-primary mb-2">Message</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors resize-none"
+              required
+            ></textarea>
+          </div>
+          <div>
+            <button
+              type="submit"
+              class="w-full bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors uppercase"
+            >
+              Send Message
+            </button>
+          </div>
         </div>
-      </div>
-      {% empty %}
-      <div class="col-span-full">
-        <div class="text-center py-12">
-          <i class="fas fa-folder-open text-4xl text-gray-400 mb-4"></i>
-          <p class="text-gray-500">No categories available yet.</p>
-        </div>
-      </div>
-      {% endfor %}
+      </form>
     </div>
-  </div>
+  </section>
 </div>
 {% endblock %}

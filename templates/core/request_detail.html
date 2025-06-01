@@ -1,11 +1,11 @@
-{% extends 'base.html' %} {% block title %}Request Details - Saxapahaw Community Time Bank{% endblock %} {% block content %}
+{% extends 'base.html' %} {% block title %}Request Details - Saxapahaw Timebank{% endblock %} {% block content %}
 <div class="max-w-7xl mx-auto">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Back Button -->
     <div class="mb-6">
       <a
         href="{% url 'request_list' %}"
-        class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-green-700 transition-colors duration-200">
+        class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200">
         <i class="fas fa-arrow-left mr-2"></i>Back to Requests
       </a>
     </div>
@@ -31,7 +31,7 @@
             {% csrf_token %}
             <button
               type="submit"
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
               <i class="fas fa-check mr-2"></i>Accept Request
             </button>
           </form>
@@ -50,7 +50,7 @@
             {% csrf_token %}
             <button
               type="submit"
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition-colors duration-200">
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
               <i class="fas fa-flag-checkered mr-2"></i>Mark as Completed
             </button>
           </form>
@@ -115,7 +115,7 @@
                   <p class="text-sm font-medium text-gray-900">{{ request.requester.username }}</p>
                   <a
                     href="{% url 'profile' request.requester.username %}"
-                    class="text-sm text-green-700 hover:text-green-600"
+                    class="text-sm text-primary hover:text-primary"
                     >View Profile</a
                   >
                 </div>
@@ -129,7 +129,7 @@
                   <p class="text-sm font-medium text-gray-900">{{ request.service.provider.username }}</p>
                   <a
                     href="{% url 'profile' request.service.provider.username %}"
-                    class="text-sm text-green-700 hover:text-green-600"
+                    class="text-sm text-primary hover:text-primary"
                     >View Profile</a
                   >
                 </div>
