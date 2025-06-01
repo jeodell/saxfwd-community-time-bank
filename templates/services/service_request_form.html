@@ -1,4 +1,7 @@
-{% extends 'base.html' %} {% block title %}Request Service - Saxapahaw Timebank{% endblock %} {% block content %}
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% block title %}Request Service - Saxapahaw Timebank{% endblock %}
+{% block content %}
 <div class="max-w-3xl mx-auto">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Header -->
@@ -10,8 +13,10 @@
         </div>
         <a
           href="{% url 'service_detail' service.pk %}"
-          class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200">
-          <i class="fas fa-arrow-left mr-2"></i>Back to Service
+          class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>
+          Back to Service
         </a>
       </div>
     </div>
@@ -36,9 +41,9 @@
 
       <!-- Requested Date -->
       <div>
-        <label for="{{ form.requested_date.id_for_label }}" class="block text-sm font-medium text-gray-700"
-          >Requested Date and Time</label
-        >
+        <label for="{{ form.requested_date.id_for_label }}" class="block text-sm font-medium text-gray-700">
+          Requested Date and Time
+        </label>
         <div class="mt-1">{{ form.requested_date }}</div>
         {% if form.requested_date.errors %}
         <p class="mt-2 text-sm text-red-600">{{ form.requested_date.errors.0 }}</p>
@@ -48,9 +53,9 @@
 
       <!-- Hours Requested -->
       <div>
-        <label for="{{ form.hours_requested.id_for_label }}" class="block text-sm font-medium text-gray-700"
-          >Hours Requested</label
-        >
+        <label for="{{ form.hours_requested.id_for_label }}" class="block text-sm font-medium text-gray-700">
+          Hours Requested
+        </label>
         <div class="mt-1">{{ form.hours_requested }}</div>
         {% if form.hours_requested.errors %}
         <p class="mt-2 text-sm text-red-600">{{ form.hours_requested.errors.0 }}</p>
@@ -60,9 +65,9 @@
 
       <!-- Description -->
       <div>
-        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700"
-          >Description</label
-        >
+        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">
+          Description
+        </label>
         <div class="mt-1">{{ form.description }}</div>
         {% if form.description.errors %}
         <p class="mt-2 text-sm text-red-600">{{ form.description.errors.0 }}</p>
@@ -88,8 +93,10 @@
       <div class="flex justify-end">
         <button
           type="submit"
-          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
-          <i class="fas fa-handshake mr-2"></i>Submit Request
+          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+        >
+          <i class="fas fa-handshake mr-2"></i>
+          Submit Request
         </button>
       </div>
     </form>
@@ -98,9 +105,9 @@
 
 <style>
   /* Form field styling */
-  input[type="text"],
-  input[type="number"],
-  input[type="datetime-local"],
+  input[type='text'],
+  input[type='number'],
+  input[type='datetime-local'],
   textarea {
     @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm;
   }

@@ -1,6 +1,8 @@
-{% extends 'base.html' %} {% block title %}{% if service %}Edit Service{% else %}Offer a Service{% endif %} - Community
-Time Bank{% endblock %} {% block content %}
-<div class="max-w-3xl mx-auto">
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% block title %}{% if service %}Edit Service{% else %}Offer a Service{% endif %} - Saxapahaw Timebank{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto py-8">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Header -->
     <div class="border-b border-gray-200 pb-6 mb-6">
@@ -16,8 +18,10 @@ Time Bank{% endblock %} {% block content %}
         </div>
         <a
           href="{% url 'service_list' %}"
-          class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200">
-          <i class="fas fa-arrow-left mr-2"></i>Back to Services
+          class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>
+          Back to Services
         </a>
       </div>
     </div>
@@ -46,9 +50,9 @@ Time Bank{% endblock %} {% block content %}
 
       <!-- Description -->
       <div>
-        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700"
-          >Description</label
-        >
+        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">
+          Description
+        </label>
         <div class="mt-1">{{ form.description }}</div>
         {% if form.description.errors %}
         <p class="mt-2 text-sm text-red-600">{{ form.description.errors.0 }}</p>
@@ -58,9 +62,9 @@ Time Bank{% endblock %} {% block content %}
 
       <!-- Requirements -->
       <div>
-        <label for="{{ form.requirements.id_for_label }}" class="block text-sm font-medium text-gray-700"
-          >Requirements</label
-        >
+        <label for="{{ form.requirements.id_for_label }}" class="block text-sm font-medium text-gray-700">
+          Requirements
+        </label>
         <div class="mt-1">{{ form.requirements }}</div>
         {% if form.requirements.errors %}
         <p class="mt-2 text-sm text-red-600">{{ form.requirements.errors.0 }}</p>
@@ -70,9 +74,9 @@ Time Bank{% endblock %} {% block content %}
 
       <!-- Hourly Rate -->
       <div>
-        <label for="{{ form.hourly_rate.id_for_label }}" class="block text-sm font-medium text-gray-700"
-          >Hourly Rate (in time credits)</label
-        >
+        <label for="{{ form.hourly_rate.id_for_label }}" class="block text-sm font-medium text-gray-700">
+          Hourly Rate (in time credits)
+        </label>
         <div class="mt-1">{{ form.hourly_rate }}</div>
         {% if form.hourly_rate.errors %}
         <p class="mt-2 text-sm text-red-600">{{ form.hourly_rate.errors.0 }}</p>
@@ -84,7 +88,8 @@ Time Bank{% endblock %} {% block content %}
       <div class="flex justify-end">
         <button
           type="submit"
-          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
+          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+        >
           <i class="fas {% if service %}fa-save{% else %}fa-plus-circle{% endif %} mr-2"></i>
           {% if service %}Save Changes{% else %}Create Service{% endif %}
         </button>
@@ -95,8 +100,8 @@ Time Bank{% endblock %} {% block content %}
 
 <style>
   /* Form field styling */
-  input[type="text"],
-  input[type="number"],
+  input[type='text'],
+  input[type='number'],
   textarea,
   select {
     @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm;

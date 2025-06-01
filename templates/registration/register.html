@@ -1,108 +1,28 @@
+<!-- prettier-ignore -->
 {% extends "base.html" %}
-{% load static %}
-
+{% load crispy_forms_tags %}
 {% block title %}Register - Saxapahaw Timebank{% endblock %}
-
 {% block content %}
-<div class="min-h-[calc(100vh-76px-140px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full space-y-8">
+<div class="max-w-md mx-auto flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
     <div class="text-center">
-      <h2 class="text-3xl font-bold text-gray-900">Create your account</h2>
-      <p class="mt-2 text-sm text-gray-600">
-        Join our community of neighbors helping neighbors
-      </p>
+      <h2 class="text-3xl font-extrabold text-gray-900">Create your account</h2>
+      <p class="mt-2 text-sm text-gray-600">Join our community of neighbors helping neighbors</p>
     </div>
-
     <form class="mt-8 space-y-6" method="post" action="{% url 'register' %}">
-      {% csrf_token %}
-
-      {% if form.errors %}
-      <div class="rounded-md bg-red-50 p-4">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <i class="fas fa-exclamation-circle text-red-400"></i>
-          </div>
-          <div class="ml-3">
-            <h3 class="text-sm font-medium text-red-800">There were errors with your submission</h3>
-            <div class="mt-2 text-sm text-red-700">
-              <ul class="list-disc pl-5 space-y-1">
-                {% for field, errors in form.errors.items %}
-                  {% for error in errors %}
-                    <li>{{ error }}</li>
-                  {% endfor %}
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-
-      <div class="rounded-md shadow-sm space-y-4">
-        <div>
-          <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            placeholder="Choose a username"
-          />
-        </div>
-
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            placeholder="Enter your email"
-          />
-        </div>
-
-        <div>
-          <label for="password1" class="block text-sm font-medium text-gray-700">Password</label>
-          <input
-            id="password1"
-            name="password1"
-            type="password"
-            required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            placeholder="Create a password"
-          />
-        </div>
-
-        <div>
-          <label for="password2" class="block text-sm font-medium text-gray-700">Confirm password</label>
-          <input
-            id="password2"
-            name="password2"
-            type="password"
-            required
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            placeholder="Confirm your password"
-          />
-        </div>
-      </div>
-
+      {% csrf_token %} {{ form|crispy }}
       <div>
         <button
           type="submit"
-          class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
         >
           Create Account
         </button>
       </div>
-
       <div class="text-center">
         <p class="text-sm text-gray-600">
           Already have an account?
-          <a href="{% url 'login' %}" class="font-medium text-blue-600 hover:text-blue-500">
-            Sign in
-          </a>
+          <a href="{% url 'login' %}" class="font-medium text-primary hover:text-primary-light">Sign in</a>
         </p>
       </div>
     </form>

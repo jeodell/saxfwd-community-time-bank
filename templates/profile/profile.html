@@ -1,0 +1,118 @@
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% block title %}{{ user.username | default:"Community Member" }}'s Dashboard - Saxapahaw Timebank{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto py-8">
+  <div class="bg-white rounded-lg shadow-sm p-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-2xl md:text-3xl font-semibold text-gray-900">
+        Welcome,
+        <span class="text-primary">{{ user.username | default:"Community Member" }}</span>
+      </h1>
+      <div class="flex items-center space-x-3">
+        {% if user.profile.avatar %}
+        <img
+          src="{{ user.profile.avatar.url }}"
+          alt="Profile"
+          class="w-14 h-14 rounded-full object-cover border-2 border-primary"
+        />
+        {% else %}
+        <i class="fas fa-user-circle text-5xl text-gray-400"></i>
+        {% endif %}
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Balance Card -->
+        <div class="bg-yellow-50 rounded-lg p-6 flex flex-col items-center text-center">
+          <div class="text-yellow-500 mb-2">
+            <i class="fas fa-clock text-4xl"></i>
+          </div>
+          <div class="text-gray-500 text-sm font-medium mb-1">YOUR BALANCE</div>
+          <div class="text-3xl font-bold text-yellow-600 mb-1">{{ user.profile.time_balance | default:0 }} HOURS</div>
+        </div>
+        <!-- Listings Card -->
+        <div class="bg-gray-50 rounded-lg p-6">
+          <div class="text-gray-700 text-sm font-semibold mb-2">YOUR LISTINGS</div>
+          <ul class="mb-4 space-y-1">
+            {% for service in services %}
+            <li class="text-gray-900">{{ service.title }}</li>
+            {% empty %}
+            <li class="text-gray-400">No listings yet.</li>
+            {% endfor %}
+          </ul>
+          <a
+            href="{% url 'service_create' %}"
+            class="block w-full text-center px-4 py-2 rounded-md bg-primary text-white font-medium hover:bg-primary-light transition"
+          >
+            CREATE NEW LISTING
+          </a>
+        </div>
+        <!-- Find a Service Button -->
+        <a
+          href="{% url 'service_list' %}"
+          class="block w-full text-center px-4 py-4 rounded-lg bg-primary text-white font-semibold text-lg hover:bg-primary-light transition"
+        >
+          FIND A SERVICE
+        </a>
+      </div>
+      <!-- Main Activity Section -->
+      <div class="md:col-span-2 flex flex-col space-y-8">
+        <!-- Activity Card -->
+        <div class="bg-gray-50 rounded-lg p-6 mb-6">
+          <div class="text-gray-700 text-lg font-semibold mb-4">YOUR ACTIVITY</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Given -->
+            <div>
+              <div class="font-semibold text-gray-600 mb-2">Given</div>
+              <ul class="space-y-2">
+                {% for tx in given_transactions %}
+                <li class="flex justify-between text-gray-800 text-sm border-b border-dotted border-gray-300 pb-1">
+                  <span>
+                    {{ tx.date|date:"n/j/y" }}
+                    <span class="font-semibold">{{ tx.description }}</span>
+                  </span>
+                  <span class="font-bold">{{ tx.amount }} Hour{{ tx.amount|pluralize }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-400">No given activity.</li>
+                {% endfor %}
+              </ul>
+            </div>
+            <!-- Received -->
+            <div>
+              <div class="font-semibold text-gray-600 mb-2">Received</div>
+              <ul class="space-y-2">
+                {% for tx in received_transactions %}
+                <li class="flex justify-between text-gray-800 text-sm border-b border-dotted border-gray-300 pb-1">
+                  <span>
+                    {{ tx.date|date:"n/j/y" }}
+                    <span class="font-semibold">{{ tx.description }}</span>
+                  </span>
+                  <span class="font-bold">{{ tx.amount }} Hour{{ tx.amount|pluralize }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-400">No received activity.</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- Settings Card -->
+        <div class="bg-gray-50 rounded-lg p-6">
+          <div class="text-gray-700 text-lg font-semibold mb-4">SETTINGS</div>
+          <a
+            href="{% url 'profile_edit' %}"
+            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+          >
+            <i class="fas fa-edit mr-2"></i>
+            Edit Profile
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

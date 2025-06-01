@@ -1,30 +1,28 @@
 {% load static %}
-<nav class="bg-white shadow-lg border-b border-gray-100 h-24">
+<nav class="bg-white shadow-sm border-b border-gray-100 h-24">
   <!-- Desktop menu -->
-   <div class="h-8">
-   <!-- Login/Hello-->
+  <div class="h-8">
+    <!-- Login/Hello-->
     <div class="grid grid-cols-4 h-full">
       {% if user.is_authenticated %}
-      <div class="col-span-3 flex items-center justify-start bg-primary pl-8"></div>
-      <div class="col-span-1 flex items-center justify-end bg-secondary pr-8">
-        <p class="text-white mr-2">Hello, {{ user.username }}</p>
-        <a href="{% url 'profile' %}" class="flex items-center">
+      <div class="col-span-3 flex items-center justify-start bg-primary"></div>
+      <div class="col-span-1 flex items-center justify-end bg-secondary pr-12">
+        <a href="{% url 'profile' %}" class="text-white flex items-center space-x-2 hover:text-white/80">
+          <span>Hello, {{ user.username | default:"Community Member" }}</span>
           {% if user.profile.avatar %}
-          <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" class="h-6 w-6 rounded-full object-cover">
-        {% else %}
+          <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" class="h-6 w-6 rounded-full object-cover" />
+          {% else %}
           <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
             <i class="fas fa-user text-sm text-gray-500"></i>
           </div>
-        {% endif %}
+          {% endif %}
         </a>
       </div>
       {% else %}
-        <div class="col-span-3 flex items-center justify-start bg-primary pl-8"></div>
-        <div class="col-span-1 flex items-center justify-end bg-secondary pr-8">
-          <a href="{% url 'login' %}" class="flex items-center">
-            Login
-          </a>
-        </div>
+      <div class="col-span-3 flex items-center justify-start bg-primary"></div>
+      <div class="col-span-1 flex items-center justify-end bg-secondary pr-12">
+        <a href="{% url 'login' %}" class="text-white hover:text-white/80">Login</a>
+      </div>
       {% endif %}
     </div>
     <!-- Logo and Menu -->
@@ -34,54 +32,48 @@
           <div class="flex-shrink-0 flex items-center">
             <a
               href="{% url 'home' %}"
-              class="text-xl font-bold text-primary hover:text-primary/80 transition-colors duration-200 uppercase">
+              class="text-xl font-bold text-primary hover:text-primary/80 transition-colors duration-200 uppercase"
+            >
               Saxapahaw Timebank
             </a>
-          </div>
-          <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
-            {% if user.is_authenticated %}
-            <a
-              href="{% url 'service_list' %}"
-              class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors duration-200"
-              >Services</a
-            >
-            <a
-              href="{% url 'request_list' %}"
-              class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors duration-200"
-              >Requests</a
-            >
-            <a
-              href="{% url 'ledger' %}"
-              class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-primary border-b-2 border-transparent hover:border-primary transition-colors duration-200"
-              >Ledger</a
-            >
-            {% endif %}
           </div>
         </div>
         <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
           {% if user.is_authenticated %}
           <a
-            href="{% url 'profile' %}"
+            href="{% url 'about' %}"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
-            ><i class="fas fa-user-circle mr-2"></i>Profile</a
           >
+            About
+          </a>
+          <a
+            href="{% url 'service_list' %}"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+          >
+            Services
+          </a>
           <form method="post" action="{% url 'logout' %}" class="inline">
             {% csrf_token %}
-            <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200">
-              <i class="fas fa-sign-out-alt mr-2"></i>Logout
-            </button>
+            <a
+              class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200 cursor-pointer"
+              onclick="this.closest('form').submit(); return false;"
+            >
+              Logout
+            </a>
           </form>
           {% else %}
           <a
             href="{% url 'about' %}"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
-            >About</a
           >
+            About
+          </a>
           <a
             href="{% url 'service_list' %}"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
-            >Services</a
           >
+            Services
+          </a>
           {% endif %}
         </div>
         <div class="-mr-2 flex items-center sm:hidden">
@@ -89,7 +81,8 @@
             type="button"
             class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary transition-colors duration-200"
             aria-controls="mobile-menu"
-            aria-expanded="false">
+            aria-expanded="false"
+          >
             <span class="sr-only">Open main menu</span>
             <i class="fas fa-bars"></i>
           </button>
@@ -99,45 +92,54 @@
   </div>
 
   <!-- Mobile menu -->
+  {% comment %}
   <div class="sm:hidden hidden" id="mobile-menu">
     <div class="pt-2 pb-3 space-y-1">
       {% if user.is_authenticated %}
       <a
         href="{% url 'service_list' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-        ><i class="fas fa-list-ul mr-2"></i>Services</a
       >
+        Services
+      </a>
       <a
         href="{% url 'request_list' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-        ><i class="fas fa-handshake mr-2"></i>Requests</a
       >
+        Requests
+      </a>
       <a
         href="{% url 'ledger' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-        ><i class="fas fa-book mr-2"></i>Ledger</a
       >
+        Ledger
+      </a>
       {% endif %} {% if user.is_authenticated %}
       <a
         href="{% url 'profile' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-        ><i class="fas fa-user-circle mr-2"></i>Profile</a
       >
+        Profile
+      </a>
       <form method="post" action="{% url 'logout' %}" class="block">
         {% csrf_token %}
-        <button type="submit" class="w-full text-left pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200">
-          <i class="fas fa-sign-out-alt mr-2"></i>Logout
-        </button>
+        <a
+          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
+          onclick="this.closest('form').submit(); return false;"
+        >
+          Logout
+        </a>
       </form>
       {% endif %}
     </div>
   </div>
+  {% endcomment %}
 </nav>
 
 <script>
   // Mobile menu toggle
-  document.querySelector('button[aria-controls="mobile-menu"]').addEventListener("click", function () {
-    const mobileMenu = document.getElementById("mobile-menu");
-    mobileMenu.classList.toggle("hidden");
+  document.querySelector('button[aria-controls="mobile-menu"]').addEventListener('click', function () {
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenu.classList.toggle('hidden');
   });
 </script>

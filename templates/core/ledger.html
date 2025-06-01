@@ -1,11 +1,14 @@
-{% extends 'base.html' %} {% block title %}Time Bank Ledger - Saxapahaw Timebank{% endblock %} {% block content %}
+<!-- prettier-ignore -->
+{% extends 'base.html' %}
+{% block title %}Timebank Ledger - Saxapahaw Timebank{% endblock %}
+{% block content %}
 <div class="max-w-7xl mx-auto">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Header -->
     <div class="border-b border-gray-200 pb-6 mb-6">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Time Bank Ledger</h1>
+          <h1 class="text-2xl font-bold text-gray-900">Timebank Ledger</h1>
           <p class="mt-1 text-sm text-gray-500">Track your time credit transactions and balance.</p>
         </div>
         <div class="mt-4 md:mt-0 flex items-center space-x-4">
@@ -33,7 +36,7 @@
           <input type="date" name="date_from" id="date_from" value="{{ request.GET.date_from }}" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md">
         </div>
         <div class="flex items-end">
-          <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
+          <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
             <i class="fas fa-filter mr-2"></i>Filter
           </button>
         </div>

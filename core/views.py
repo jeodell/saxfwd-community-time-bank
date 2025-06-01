@@ -62,7 +62,7 @@ def service_list(request):
 
     return render(
         request,
-        "core/service_list.html",
+        "services/service_list.html",
         {
             "services": services,
             "categories": ServiceCategory.objects.all(),
@@ -83,12 +83,12 @@ def service_create(request):
     else:
         form = ServiceForm()
 
-    return render(request, "core/service_form.html", {"form": form})
+    return render(request, "services/service_form.html", {"form": form})
 
 
 def service_detail(request, pk):
     service = get_object_or_404(Service, pk=pk)
-    return render(request, "core/service_detail.html", {"service": service})
+    return render(request, "services/service_detail.html", {"service": service})
 
 
 @login_required
@@ -108,11 +108,8 @@ def service_request(request, pk):
 
     return render(
         request,
-        "core/service_request_form.html",
-        {
-            "form": form,
-            "service": service,
-        },
+        "services/service_request_form.html",
+        {"form": form, "service": service},
     )
 
 
@@ -167,7 +164,7 @@ def request_complete(request, pk):
     service_request.status = "completed"
     service_request.save()
 
-    # Update time bank ledger
+    # Update timebank ledger
     hours = service_request.hours_requested
     provider_profile = UserProfile.objects.get_or_create(
         user=service_request.service.provider
@@ -211,7 +208,7 @@ def profile(request):
     requests = ServiceRequest.objects.filter(requester=request.user)
     return render(
         request,
-        "core/profile.html",
+        "profile/profile.html",
         {
             "profile": profile,
             "services": services,
@@ -232,7 +229,7 @@ def profile_edit(request):
     else:
         form = UserProfileForm(instance=profile)
 
-    return render(request, "core/profile_form.html", {"form": form})
+    return render(request, "profile/profile_form.html", {"form": form})
 
 
 @login_required

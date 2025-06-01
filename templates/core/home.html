@@ -1,6 +1,6 @@
+<!-- prettier-ignore -->
 {% extends "base.html" %}
 {% load static %}
-
 {% block title %}Home - Saxapahaw Timebank{% endblock %}
 {% block content %}
 <div>
@@ -17,15 +17,11 @@
     </div>
     <div class="relative h-full flex items-center justify-center text-center px-4">
       <div class="max-w-3/4">
-        <h1 class="text-3xl md:text-5xl font-bold text-white mb-6 uppercase">
-          Neighbors Helping Neighbors
-        </h1>
-        <p class="text-lg md:text-xl text-white mb-8">
-          in SAXAPAHAW, NC
-        </p>
+        <h1 class="text-3xl md:text-5xl font-bold text-white mb-6 uppercase">Neighbors Helping Neighbors</h1>
+        <p class="text-lg md:text-xl text-white mb-8">in SAXAPAHAW, NC</p>
         <a
           href="{% url 'register' %}"
-          class="inline-block bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary transition-colors uppercase"
+          class="inline-block bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-light transition-colors uppercase"
         >
           Get Started
         </a>
@@ -38,11 +34,15 @@
     <div class="text-left max-w-3xl mx-auto">
       <h2 class="text-3xl font-bold text-primary mb-4 uppercase">How It Works</h2>
       <p class="text-lg text-gray-600">
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+        enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
+        qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,
+        consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt.
       </p>
       <a
         href="{% url 'about' %}"
-        class="inline-block mt-8 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary transition-colors"
+        class="inline-block mt-8 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors"
       >
         Learn More
       </a>
@@ -53,14 +53,11 @@
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <h2 class="text-3xl font-bold text-secondary text-center uppercase">Services</h2>
     <div class="border-b-2 border-secondary mt-4 mb-16 w-48 mx-auto"></div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {% include "components/service_card.html" with title="Garden Help" description="Help with planting, weeding, and garden maintenance" %}
-      {% include "components/service_card.html" with title="Home Repairs" description="Basic home repairs and maintenance tasks" %}
-      {% include "components/service_card.html" with title="Child Care" description="Reliable childcare from trusted community members" %}
-      {% include "components/service_card.html" with title="Tech Support" description="Help with computers, phones, and other devices" %}
-      {% include "components/service_card.html" with title="Meal Sharing" description="Share meals and cooking skills with neighbors" %}
-      {% include "components/service_card.html" with title="Transportation" description="Rides to appointments and errands" %}
-      {% include "components/service_card.html" with title="Pet Care" description="Pet sitting and walking services" %}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- prettier-ignore -->
+      {% for category in categories %}
+        {% include "services/service_category_card.html" with category=category title=category.title description=category.description %}
+      {% endfor %}
       <a
         href="{% url 'service_list' %}"
         class="bg-primary text-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow h-48 flex flex-col justify-end"
@@ -77,11 +74,7 @@
       <h2 class="text-3xl font-bold text-primary text-center uppercase mb-16">Our Values</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div class="relative h-[500px] rounded-lg overflow-hidden">
-          <img
-            src="{% static 'img/saxpatch.jpg' %}"
-            alt="Saxapahaw Community"
-            class="w-full h-full object-cover"
-          />
+          <img src="{% static 'img/saxpatch.jpg' %}" alt="Saxapahaw Community" class="w-full h-full object-cover" />
         </div>
         <div class="space-y-8">
           <div class="space-y-4">
@@ -118,7 +111,8 @@
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <h2 class="text-3xl font-bold text-primary text-center uppercase mb-4">Get in Touch</h2>
       <p class="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-        Have questions about our time bank? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+        Have questions about our time bank? We'd love to hear from you. Send us a message and we'll respond as soon as
+        possible.
       </p>
       <form method="post" action="{% url 'contact' %}" class="bg-white rounded-lg shadow-lg p-8">
         {% csrf_token %}
