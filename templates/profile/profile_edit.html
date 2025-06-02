@@ -1,15 +1,16 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block title %}Edit Profile - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="max-w-3xl mx-auto">
+<div class="max-w-3xl mx-auto py-8">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Header -->
     <div class="border-b border-gray-200 pb-6 mb-6">
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold text-gray-900">Edit Profile</h1>
-          <p class="mt-1 text-sm text-gray-500">Update your profile information and preferences.</p>
+          <p class="mt-1 text-sm text-gray-500">Update your personal information and preferences.</p>
         </div>
         <a
           href="{% url 'profile' %}"
@@ -23,95 +24,53 @@
 
     <!-- Form -->
     <form method="post" class="space-y-6">
-      {% csrf_token %}
-
-      <!-- Email -->
-      <div>
-        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">Email</label>
-        <div class="mt-1">{{ form.email }}</div>
-        {% if form.email.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
-        {% endif %}
-      </div>
-
-      <!-- Bio -->
-      <div>
-        <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium text-gray-700">Bio</label>
-        <div class="mt-1">{{ form.bio }}</div>
-        {% if form.bio.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.bio.errors.0 }}</p>
-        {% endif %}
-        <p class="mt-2 text-sm text-gray-500">Tell others about yourself and your skills.</p>
-      </div>
-
-      <!-- Phone Number -->
-      <div>
-        <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium text-gray-700">
-          Phone Number
-        </label>
-        <div class="mt-1">{{ form.phone_number }}</div>
-        {% if form.phone_number.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.phone_number.errors.0 }}</p>
-        {% endif %}
-        <p class="mt-2 text-sm text-gray-500">Optional: Add your phone number for easier communication.</p>
-      </div>
-
-      <!-- Address -->
-      <div>
-        <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-gray-700">Address</label>
-        <div class="mt-1">{{ form.address }}</div>
-        {% if form.address.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.address.errors.0 }}</p>
-        {% endif %}
-        <p class="mt-2 text-sm text-gray-500">Optional: Add your address for local service coordination.</p>
-      </div>
-
-      <!-- Notification Preferences -->
-      <div class="bg-gray-50 rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Notification Preferences</h3>
-        <div class="space-y-4">
-          <div class="flex items-start">
-            <div class="flex items-center h-5">{{ form.email_notifications }}</div>
-            <div class="ml-3 text-sm">
-              <label for="{{ form.email_notifications.id_for_label }}" class="font-medium text-gray-700">
-                Email Notifications
-              </label>
-              <p class="text-gray-500">Receive email notifications for service requests and updates.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Submit Button -->
-      <div class="flex justify-end">
+      {% csrf_token %} {{ form|crispy }}
+      <div class="flex items-center justify-end space-x-4">
+        <a
+          href="{% url 'profile' %}"
+          class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+        >
+          Cancel
+        </a>
         <button
           type="submit"
-          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
         >
-          <i class="fas fa-save mr-2"></i>
           Save Changes
         </button>
       </div>
     </form>
   </div>
+
+  <!-- Profile Tips -->
+  <div class="bg-white rounded-lg shadow-sm p-8 mt-8">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Profile Tips</h2>
+    <div class="space-y-4">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <i class="fas fa-check-circle text-green-500 mt-1"></i>
+        </div>
+        <p class="ml-3 text-sm text-gray-600">Keep your contact information up to date</p>
+      </div>
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <i class="fas fa-check-circle text-green-500 mt-1"></i>
+        </div>
+        <p class="ml-3 text-sm text-gray-600">Write a clear and concise bio</p>
+      </div>
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <i class="fas fa-check-circle text-green-500 mt-1"></i>
+        </div>
+        <p class="ml-3 text-sm text-gray-600">Include relevant skills and experience</p>
+      </div>
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <i class="fas fa-check-circle text-green-500 mt-1"></i>
+        </div>
+        <p class="ml-3 text-sm text-gray-600">Add your preferred contact methods</p>
+      </div>
+    </div>
+  </div>
 </div>
-
-<style>
-  /* Form field styling */
-  input[type='text'],
-  input[type='email'],
-  input[type='tel'],
-  textarea {
-    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm;
-  }
-
-  textarea {
-    @apply h-32;
-  }
-
-  /* Checkbox styling */
-  input[type='checkbox'] {
-    @apply h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded;
-  }
-</style>
 {% endblock %}

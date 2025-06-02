@@ -72,18 +72,6 @@
         <p class="mt-2 text-sm text-gray-500">List any specific requirements or prerequisites for your service.</p>
       </div>
 
-      <!-- Hourly Rate -->
-      <div>
-        <label for="{{ form.hourly_rate.id_for_label }}" class="block text-sm font-medium text-gray-700">
-          Hourly Rate (in time credits)
-        </label>
-        <div class="mt-1">{{ form.hourly_rate }}</div>
-        {% if form.hourly_rate.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.hourly_rate.errors.0 }}</p>
-        {% endif %}
-        <p class="mt-2 text-sm text-gray-500">How many time credits you charge per hour of service.</p>
-      </div>
-
       <!-- Submit Button -->
       <div class="flex justify-end">
         <button
