@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: saxfwd-community-time-bank
+    runtime: python
+    buildCommand: 'pip install -r requirements.txt'
+    startCommand: 'python manage.py migrate && gunicorn timebank.wsgi:application'
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        value: '{{ env.DJANGO_SECRET_KEY }}'
+      - key: DEBUG
+        value: '{{ env.DEBUG }}'
