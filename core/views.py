@@ -14,6 +14,68 @@ from .models import (
     UserProfile,
 )
 
+"""
+HOME
+"""
+
+
+def home(request):
+    recent_services = Service.objects.filter(is_active=True).order_by("-created_at")[:6]
+    categories = ServiceCategory.objects.all()
+    return render(
+        request,
+        "core/home.html",
+        {
+            "recent_services": recent_services,
+            "categories": categories,
+        },
+    )
+
+
+def contact(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+
+        # Send email
+        subject = f"New Contact Form Submission from {name}"
+        email_message = f"""
+        Name: {name}
+        Email: {email}
+
+        Message:
+        {message}
+        """
+
+        try:
+            send_mail(
+                subject=subject,
+                message=email_message,
+                from_email=email,
+                recipient_list=["admin@example.com"],  # Replace with your email
+                fail_silently=False,
+            )
+            messages.success(request, "Your message has been sent successfully!")
+        except Exception:
+            messages.error(
+                request,
+                "There was an error sending your message. Please try again later.",
+            )
+
+        return redirect("home")
+
+    return redirect("home")
+
+
+def about(request):
+    return render(request, "core/about.html")
+
+
+"""
+REGISTRATION
+"""
+
 
 def register(request):
     if request.method == "POST":
@@ -31,21 +93,45 @@ def register(request):
     return render(request, "registration/register.html", {"form": form})
 
 
-def about(request):
-    return render(request, "core/about.html")
+"""
+PROFILE
+"""
 
 
-def home(request):
-    recent_services = Service.objects.filter(is_active=True).order_by("-created_at")[:6]
-    categories = ServiceCategory.objects.all()
+@login_required
+def profile(request):
+    profile = UserProfile.objects.get_or_create(user=request.user)[0]
+    services = Service.objects.filter(provider=request.user)
+    requests = ServiceRequest.objects.filter(requester=request.user)
     return render(
         request,
-        "core/home.html",
+        "profile/profile.html",
         {
-            "recent_services": recent_services,
-            "categories": categories,
+            "profile": profile,
+            "services": services,
+            "requests": requests,
         },
     )
+
+
+@login_required
+def profile_edit(request):
+    profile = UserProfile.objects.get_or_create(user=request.user)[0]
+    if request.method == "POST":
+        form = UserProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("profile")
+    else:
+        form = UserProfileForm(instance=profile)
+
+    return render(request, "profile/profile_edit.html", {"form": form})
+
+
+"""
+SERVICES
+"""
 
 
 def service_list(request):
@@ -86,8 +172,34 @@ def service_create(request):
     return render(request, "services/service_form.html", {"form": form})
 
 
+@login_required
 def service_detail(request, pk):
     service = get_object_or_404(Service, pk=pk)
+
+    if request.method == "DELETE":
+        if request.user != service.provider:
+            messages.error(
+                request, "You do not have permission to delete this service."
+            )
+            return redirect("service_list")
+        service.delete()
+        messages.success(request, "Service deleted successfully!")
+        return redirect("service_list")
+
+    if request.method == "PUT":
+        if request.user != service.provider:
+            messages.error(request, "You do not have permission to edit this service.")
+            return redirect("service_detail", pk=pk)
+
+        form = ServiceForm(request.POST, instance=service)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Service updated successfully!")
+            return redirect("service_detail", pk=service.pk)
+        return render(
+            request, "services/service_form.html", {"form": form, "service": service}
+        )
+
     return render(request, "services/service_detail.html", {"service": service})
 
 
@@ -108,9 +220,14 @@ def service_request(request, pk):
 
     return render(
         request,
-        "services/service_request_form.html",
+        "requests/request_form.html",
         {"form": form, "service": service},
     )
+
+
+"""
+REQUESTS
+"""
 
 
 @login_required
@@ -118,7 +235,7 @@ def request_list(request):
     requests = ServiceRequest.objects.filter(
         Q(requester=request.user) | Q(service__provider=request.user)
     ).order_by("-created_at")
-    return render(request, "core/request_list.html", {"requests": requests})
+    return render(request, "requests/request_list.html", {"requests": requests})
 
 
 @login_required
@@ -130,7 +247,7 @@ def request_detail(request, pk):
     ):
         messages.error(request, "You do not have permission to view this request.")
         return redirect("home")
-    return render(request, "core/request_detail.html", {"request": service_request})
+    return render(request, "requests/request_detail.html", {"request": service_request})
 
 
 @login_required
@@ -202,75 +319,8 @@ def request_complete(request, pk):
 
 
 @login_required
-def profile(request):
-    profile = UserProfile.objects.get_or_create(user=request.user)[0]
-    services = Service.objects.filter(provider=request.user)
-    requests = ServiceRequest.objects.filter(requester=request.user)
-    return render(
-        request,
-        "profile/profile.html",
-        {
-            "profile": profile,
-            "services": services,
-            "requests": requests,
-        },
-    )
-
-
-@login_required
-def profile_edit(request):
-    profile = UserProfile.objects.get_or_create(user=request.user)[0]
-    if request.method == "POST":
-        form = UserProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect("profile")
-    else:
-        form = UserProfileForm(instance=profile)
-
-    return render(request, "profile/profile_form.html", {"form": form})
-
-
-@login_required
 def ledger(request):
     transactions = TimeBankLedger.objects.filter(user=request.user).order_by(
         "-created_at"
     )
     return render(request, "core/ledger.html", {"transactions": transactions})
-
-
-def contact(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        message = request.POST.get("message")
-
-        # Send email
-        subject = f"New Contact Form Submission from {name}"
-        email_message = f"""
-        Name: {name}
-        Email: {email}
-
-        Message:
-        {message}
-        """
-
-        try:
-            send_mail(
-                subject=subject,
-                message=email_message,
-                from_email=email,
-                recipient_list=["admin@example.com"],  # Replace with your email
-                fail_silently=False,
-            )
-            messages.success(request, "Your message has been sent successfully!")
-        except Exception:
-            messages.error(
-                request,
-                "There was an error sending your message. Please try again later.",
-            )
-
-        return redirect("home")
-
-    return redirect("home")
