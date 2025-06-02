@@ -6,7 +6,7 @@ from .models import Service, ServiceRequest, UserProfile
 class ServiceForm(forms.ModelForm):
     class Meta:
         model = Service
-        fields = ["title", "description", "category", "hourly_rate"]
+        fields = ["title", "description", "category"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
         }

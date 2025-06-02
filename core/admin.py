@@ -21,7 +21,6 @@ class ServiceAdmin(admin.ModelAdmin):
         "title",
         "provider",
         "category",
-        "hourly_rate",
         "is_active",
         "created_at",
     )
