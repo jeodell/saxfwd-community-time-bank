@@ -9,7 +9,7 @@ manage their time bank accounts.
 - Service listing and management
 - Time bank ledger for tracking hours
 - Service request and fulfillment system
-- User profiles and ratings
+- User profiles with history and info
 
 ## Setup
 
@@ -46,16 +46,13 @@ python manage.py runserver
 
 Visit http://127.0.0.1:8000/ to access the application.
 
-## Environment Variables
-
-```bash
-DEBUG=True
-SECRET_KEY=your-secret-key-here
-```
-
 ## Tailwind CSS
 
 ```bash
 python manage.py tailwind build
 python manage.py collectstatic --noinput
 ```
+
+## Render Deployment
+
+See [render.yaml](render.yaml) for the Render deployment configuration.
