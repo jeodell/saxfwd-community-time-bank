@@ -2,13 +2,13 @@
 <nav class="bg-white shadow-sm border-b border-gray-100 h-24">
   <!-- Desktop menu -->
   <div class="h-8">
-    <!-- Login/Hello-->
+    <!-- Login/Welcome-->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 h-full">
       {% if user.is_authenticated %}
       <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
       <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
         <a href="{% url 'profile' %}" class="text-white flex items-center space-x-2 hover:text-white/80">
-          <span>Hello, {{ user.username | default:"Community Member" }}</span>
+          <span class="text-sm">Welcome, {{ user.username | default:"Community Member" }}</span>
           {% if user.profile.avatar %}
           <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" class="h-6 w-6 rounded-full object-cover" />
           {% else %}
@@ -21,9 +21,9 @@
       {% else %}
       <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
       <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
-        <a href="{% url 'login' %}" class="text-white hover:text-white/80">Login</a>
-        <span class="text-white px-1">or</span>
-        <a href="{% url 'register' %}" class="text-white hover:text-white/80">Register</a>
+        <a href="{% url 'login' %}" class="text-sm text-white hover:text-white/80 uppercase">Login</a>
+        <span class="text-white px-1 text-sm">or</span>
+        <a href="{% url 'register' %}" class="text-sm text-white hover:text-white/80 uppercase">Register</a>
       </div>
       {% endif %}
     </div>
