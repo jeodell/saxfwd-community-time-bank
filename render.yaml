@@ -5,7 +5,7 @@ services:
     plan: free
     buildCommand: |
       pip install -r requirements.txt
-      cd theme && npm install && npm run build && cd ..
+      cd theme/static_src && npm install && npm run build && cd ../..
     startCommand: >
       python manage.py tailwind build &&
       python manage.py collectstatic --noinput &&
