@@ -77,12 +77,12 @@ class TimeBankLedger(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="profile_images/", blank=True)
     bio = models.TextField(blank=True)
     phone_number = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(blank=True)
     address = models.TextField(blank=True)
-    total_hours_earned = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    total_hours_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    rating = models.DecimalField(max_digits=3, decimal_places=2, default=5.00)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -25,7 +25,7 @@ class ServiceRequestForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["bio", "phone_number", "address"]
+        fields = ["bio", "phone_number", "email", "address"]
         widgets = {
             "bio": forms.Textarea(attrs={"rows": 4}),
             "address": forms.Textarea(attrs={"rows": 3}),
