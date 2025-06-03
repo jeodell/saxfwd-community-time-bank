@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
@@ -53,11 +54,12 @@ def contact(request):
                 subject=subject,
                 message=email_message,
                 from_email=email,
-                recipient_list=["admin@example.com"],  # Replace with your email
+                recipient_list=[settings.EMAIL_HOST_USER],
                 fail_silently=False,
             )
             messages.success(request, "Your message has been sent successfully!")
-        except Exception:
+        except Exception as e:
+            print(f"Email error: {str(e)}")
             messages.error(
                 request,
                 "There was an error sending your message. Please try again later.",
