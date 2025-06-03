@@ -53,6 +53,9 @@ class ServiceRequest(models.Model):
     def __str__(self):
         return f"{self.service.title} request by {self.requester.username}"
 
+    class Meta:
+        verbose_name_plural = "Service Requests"
+
 
 class TimeBankLedger(models.Model):
     TRANSACTION_TYPES = [
