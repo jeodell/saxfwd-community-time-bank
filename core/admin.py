@@ -63,10 +63,7 @@ class TimeBankLedgerAdmin(admin.ModelAdmin):
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
         "user",
-        "total_hours_earned",
-        "total_hours_spent",
-        "balance",
-        "rating",
+        "is_active",
     )
-    search_fields = ("user__username", "bio", "phone_number")
-    readonly_fields = ("total_hours_earned", "total_hours_spent", "rating")
+    search_fields = ("user__username", "bio", "phone_number", "email", "address")
+    readonly_fields = ("is_active",)

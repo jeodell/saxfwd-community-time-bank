@@ -88,7 +88,3 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s profile"
-
-    @property
-    def balance(self):
-        return self.total_hours_earned - self.total_hours_spent
