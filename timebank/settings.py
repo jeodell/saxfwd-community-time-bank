@@ -64,7 +64,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "timebank.wsgi.application"
 
 # Database
-if DEBUG:
+if os.getenv("ENVIRONMENT", "local") == "local":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
