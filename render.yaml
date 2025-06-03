@@ -18,7 +18,27 @@ services:
         " &&
       gunicorn timebank.wsgi:application
     envVars:
+      - key: DATABASE_ENGINE
+        value: '{{ env.DATABASE_ENGINE }}'
+      - key: DATABASE_HOST
+        value: '{{ env.DATABASE_HOST }}'
+      - key: DATABASE_NAME
+        value: '{{ env.DATABASE_NAME }}'
+      - key: DATABASE_PASSWORD
+        value: '{{ env.DATABASE_PASSWORD }}'
+      - key: DATABASE_USER
+        value: '{{ env.DATABASE_USER }}'
+      - key: DEBUG
+        value: '{{ env.DEBUG }}'
       - key: DJANGO_SECRET_KEY
         value: '{{ env.DJANGO_SECRET_KEY }}'
-      - key: DEBUG
-        value: '{{ env.DEBUG}}'
+      - key: EMAIL_HOST
+        value: '{{ env.EMAIL_HOST }}'
+      - key: EMAIL_HOST_PASSWORD
+        value: '{{ env.EMAIL_HOST_PASSWORD }}'
+      - key: EMAIL_HOST_USER
+        value: '{{ env.EMAIL_HOST_USER }}'
+      - key: EMAIL_PORT
+        value: '{{ env.EMAIL_PORT }}'
+      - key: EMAIL_USE_TLS
+        value: '{{ env.EMAIL_USE_TLS }}'
