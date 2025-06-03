@@ -3,10 +3,10 @@
   <!-- Desktop menu -->
   <div class="h-8">
     <!-- Login/Hello-->
-    <div class="grid grid-cols-4 h-full">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 h-full">
       {% if user.is_authenticated %}
-      <div class="col-span-3 flex items-center justify-start bg-primary"></div>
-      <div class="col-span-1 flex items-center justify-end bg-secondary pr-12">
+      <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
+      <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
         <a href="{% url 'profile' %}" class="text-white flex items-center space-x-2 hover:text-white/80">
           <span>Hello, {{ user.username | default:"Community Member" }}</span>
           {% if user.profile.avatar %}
@@ -19,8 +19,8 @@
         </a>
       </div>
       {% else %}
-      <div class="col-span-3 flex items-center justify-start bg-primary"></div>
-      <div class="col-span-1 flex items-center justify-end bg-secondary pr-12">
+      <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
+      <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
         <a href="{% url 'login' %}" class="text-white hover:text-white/80">Login</a>
         <span class="text-white px-1">or</span>
         <a href="{% url 'register' %}" class="text-white hover:text-white/80">Register</a>
