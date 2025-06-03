@@ -39,6 +39,6 @@ services:
       - key: EMAIL_HOST_USER
         value: '{{ env.EMAIL_HOST_USER }}'
       - key: EMAIL_PORT
-        value: '{{ env.EMAIL_PORT }}'
+        value: '587'
       - key: EMAIL_USE_TLS
         value: '{{ env.EMAIL_USE_TLS }}'
