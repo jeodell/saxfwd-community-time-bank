@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: timebank-app
+    name: saxfwd-community-time-bank
     runtime: python
     plan: free
     buildCommand: |
