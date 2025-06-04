@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 {% block title %}Request Service - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="max-w-3xl mx-auto">
+<div class="max-w-7xl mx-auto py-8">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Header -->
     <div class="border-b border-gray-200 pb-6 mb-6">
@@ -76,11 +76,11 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-green-800">Your Time Credit Balance</p>
-            <p class="text-2xl font-bold text-primary">{{ user.time_balance }} hours</p>
+            <p class="text-2xl font-bold text-primary">{{ user.time_balance | default:0 }} hours</p>
           </div>
           <div class="text-right">
             <p class="text-sm font-medium text-green-800">Total Cost</p>
-            <p class="text-2xl font-bold text-primary">{{ total_cost }} hours</p>
+            <p class="text-2xl font-bold text-primary">{{ total_cost | default:0 }} hours</p>
           </div>
         </div>
       </div>
