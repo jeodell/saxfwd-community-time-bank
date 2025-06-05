@@ -1,6 +1,22 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 from .models import Service, ServiceRequest, UserProfile
+
+
+class UserRegistrationForm(UserCreationForm):
+    terms_accepted = forms.BooleanField(
+        required=True,
+        label="I agree to the values of the Saxapahaw Timebank and I will use this platform responsibly and will not engage in malicious activities or illegal behavior.",
+        error_messages={
+            "required": "You must agree to our values and terms to register."
+        },
+    )
+
+    class Meta:
+        model = User
+        fields = ["username", "password1", "password2"]
 
 
 class ServiceForm(forms.ModelForm):

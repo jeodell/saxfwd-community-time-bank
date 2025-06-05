@@ -1,13 +1,17 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .forms import ServiceForm, ServiceRequestForm, UserProfileForm
+from .forms import (
+    ServiceForm,
+    ServiceRequestForm,
+    UserProfileForm,
+    UserRegistrationForm,
+)
 from .models import (
     Service,
     ServiceCategory,
@@ -81,7 +85,7 @@ REGISTRATION
 
 def register(request):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             # Create user profile
@@ -91,7 +95,7 @@ def register(request):
             )
             return redirect("login")
     else:
-        form = UserCreationForm()
+        form = UserRegistrationForm()
     return render(request, "registration/register.html", {"form": form})
 
 

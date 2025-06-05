@@ -1,4 +1,4 @@
-{% load static tailwind_tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,7 +12,23 @@
       href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    {% tailwind_css %}
+    {% if debug %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          colors: {
+            primary: '#4F46E5',
+            'primary-light': '#6366F1',
+            secondary: '#10B981',
+            cream: '#FDF6E3',
+            // Include Tailwind's default colors
+            ...tailwind.colors,
+          },
+        },
+      };
+    </script>
+    {% endif %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   </head>
   <body class="flex flex-col bg-gray-50 font-['Raleway']">

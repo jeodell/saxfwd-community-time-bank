@@ -94,6 +94,11 @@ class UserProfile(models.Model):
     total_hours_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    terms_accepted = models.BooleanField(
+        default=False,
+        help_text="User has agreed to use the platform responsibly and not engage in malicious activities or illegal behavior.",
+    )
+    terms_accepted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username}'s profile"
