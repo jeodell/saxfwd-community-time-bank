@@ -1,82 +1,30 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block title %}{% if service %}Edit Service{% else %}Offer a Service{% endif %} - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="max-w-3xl mx-auto py-8">
-  <div class="bg-white rounded-lg shadow-sm p-8">
+<div class="max-w-lg mx-auto flex items-center justify-center py-8 px-4">
+  <div class="bg-white py-8 shadow rounded-lg px-12">
     <!-- Header -->
-    <div class="border-b border-gray-200 pb-6 mb-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900">
-            {% if service %}Edit Service{% else %}Offer a Service{% endif %}
-          </h1>
-          <p class="mt-1 text-sm text-gray-500">
-            {% if service %} Update your service details below. {% else %} Share your skills with the community and earn
-            time credits. {% endif %}
-          </p>
-        </div>
-        <a
-          href="{% url 'service_list' %}"
-          class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200"
-        >
-          <i class="fas fa-arrow-left mr-2"></i>
-          Back to Services
-        </a>
-      </div>
+    <div class="text-center mb-6">
+      <h2 class="text-3xl font-extrabold text-gray-900">
+        {% if service %}Edit Service{% else %}Offer a Service{% endif %}
+      </h2>
+      <p class="mt-2 text-sm text-gray-500">
+        {% if service %}Update your service details below.{% else %}Share your skills with the community and earn time
+        credits.{% endif %}
+      </p>
     </div>
 
     <!-- Form -->
-    <form method="post" class="space-y-6">
-      {% csrf_token %}
-
-      <!-- Title -->
-      <div>
-        <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">Title</label>
-        <div class="mt-1">{{ form.title }}</div>
-        {% if form.title.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.title.errors.0 }}</p>
-        {% endif %}
-      </div>
-
-      <!-- Category -->
-      <div>
-        <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-gray-700">Category</label>
-        <div class="mt-1">{{ form.category }}</div>
-        {% if form.category.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.category.errors.0 }}</p>
-        {% endif %}
-      </div>
-
-      <!-- Description -->
-      <div>
-        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">
-          Description
-        </label>
-        <div class="mt-1">{{ form.description }}</div>
-        {% if form.description.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.description.errors.0 }}</p>
-        {% endif %}
-        <p class="mt-2 text-sm text-gray-500">Provide a detailed description of your service.</p>
-      </div>
-
-      <!-- Requirements -->
-      <div>
-        <label for="{{ form.requirements.id_for_label }}" class="block text-sm font-medium text-gray-700">
-          Requirements
-        </label>
-        <div class="mt-1">{{ form.requirements }}</div>
-        {% if form.requirements.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.requirements.errors.0 }}</p>
-        {% endif %}
-        <p class="mt-2 text-sm text-gray-500">List any specific requirements or prerequisites for your service.</p>
-      </div>
+    <form method="post" class="mt-8 space-y-6">
+      {% csrf_token %} {{ form|crispy }}
 
       <!-- Submit Button -->
-      <div class="flex justify-end">
+      <div>
         <button
           type="submit"
-          class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
         >
           <i class="fas {% if service %}fa-save{% else %}fa-plus-circle{% endif %} mr-2"></i>
           {% if service %}Save Changes{% else %}Create Service{% endif %}
@@ -85,18 +33,4 @@
     </form>
   </div>
 </div>
-
-<style>
-  /* Form field styling */
-  input[type='text'],
-  input[type='number'],
-  textarea,
-  select {
-    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm;
-  }
-
-  textarea {
-    @apply h-32;
-  }
-</style>
 {% endblock %}
