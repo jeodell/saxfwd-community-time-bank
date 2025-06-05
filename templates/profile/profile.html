@@ -33,7 +33,7 @@
           <div class="text-gray-500 text-sm font-medium mb-1">YOUR BALANCE</div>
           <div class="text-3xl font-bold text-yellow-600 mb-1">{{ profile.time_balance | default:0 }} HOURS</div>
         </div>
-        <!-- Listings Card -->
+        <!-- Offered Services Card -->
         <div class="bg-gray-50 rounded-lg p-6">
           <div class="text-gray-700 text-sm font-semibold mb-2">YOUR OFFERED SERVICES</div>
           <ul class="mb-4 space-y-1">
@@ -44,14 +44,14 @@
               </a>
             </li>
             {% empty %}
-            <li class="text-gray-400">No listings yet.</li>
+            <li class="text-gray-400">No offered services yet.</li>
             {% endfor %}
           </ul>
           <a
             href="{% url 'service_create' %}"
             class="block w-full text-center px-4 py-2 rounded-md bg-primary text-white font-medium hover:bg-primary-light transition"
           >
-            CREATE NEW LISTING
+            CREATE NEW SERVICE
           </a>
         </div>
       </div>

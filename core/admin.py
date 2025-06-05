@@ -11,7 +11,7 @@ from .models import (
 
 @admin.register(ServiceCategory)
 class ServiceCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "description")
+    list_display = ("name", "description", "is_featured")
     search_fields = ("name",)
 
 
@@ -37,11 +37,43 @@ class ServiceRequestAdmin(admin.ModelAdmin):
         "status",
         "requested_date",
         "hours_requested",
+        "provider_completed",
+        "requester_completed",
+        "completed_at",
         "created_at",
     )
-    list_filter = ("status", "requested_date", "created_at")
+    list_filter = (
+        "status",
+        "requested_date",
+        "created_at",
+        "provider_completed",
+        "requester_completed",
+    )
     search_fields = ("service__title", "requester__username", "description")
     date_hierarchy = "created_at"
+    readonly_fields = ("created_at", "updated_at", "completed_at")
+    fieldsets = (
+        (
+            "Service Information",
+            {"fields": ("service", "requester", "hours_requested", "description")},
+        ),
+        (
+            "Request Status",
+            {
+                "fields": (
+                    "status",
+                    "requested_date",
+                    "provider_completed",
+                    "requester_completed",
+                    "completed_at",
+                )
+            },
+        ),
+        (
+            "System Information",
+            {"fields": ("created_at", "updated_at"), "classes": ("collapse",)},
+        ),
+    )
 
 
 @admin.register(TimeBankLedger)
@@ -64,6 +96,31 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
         "user",
         "is_active",
+        "total_hours_earned",
+        "total_hours_spent",
+        "created_at",
+        "updated_at",
     )
+    list_filter = ("is_active", "created_at")
     search_fields = ("user__username", "bio", "phone_number", "email", "address")
-    readonly_fields = ("is_active",)
+    readonly_fields = (
+        "is_active",
+        "total_hours_earned",
+        "total_hours_spent",
+        "created_at",
+        "updated_at",
+    )
+    fieldsets = (
+        (
+            "User Information",
+            {"fields": ("user", "image", "bio", "phone_number", "email", "address")},
+        ),
+        (
+            "Time Bank Status",
+            {"fields": ("is_active", "total_hours_earned", "total_hours_spent")},
+        ),
+        (
+            "System Information",
+            {"fields": ("created_at", "updated_at"), "classes": ("collapse",)},
+        ),
+    )
