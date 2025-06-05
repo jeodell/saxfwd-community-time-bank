@@ -12,6 +12,7 @@ from .models import (
     ServiceCategory,
     ServiceRequest,
     TimeBankLedger,
+    User,
     UserProfile,
 )
 
@@ -21,13 +22,11 @@ HOME
 
 
 def home(request):
-    recent_services = Service.objects.filter(is_active=True).order_by("-created_at")[:6]
-    categories = ServiceCategory.objects.all()
+    categories = ServiceCategory.objects.filter(is_featured=True).order_by("name")
     return render(
         request,
         "core/home.html",
         {
-            "recent_services": recent_services,
             "categories": categories,
         },
     )
@@ -101,10 +100,17 @@ PROFILE
 
 
 @login_required
-def profile(request):
-    profile = UserProfile.objects.get_or_create(user=request.user)[0]
-    services = Service.objects.filter(provider=request.user)
-    requests = ServiceRequest.objects.filter(requester=request.user)
+def profile(request, username=None):
+    if username:
+        user = get_object_or_404(User, username=username)
+        profile = get_object_or_404(UserProfile, user=user)
+        services = Service.objects.filter(provider=user)
+        requests = ServiceRequest.objects.filter(requester=user)
+    else:
+        profile = UserProfile.objects.get_or_create(user=request.user)[0]
+        services = Service.objects.filter(provider=request.user)
+        requests = ServiceRequest.objects.filter(requester=request.user)
+
     return render(
         request,
         "profile/profile.html",
@@ -174,7 +180,6 @@ def service_create(request):
     return render(request, "services/service_form.html", {"form": form})
 
 
-@login_required
 def service_detail(request, pk):
     service = get_object_or_404(Service, pk=pk)
 
@@ -236,7 +241,16 @@ REQUESTS
 def request_list(request):
     requests = ServiceRequest.objects.filter(
         Q(requester=request.user) | Q(service__provider=request.user)
-    ).order_by("-created_at")
+    )
+
+    status = request.GET.get("status")
+    if status:
+        if status == "active":
+            requests = requests.filter(status__in=["pending", "accepted"])
+        else:
+            requests = requests.filter(status=status)
+
+    requests = requests.order_by("-created_at")
     return render(request, "requests/request_list.html", {"requests": requests})
 
 
@@ -266,6 +280,23 @@ def request_accept(request, pk):
     service_request.status = "accepted"
     service_request.save()
     messages.success(request, "Request accepted successfully!")
+    return redirect("request_detail", pk=pk)
+
+
+@login_required
+def request_reject(request, pk):
+    service_request = get_object_or_404(ServiceRequest, pk=pk)
+    if request.user != service_request.service.provider:
+        messages.error(request, "Only the service provider can reject requests.")
+        return redirect("home")
+
+    if service_request.status != "pending":
+        messages.error(request, "This request cannot be rejected.")
+        return redirect("request_detail", pk=pk)
+
+    service_request.status = "rejected"
+    service_request.save()
+    messages.success(request, "Request rejected successfully!")
     return redirect("request_detail", pk=pk)
 
 
