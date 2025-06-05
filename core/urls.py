@@ -14,10 +14,12 @@ urlpatterns = [
     path("requests/", views.request_list, name="request_list"),
     path("requests/<int:pk>/", views.request_detail, name="request_detail"),
     path("requests/<int:pk>/accept/", views.request_accept, name="request_accept"),
+    path("requests/<int:pk>/reject/", views.request_reject, name="request_reject"),
     path(
         "requests/<int:pk>/complete/", views.request_complete, name="request_complete"
     ),
     path("profile/", views.profile, name="profile"),
+    path("profile/<str:username>/", views.profile, name="profile"),
     path("profile/edit/", views.profile_edit, name="profile_edit"),
     path("ledger/", views.ledger, name="ledger"),
 ]
