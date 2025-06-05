@@ -55,8 +55,9 @@
             </button>
           </form>
         </div>
-        {% elif request.status == 'accepted' and user == request.service.provider %}
-        <div class="mt-4 md:mt-0">
+        {% elif request.status == 'accepted' %}
+        <div class="mt-4 md:mt-0 space-y-2">
+          {% if user == request.service.provider and not request.provider_completed %}
           <form method="post" action="{% url 'request_complete' request.pk %}" class="inline">
             {% csrf_token %}
             <button
@@ -64,9 +65,32 @@
               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
             >
               <i class="fas fa-flag-checkered mr-2"></i>
-              Mark as Completed
+              Mark Service as Completed
             </button>
           </form>
+          {% elif user == request.requester and not request.requester_completed %}
+          <form method="post" action="{% url 'request_complete' request.pk %}" class="inline">
+            {% csrf_token %}
+            <button
+              type="submit"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+            >
+              <i class="fas fa-flag-checkered mr-2"></i>
+              Confirm Service Completion
+            </button>
+          </form>
+          {% endif %}
+
+          <!-- Completion Status -->
+          {% if request.provider_completed or request.requester_completed %}
+          <div class="mt-2 text-sm text-gray-600">
+            <p>Completion Status:</p>
+            <ul class="list-disc list-inside">
+              <li>Provider: {% if request.provider_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
+              <li>Requester: {% if request.requester_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
+            </ul>
+          </div>
+          {% endif %}
         </div>
         {% endif %}
       </div>

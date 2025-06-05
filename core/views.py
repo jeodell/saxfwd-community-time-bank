@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from .forms import ServiceForm, ServiceRequestForm, UserProfileForm
 from .models import (
@@ -110,14 +111,27 @@ def profile(request, username=None):
         profile = UserProfile.objects.get_or_create(user=request.user)[0]
         services = Service.objects.filter(provider=request.user)
         requests = ServiceRequest.objects.filter(requester=request.user)
+        user = request.user
+
+    # Get transactions for the user
+    given_transactions = TimeBankLedger.objects.filter(
+        user=user, transaction_type="credit"
+    ).order_by("-created_at")[:5]  # Show last 5 transactions
+
+    received_transactions = TimeBankLedger.objects.filter(
+        user=user, transaction_type="debit"
+    ).order_by("-created_at")[:5]  # Show last 5 transactions
 
     return render(
         request,
         "profile/profile.html",
         {
+            "user": user,
             "profile": profile,
             "services": services,
             "requests": requests,
+            "given_transactions": given_transactions,
+            "received_transactions": received_transactions,
         },
     )
 
@@ -146,6 +160,10 @@ def service_list(request):
     services = Service.objects.filter(is_active=True)
     category = request.GET.get("category")
     search = request.GET.get("search")
+
+    # Exclude current user's services if they are logged in
+    if request.user.is_authenticated:
+        services = services.exclude(provider=request.user)
 
     if category:
         services = services.filter(category__name=category)
@@ -249,6 +267,9 @@ def request_list(request):
             requests = requests.filter(status__in=["pending", "accepted"])
         else:
             requests = requests.filter(status=status)
+    # default to active on page load
+    else:
+        requests = requests.filter(status__in=["pending", "accepted"])
 
     requests = requests.order_by("-created_at")
     return render(request, "requests/request_list.html", {"requests": requests})
@@ -303,51 +324,77 @@ def request_reject(request, pk):
 @login_required
 def request_complete(request, pk):
     service_request = get_object_or_404(ServiceRequest, pk=pk)
-    if request.user != service_request.service.provider:
-        messages.error(request, "Only the service provider can complete requests.")
+
+    # Check if user is either provider or requester
+    if request.user not in [
+        service_request.service.provider,
+        service_request.requester,
+    ]:
+        messages.error(
+            request,
+            "Only the service provider or requester can mark this request as complete.",
+        )
         return redirect("home")
 
     if service_request.status != "accepted":
         messages.error(request, "This request cannot be completed.")
         return redirect("request_detail", pk=pk)
 
-    service_request.status = "completed"
+    # Update completion status based on user role
+    if request.user == service_request.service.provider:
+        service_request.provider_completed = True
+    else:  # requester
+        service_request.requester_completed = True
+
+    # Check if both parties have completed
+    if service_request.provider_completed and service_request.requester_completed:
+        service_request.status = "completed"
+        service_request.completed_at = timezone.now()
+
+        # Update timebank ledger
+        hours = service_request.hours_requested
+        provider_profile = UserProfile.objects.get_or_create(
+            user=service_request.service.provider
+        )[0]
+        requester_profile = UserProfile.objects.get_or_create(
+            user=service_request.requester
+        )[0]
+
+        # Credit provider
+        TimeBankLedger.objects.create(
+            user=service_request.service.provider,
+            service_request=service_request,
+            transaction_type="credit",
+            hours=hours,
+            balance=provider_profile.total_hours_earned + hours,
+            description=f"Completed service: {service_request.service.title}",
+        )
+        provider_profile.total_hours_earned += hours
+        provider_profile.save()
+
+        # Debit requester
+        TimeBankLedger.objects.create(
+            user=service_request.requester,
+            service_request=service_request,
+            transaction_type="debit",
+            hours=hours,
+            balance=requester_profile.total_hours_spent + hours,
+            description=f"Received service: {service_request.service.title}",
+        )
+        requester_profile.total_hours_spent += hours
+        requester_profile.save()
+
+        messages.success(
+            request,
+            "Request completed successfully! Time credits have been transferred.",
+        )
+    else:
+        messages.success(
+            request,
+            "Completion status updated. Waiting for the other party to complete.",
+        )
+
     service_request.save()
-
-    # Update timebank ledger
-    hours = service_request.hours_requested
-    provider_profile = UserProfile.objects.get_or_create(
-        user=service_request.service.provider
-    )[0]
-    requester_profile = UserProfile.objects.get_or_create(
-        user=service_request.requester
-    )[0]
-
-    # Credit provider
-    TimeBankLedger.objects.create(
-        user=service_request.service.provider,
-        service_request=service_request,
-        transaction_type="credit",
-        hours=hours,
-        balance=provider_profile.total_hours_earned + hours,
-        description=f"Completed service: {service_request.service.title}",
-    )
-    provider_profile.total_hours_earned += hours
-    provider_profile.save()
-
-    # Debit requester
-    TimeBankLedger.objects.create(
-        user=service_request.requester,
-        service_request=service_request,
-        transaction_type="debit",
-        hours=hours,
-        balance=requester_profile.total_hours_spent + hours,
-        description=f"Received service: {service_request.service.title}",
-    )
-    requester_profile.total_hours_spent += hours
-    requester_profile.save()
-
-    messages.success(request, "Request completed successfully!")
     return redirect("request_detail", pk=pk)
 
 
