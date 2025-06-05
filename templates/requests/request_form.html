@@ -1,5 +1,6 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block title %}Request Service - Saxapahaw Timebank{% endblock %}
 {% block content %}
 <div class="max-w-7xl mx-auto py-8">
@@ -33,43 +34,7 @@
 
     <!-- Form -->
     <form method="post" class="space-y-6">
-      {% csrf_token %}
-
-      <!-- Requested Date -->
-      <div>
-        <label for="{{ form.requested_date.id_for_label }}" class="block text-sm font-medium text-gray-700">
-          Requested Date and Time
-        </label>
-        <div class="mt-1">{{ form.requested_date }}</div>
-        {% if form.requested_date.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.requested_date.errors.0 }}</p>
-        {% endif %}
-        <p class="mt-2 text-sm text-gray-500">When would you like the service to be provided?</p>
-      </div>
-
-      <!-- Hours Requested -->
-      <div>
-        <label for="{{ form.hours_requested.id_for_label }}" class="block text-sm font-medium text-gray-700">
-          Hours Requested
-        </label>
-        <div class="mt-1">{{ form.hours_requested }}</div>
-        {% if form.hours_requested.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.hours_requested.errors.0 }}</p>
-        {% endif %}
-        <p class="mt-2 text-sm text-gray-500">How many hours of service do you need?</p>
-      </div>
-
-      <!-- Description -->
-      <div>
-        <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">
-          Description
-        </label>
-        <div class="mt-1">{{ form.description }}</div>
-        {% if form.description.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.description.errors.0 }}</p>
-        {% endif %}
-        <p class="mt-2 text-sm text-gray-500">Provide details about your request and any specific requirements.</p>
-      </div>
+      {% csrf_token %} {{ form|crispy }}
 
       <!-- Time Credit Balance -->
       <div class="bg-green-50 rounded-lg p-4">
