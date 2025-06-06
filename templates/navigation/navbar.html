@@ -8,7 +8,9 @@
       <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
       <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
         <a href="{% url 'profile' %}" class="text-white flex items-center space-x-2 hover:text-white/80">
-          <span class="text-sm">Welcome, {{ user.username | default:"Community Member" }}</span>
+          <span class="text-sm">
+            Welcome, {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}
+          </span>
           {% if user.profile.avatar %}
           <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" class="h-6 w-6 rounded-full object-cover" />
           {% else %}
