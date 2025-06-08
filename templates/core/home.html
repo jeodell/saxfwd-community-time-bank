@@ -10,21 +10,23 @@
       <img
         src="{% static 'img/sax_river_and_dam.jpg' %}"
         alt="Saxapahaw River and Dam"
-        class="w-full h-full object-cover"
+        class="w-full h-full object-cover object-[center_30%]"
         loading="eager"
       />
-      <div class="absolute inset-0 bg-black/50"></div>
+      <div class="absolute inset-0 bg-primary/50"></div>
     </div>
     <div class="relative h-full flex items-center justify-center text-center px-4">
       <div class="max-w-3/4">
         <h1 class="text-3xl md:text-5xl font-bold text-white mb-6 uppercase">Neighbors Helping Neighbors</h1>
         <p class="text-lg md:text-xl text-white mb-8">in SAXAPAHAW, NC</p>
+        {% if not user.is_authenticated %}
         <a
           href="{% url 'register' %}"
           class="inline-block bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-light transition-colors uppercase"
         >
           Get Started
         </a>
+        {% endif %}
       </div>
     </div>
   </section>
