@@ -7,8 +7,8 @@
 <div class="max-w-7xl mx-auto py-8">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <h1 class="text-2xl md:text-3xl font-semibold text-gray-900">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl md:text-3xl font-semibold text-gray-800">
         Welcome,
         <span class="text-primary">
           {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}
@@ -50,7 +50,7 @@
               <a href="{% url 'service_detail' service.id %}">{{ service.title }}</a>
             </li>
             {% empty %}
-            <li class="text-primary">No services offered yet.</li>
+            <li class="text-primary">No services offered yet</li>
             {% endfor %}
           </ul>
           <a
@@ -72,7 +72,7 @@
           <div class="pt-2 pb-4 flex flex-col gap-8">
             <!-- Given -->
             <div>
-              <div class="font-semibold text-gray-600 mb-2">Given</div>
+              <div class="font-semibold text-gray-800 mb-2">Given</div>
               <ul class="space-y-2">
                 {% for transaction in given_transactions %}
                 <li class="flex items-center text-gray-800 text-sm">
@@ -82,13 +82,13 @@
                   <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                 </li>
                 {% empty %}
-                <li class="text-gray-400">No given activity.</li>
+                <li class="text-gray-600">No given activity</li>
                 {% endfor %}
               </ul>
             </div>
             <!-- Received -->
             <div>
-              <div class="font-semibold text-gray-600 mb-2">Received</div>
+              <div class="font-semibold text-gray-800 mb-2">Received</div>
               <ul class="space-y-2">
                 {% for transaction in received_transactions %}
                 <li class="flex items-center text-gray-800 text-sm">
@@ -98,7 +98,7 @@
                   <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                 </li>
                 {% empty %}
-                <li class="text-gray-400">No received activity.</li>
+                <li class="text-gray-600">No received activity</li>
                 {% endfor %}
               </ul>
             </div>
@@ -111,45 +111,45 @@
 
           <!-- Profile Information -->
           <div class="rounded-lg p-6 mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Profile Information</h3>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Profile Information</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <p class="text-sm text-gray-500">Name</p>
-                <p class="text-sm text-gray-900">
+                <p class="text-sm text-gray-800">
                   {% if user.first_name or user.last_name %} {{ user.first_name }} {{ user.last_name }} {% else %} {{
                   user.username }} {% endif %}
                 </p>
               </div>
               <div>
                 <p class="text-sm text-gray-500">Email</p>
-                <p class="text-sm text-gray-900">{{ user.email|default:"Not provided" }}</p>
+                <p class="text-sm text-gray-800">{{ user.email|default:"Not provided" }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-500">Phone</p>
-                <p class="text-sm text-gray-900">{{ profile.phone_number|default:"Not provided" }}</p>
+                <p class="text-sm text-gray-800">{{ profile.phone_number|default:"Not provided" }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-500">Address</p>
-                <p class="text-sm text-gray-900">{{ profile.address|default:"Not provided" }}</p>
+                <p class="text-sm text-gray-800">{{ profile.address|default:"Not provided" }}</p>
               </div>
               <div class="md:col-span-2">
                 <p class="text-sm text-gray-500">Bio</p>
-                <p class="text-sm text-gray-900">{{ profile.bio|default:"Not provided" }}</p>
+                <p class="text-sm text-gray-800">{{ profile.bio|default:"Not provided" }}</p>
               </div>
             </div>
           </div>
 
           <!-- Account Information -->
           <div class="rounded-lg p-6 mb-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Account Information</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <p class="text-sm text-gray-500">Member Since</p>
-                <p class="text-sm text-gray-900">{{ profile.created_at|date:"F j, Y" }}</p>
+                <p class="text-sm text-gray-800">{{ profile.created_at|date:"F j, Y" }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-500">Last Updated</p>
-                <p class="text-sm text-gray-900">{{ profile.updated_at|date:"F j, Y" }}</p>
+                <p class="text-sm text-gray-800">{{ profile.updated_at|date:"F j, Y" }}</p>
               </div>
             </div>
           </div>
