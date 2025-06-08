@@ -6,6 +6,17 @@ from .models import Service, ServiceRequest, UserProfile
 
 
 class UserRegistrationForm(UserCreationForm):
+    first_name = forms.CharField(
+        required=True,
+        max_length=30,
+    )
+    last_name = forms.CharField(
+        required=True,
+        max_length=30,
+    )
+    email = forms.EmailField(
+        required=True,
+    )
     terms_accepted = forms.BooleanField(
         required=True,
         label="I agree to the values of the Saxapahaw Timebank and I will use this platform responsibly and will not engage in malicious activities or illegal behavior.",
@@ -31,9 +42,6 @@ class ServiceForm(forms.ModelForm):
     class Meta:
         model = Service
         fields = ["title", "description", "category"]
-        widgets = {
-            "description": forms.Textarea(attrs={"rows": 4}),
-        }
 
 
 class ServiceRequestForm(forms.ModelForm):
