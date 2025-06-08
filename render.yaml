@@ -10,7 +10,7 @@ services:
       python manage.py tailwind build &&
       python manage.py collectstatic --noinput &&
       python manage.py migrate &&
-      python manage.py seed_db &&
+      DJANGO_SUPERUSER_PASSWORD=superuser python manage.py createsuperuser --noinput --username superuser --email superuser@example.com &&
       gunicorn timebank.wsgi:application
     envVars:
       - fromGroup: timebank-env
