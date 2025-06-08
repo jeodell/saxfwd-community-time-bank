@@ -12,7 +12,7 @@ CATEGORIES = [
     {"name": "Food", "is_featured": True},
     {"name": "General Labor", "is_featured": True},
     {"name": "Healthcare", "is_featured": False},
-    {"name": "Home", "is_featured": False},
+    {"name": "Home", "is_featured": True},
     {"name": "Landscaping", "is_featured": True},
     {"name": "Legal", "is_featured": False},
     {"name": "Other", "is_featured": False},

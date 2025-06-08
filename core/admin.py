@@ -106,7 +106,14 @@ class UserProfileAdmin(admin.ModelAdmin):
         "updated_at",
     )
     list_filter = ("is_active", "created_at")
-    search_fields = ("user__username", "bio", "phone_number", "email", "address")
+    search_fields = (
+        "user__username",
+        "user__first_name",
+        "user__last_name",
+        "user__email",
+        "phone_number",
+        "address",
+    )
     readonly_fields = (
         "is_active",
         "total_hours_earned",
@@ -117,7 +124,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "User Information",
-            {"fields": ("user", "image", "bio", "phone_number", "email", "address")},
+            {"fields": ("user", "image", "bio", "phone_number", "address")},
         ),
         (
             "Time Bank Status",
