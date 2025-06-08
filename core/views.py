@@ -240,6 +240,11 @@ class ServiceCreateView(LoginRequiredMixin, CreateView):
     form_class = ServiceForm
     template_name = "services/service_form.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = ServiceCategory.get_all_categories()
+        return context
+
     def form_valid(self, form):
         form.instance.provider = self.request.user
         messages.success(self.request, "Service created successfully!")
