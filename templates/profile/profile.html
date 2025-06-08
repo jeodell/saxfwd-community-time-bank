@@ -4,7 +4,7 @@
 {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}'s Dashboard - Saxapahaw Timebank
 {% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto py-8">
+<div class="max-w-7xl mx-auto p-8">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
@@ -32,7 +32,7 @@
         <!-- Balance Card -->
         <div class="bg-card-bg-light rounded-xl p-8 shadow-sm flex flex-col items-center text-center">
           <div class="text-xl font-semibold text-center tracking-wide text-secondary uppercase">Your Balance</div>
-          <div class="border-t-2 border-secondary my-2 w-[18ch] mx-auto"></div>
+          <div class="border-t-2 border-secondary my-2 w-full max-w-[18ch] mx-auto"></div>
           <div class="text-yellow-500 mb-4 mt-2">
             <i class="fas fa-clock text-4xl"></i>
           </div>
@@ -43,7 +43,7 @@
           <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">
             Your Offered Services
           </div>
-          <div class="border-t-2 border-primary my-2 w-[28ch] mx-auto"></div>
+          <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
           <ul class="pt-2 pb-4 space-y-4 flex flex-col items-center">
             {% for service in services %}
             <li class="text-primary hover:text-primary-light transition-colors duration-200 text-lg font-semibold">
