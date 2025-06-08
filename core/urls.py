@@ -21,20 +21,20 @@ urlpatterns = [
     ),
     path("requests/", views.RequestListView.as_view(), name="request_list"),
     path(
-        "requests/<int:pk>/", views.RequestDetailView.as_view(), name="request_detail"
+        "requests/<uuid:pk>/", views.RequestDetailView.as_view(), name="request_detail"
     ),
     path(
-        "requests/<int:pk>/accept/",
+        "requests/<uuid:pk>/accept/",
         views.RequestAcceptView.as_view(),
         name="request_accept",
     ),
     path(
-        "requests/<int:pk>/reject/",
+        "requests/<uuid:pk>/reject/",
         views.RequestRejectView.as_view(),
         name="request_reject",
     ),
     path(
-        "requests/<int:pk>/complete/",
+        "requests/<uuid:pk>/complete/",
         views.RequestCompleteView.as_view(),
         name="request_complete",
     ),
@@ -44,17 +44,17 @@ urlpatterns = [
     ),
     path("ledger/", views.LedgerView.as_view(), name="ledger"),
     path(
-        "requests/<int:pk>/community/",
+        "requests/<uuid:pk>/community/",
         views.RequestCommunityHoursView.as_view(),
         name="request_community_hours",
     ),
     path(
-        "requests/<int:pk>/community/approve/",
+        "requests/<uuid:pk>/community/approve/",
         views.ApproveCommunityRequestView.as_view(),
         name="approve_community_request",
     ),
     path(
-        "requests/<int:pk>/community/reject/",
+        "requests/<uuid:pk>/community/reject/",
         views.RejectCommunityRequestView.as_view(),
         name="reject_community_request",
     ),
