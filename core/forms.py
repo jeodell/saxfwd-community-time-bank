@@ -37,6 +37,19 @@ class UserRegistrationForm(UserCreationForm):
             "terms_accepted",
         ]
 
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("This email address is already in use.")
+        return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
+
 
 class ServiceForm(forms.ModelForm):
     class Meta:
@@ -56,13 +69,19 @@ class ServiceRequestForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
+    email = forms.EmailField(required=False)
+    phone_number = forms.CharField(required=False)
+    address = forms.CharField(required=False)
+    image = forms.ImageField(required=False)
+    bio = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 4}))
+
     class Meta:
         model = UserProfile
-        fields = ["bio", "phone_number", "email", "address", "image"]
-        widgets = {
-            "bio": forms.Textarea(attrs={"rows": 4}),
-            "phone_number": forms.TextInput(attrs={"type": "tel"}),
-            "email": forms.EmailInput(attrs={"type": "email"}),
-            "address": forms.Textarea(attrs={"rows": 3}),
-            "image": forms.FileInput(attrs={"type": "file"}),
-        }
+        fields = [
+            "phone_number",
+            "address",
+            "image",
+            "bio",
+        ]

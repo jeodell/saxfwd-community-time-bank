@@ -11,13 +11,14 @@ from .models import (
 
 @admin.register(ServiceCategory)
 class ServiceCategoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "description", "is_featured")
+    list_display = ("id", "name", "description", "is_featured")
     search_fields = ("name",)
 
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "title",
         "provider",
         "category",
@@ -32,6 +33,7 @@ class ServiceAdmin(admin.ModelAdmin):
 @admin.register(ServiceRequest)
 class ServiceRequestAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "service",
         "requester",
         "status",
@@ -79,6 +81,7 @@ class ServiceRequestAdmin(admin.ModelAdmin):
 @admin.register(TimeBankLedger)
 class TimeBankLedgerAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "user",
         "service_request",
         "transaction_type",
@@ -94,6 +97,7 @@ class TimeBankLedgerAdmin(admin.ModelAdmin):
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "user",
         "is_active",
         "total_hours_earned",

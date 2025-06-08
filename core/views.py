@@ -1,17 +1,16 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
     TemplateView,
-    UpdateView,
     View,
 )
 
@@ -95,12 +94,20 @@ class RegisterView(CreateView):
     success_url = reverse_lazy("login")
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        UserProfile.objects.create(user=self.object)
+        # Save the User model first
+        user = form.save()
+
+        # Create the UserProfile with the terms acceptance data
+        UserProfile.objects.create(
+            user=user,
+            terms_accepted=form.cleaned_data["terms_accepted"],
+            terms_accepted_at=timezone.now(),
+        )
+
         messages.success(
             self.request, "Account created successfully! You can now log in."
         )
-        return response
+        return super().form_valid(form)
 
 
 """
@@ -108,15 +115,38 @@ PROFILE
 """
 
 
-class ProfileView(LoginRequiredMixin, DetailView):
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = "profile/profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = UserProfile.objects.get_or_create(user=self.request.user)[0]
+        user = self.request.user
+        context.update(
+            {
+                "profile": profile,
+                "user": user,
+                "services": Service.objects.filter(provider=user),
+                "requests": ServiceRequest.objects.filter(requester=user),
+                "given_transactions": TimeBankLedger.objects.filter(
+                    user=user, transaction_type="credit"
+                ).order_by("-created_at")[:5],
+                "received_transactions": TimeBankLedger.objects.filter(
+                    user=user, transaction_type="debit"
+                ).order_by("-created_at")[:5],
+            }
+        )
+        return context
+
+    def get(self, request, *args, **kwargs):
+        profile = UserProfile.objects.get_or_create(user=request.user)[0]
+        return redirect("profile_detail", pk=profile.id)
+
+
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    model = UserProfile
     template_name = "profile/profile.html"
     context_object_name = "profile"
-
-    def get_object(self):
-        if self.kwargs.get("username"):
-            user = get_object_or_404(User, username=self.kwargs["username"])
-            return get_object_or_404(UserProfile, user=user)
-        return UserProfile.objects.get_or_create(user=self.request.user)[0]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -132,22 +162,34 @@ class ProfileView(LoginRequiredMixin, DetailView):
                 "received_transactions": TimeBankLedger.objects.filter(
                     user=user, transaction_type="debit"
                 ).order_by("-created_at")[:5],
+                "form": UserProfileForm(instance=self.object),
             }
         )
         return context
 
-
-class ProfileEditView(LoginRequiredMixin, UpdateView):
-    form_class = UserProfileForm
-    template_name = "profile/profile_edit.html"
-    success_url = reverse_lazy("profile")
-
     def get_object(self):
-        return UserProfile.objects.get_or_create(user=self.request.user)[0]
+        obj = super().get_object()
+        if self.request.user != obj.user:
+            messages.error(
+                self.request, "You do not have permission to view this profile."
+            )
+            return redirect("home")
+        return obj
 
-    def form_valid(self, form):
-        messages.success(self.request, "Profile updated successfully!")
-        return super().form_valid(form)
+    def update(self, request, *args, **kwargs):
+        form = UserProfileForm(request.POST, instance=self.object)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect("profile_detail", pk=self.object.id)
+        return render(request, self.template_name, self.get_context_data(form=form))
+
+    def delete(self, request, *args, **kwargs):
+        user = self.object.user
+        self.object.delete()
+        user.delete()  # This will also delete the profile due to CASCADE
+        messages.success(request, "Your account has been successfully deleted.")
+        return redirect("home")
 
 
 """
@@ -161,11 +203,19 @@ class ServiceListView(ListView):
     context_object_name = "services"
 
     def get_queryset(self):
+        category_id = self.request.GET.get("category")
+        category = None
+        if category_id:
+            try:
+                category = ServiceCategory.objects.get(id=category_id)
+            except (ServiceCategory.DoesNotExist, ValueError):
+                pass
+
         return Service.get_active_services(
             exclude_user=self.request.user
             if self.request.user.is_authenticated
             else None,
-            category=self.request.GET.get("category"),
+            category=category,
             search=self.request.GET.get("search"),
         )
 

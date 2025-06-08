@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -6,9 +8,13 @@ from django.utils import timezone
 
 
 class ServiceCategory(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
+    icon = models.CharField(max_length=50, blank=True, null=True)
     is_featured = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -28,6 +34,7 @@ class ServiceCategory(models.Model):
 
 
 class Service(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
     description = models.TextField()
     provider = models.ForeignKey(
@@ -68,7 +75,7 @@ class Service(models.Model):
                 Q(title__icontains=search) | Q(description__icontains=search)
             )
 
-        return queryset
+        return queryset.order_by("-created_at")
 
 
 class ServiceRequest(models.Model):
@@ -86,6 +93,7 @@ class ServiceRequest(models.Model):
         ("rejected", "Rejected"),
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     requester = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="service_requests"
@@ -315,6 +323,7 @@ class TimeBankLedger(models.Model):
         ("community_request", "Community Request"),
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
@@ -329,14 +338,80 @@ class TimeBankLedger(models.Model):
     class Meta:
         ordering = ["-created_at"]
 
+    def save(self, *args, **kwargs):
+        # Update user's time balance
+        if self.transaction_type == "credit":
+            self.user.profile.time_balance += self.hours
+        else:  # debit
+            self.user.profile.time_balance -= self.hours
+        self.user.profile.save()
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_user_transactions(
+        cls, user, transaction_type=None, start_date=None, end_date=None
+    ):
+        """
+        Get a user's transaction history with optional filtering.
+
+        Args:
+            user: The user to get transactions for
+            transaction_type: Optional filter by transaction type
+            start_date: Optional start date for filtering
+            end_date: Optional end date for filtering
+        """
+        queryset = cls.objects.filter(user=user)
+
+        if transaction_type:
+            queryset = queryset.filter(transaction_type=transaction_type)
+
+        if start_date:
+            queryset = queryset.filter(created_at__gte=start_date)
+
+        if end_date:
+            queryset = queryset.filter(created_at__lte=end_date)
+
+        return queryset
+
+    @classmethod
+    def get_user_balance(cls, user):
+        """Get a user's current time balance."""
+        return user.profile.time_balance
+
+    @classmethod
+    def get_user_earnings(cls, user, start_date=None, end_date=None):
+        """Get a user's total earnings for a period."""
+        queryset = cls.objects.filter(user=user, transaction_type="credit")
+
+        if start_date:
+            queryset = queryset.filter(created_at__gte=start_date)
+
+        if end_date:
+            queryset = queryset.filter(created_at__lte=end_date)
+
+        return queryset.aggregate(total=models.Sum("hours"))["total"] or 0
+
+    @classmethod
+    def get_user_spending(cls, user, start_date=None, end_date=None):
+        """Get a user's total spending for a period."""
+        queryset = cls.objects.filter(user=user, transaction_type="debit")
+
+        if start_date:
+            queryset = queryset.filter(created_at__gte=start_date)
+
+        if end_date:
+            queryset = queryset.filter(created_at__lte=end_date)
+
+        return queryset.aggregate(total=models.Sum("hours"))["total"] or 0
+
 
 class UserProfile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="profile_images/", blank=True)
     bio = models.TextField(blank=True)
-    phone_number = models.CharField(max_length=20, blank=True)
-    email = models.EmailField(blank=True)
-    address = models.TextField(blank=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
     total_hours_earned = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_hours_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -354,3 +429,26 @@ class UserProfile(models.Model):
     @property
     def time_balance(self):
         return self.total_hours_earned - self.total_hours_spent
+
+    @property
+    def email(self):
+        """Get the user's email from the User model."""
+        return self.user.email
+
+    @property
+    def first_name(self):
+        """Get the user's first name from the User model."""
+        return self.user.first_name
+
+    @property
+    def last_name(self):
+        """Get the user's last name from the User model."""
+        return self.user.last_name
+
+    @property
+    def full_name(self):
+        """Get the user's full name from the User model."""
+        return (
+            f"{self.user.first_name} {self.user.last_name}".strip()
+            or self.user.username
+        )

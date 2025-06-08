@@ -10,7 +10,9 @@ urlpatterns = [
     path("services/", views.ServiceListView.as_view(), name="service_list"),
     path("services/create/", views.ServiceCreateView.as_view(), name="service_create"),
     path(
-        "services/<int:pk>/", views.ServiceDetailView.as_view(), name="service_detail"
+        "services/<uuid:pk>/",
+        views.ServiceDetailView.as_view(),
+        name="service_detail",
     ),
     path(
         "services/<int:pk>/request/",
@@ -37,7 +39,9 @@ urlpatterns = [
         name="request_complete",
     ),
     path("profile/", views.ProfileView.as_view(), name="profile"),
-    path("profile/edit/", views.ProfileEditView.as_view(), name="profile_edit"),
+    path(
+        "profile/<uuid:pk>/", views.ProfileDetailView.as_view(), name="profile_detail"
+    ),
     path("ledger/", views.LedgerView.as_view(), name="ledger"),
     path(
         "requests/<int:pk>/community/",
