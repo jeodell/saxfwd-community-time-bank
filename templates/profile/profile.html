@@ -28,54 +28,60 @@
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <!-- Sidebar -->
-      <div class="space-y-6">
+      <div class="space-y-4">
         <!-- Balance Card -->
-        <div class="bg-yellow-50 rounded-lg p-6 flex flex-col items-center text-center">
-          <div class="text-yellow-500 mb-2">
+        <div class="bg-card-bg-light rounded-xl p-8 shadow-sm flex flex-col items-center text-center">
+          <div class="text-xl font-semibold text-center tracking-wide text-secondary uppercase">Your Balance</div>
+          <div class="border-t-2 border-secondary my-2 w-[18ch] mx-auto"></div>
+          <div class="text-yellow-500 mb-4 mt-2">
             <i class="fas fa-clock text-4xl"></i>
           </div>
-          <div class="text-gray-500 text-sm font-medium mb-1">YOUR BALANCE</div>
-          <div class="text-3xl font-bold text-yellow-600 mb-1">{{ profile.time_balance | default:0 }} HOURS</div>
+          <div class="text-3xl font-semibold text-yellow-500">{{ profile.time_balance | default:0 }} HOURS</div>
         </div>
         <!-- Offered Services Card -->
-        <div class="bg-gray-50 rounded-lg p-6">
-          <div class="text-gray-700 text-sm font-semibold mb-2">YOUR OFFERED SERVICES</div>
-          <ul class="mb-4 space-y-1">
+        <div class="bg-card-bg rounded-xl p-8 shadow-sm flex flex-col items-stretch">
+          <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">
+            Your Offered Services
+          </div>
+          <div class="border-t-2 border-primary my-2 w-[28ch] mx-auto"></div>
+          <ul
+            class="pt-2 pb-4 space-y-4 flex flex-col items-center text-primary hover:text-primary-light transition-colors duration-200 text-lg font-semibold"
+          >
             {% for service in services %}
-            <li class="text-gray-900">
-              <a href="{% url 'service_detail' service.pk %}" class="hover:text-primary transition-colors duration-200">
-                {{ service.title }}
-              </a>
+            <li>
+              <a href="{% url 'service_detail' service.pk %}">{{ service.title }}</a>
             </li>
             {% empty %}
-            <li class="text-gray-400">No offered services yet.</li>
+            <li class="text-gray-400 pl-2">No offered services yet.</li>
             {% endfor %}
           </ul>
           <a
             href="{% url 'service_create' %}"
-            class="block w-full text-center px-4 py-2 rounded-md bg-primary text-white font-medium hover:bg-primary-light transition"
+            class="block w-full text-center px-4 py-2 rounded-md bg-primary text-white font-semibold hover:bg-primary-light transition"
           >
-            CREATE NEW SERVICE
+            Offer New Service
           </a>
         </div>
       </div>
       <!-- Main Activity Section -->
-      <div class="md:col-span-2 flex flex-col space-y-8">
+      <div class="md:col-span-2 flex flex-col space-y-4">
         <!-- Activity Card -->
-        <div class="bg-gray-50 rounded-lg p-6 mb-6">
-          <div class="text-gray-700 text-lg font-semibold mb-4">YOUR ACTIVITY</div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-card-bg rounded-xl p-8 shadow-sm">
+          <div class="flex items-center">
+            <div class="text-xl font-semibold uppercase tracking-wide text-primary mr-4">Your Activity</div>
+          </div>
+          <div class="border-t-2 border-primary my-2"></div>
+          <div class="pt-2 pb-4 flex flex-col gap-8">
             <!-- Given -->
             <div>
               <div class="font-semibold text-gray-600 mb-2">Given</div>
               <ul class="space-y-2">
-                {% for tx in given_transactions %}
-                <li class="flex justify-between text-gray-800 text-sm border-b border-dotted border-gray-300 pb-1">
-                  <span>
-                    {{ tx.date|date:"n/j/y" }}
-                    <span class="font-semibold">{{ tx.description }}</span>
-                  </span>
-                  <span class="font-bold">{{ tx.amount }} Hour{{ tx.amount|pluralize }}</span>
+                {% for transaction in given_transactions %}
+                <li class="flex items-center text-gray-800 text-sm">
+                  <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
+                  <span class="flex-1 px-2 font-medium">{{ transaction.description }}</span>
+                  <span class="flex-1 border-b border-dotted border-gray-300 mx-2"></span>
+                  <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                 </li>
                 {% empty %}
                 <li class="text-gray-400">No given activity.</li>
@@ -86,13 +92,12 @@
             <div>
               <div class="font-semibold text-gray-600 mb-2">Received</div>
               <ul class="space-y-2">
-                {% for tx in received_transactions %}
-                <li class="flex justify-between text-gray-800 text-sm border-b border-dotted border-gray-300 pb-1">
-                  <span>
-                    {{ tx.date|date:"n/j/y" }}
-                    <span class="font-semibold">{{ tx.description }}</span>
-                  </span>
-                  <span class="font-bold">{{ tx.amount }} Hour{{ tx.amount|pluralize }}</span>
+                {% for transaction in received_transactions %}
+                <li class="flex items-center text-gray-800 text-sm">
+                  <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
+                  <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                  <span class="flex-1 border-b border-primary py-1 mx-2"></span>
+                  <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                 </li>
                 {% empty %}
                 <li class="text-gray-400">No received activity.</li>
@@ -102,8 +107,8 @@
           </div>
         </div>
         <!-- Settings Card -->
-        <div class="bg-gray-50 rounded-lg p-6">
-          <div class="text-gray-700 text-lg font-semibold mb-4">SETTINGS</div>
+        <div class="bg-card-bg rounded-lg p-8">
+          <div class="text-gray-700 text-lg font-semibold mb-4">Settings</div>
           <a
             href="{% url 'profile_edit' %}"
             class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
