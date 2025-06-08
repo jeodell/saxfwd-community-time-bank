@@ -63,6 +63,12 @@
             Requests
           </a>
           <a
+            href="{% url 'ledger' %}"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+          >
+            Public Ledger
+          </a>
+          <a
             href="{% url 'profile' %}"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
@@ -123,6 +129,12 @@
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
       >
         Requests
+      </a>
+      <a
+        href="{% url 'public_ledger' %}"
+        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+      >
+        Public Ledger
       </a>
       <a
         href="{% url 'ledger' %}"
