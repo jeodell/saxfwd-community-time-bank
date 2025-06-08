@@ -15,7 +15,7 @@ urlpatterns = [
         name="service_detail",
     ),
     path(
-        "services/<int:pk>/request/",
+        "services/<uuid:pk>/request/",
         views.ServiceRequestView.as_view(),
         name="service_request",
     ),
