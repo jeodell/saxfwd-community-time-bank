@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 {% block title %}Services - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto py-8">
+<div class="max-w-7xl mx-auto p-8">
   <div class="bg-white rounded-lg shadow-sm p-8">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
       <h1 class="text-2xl font-semibold text-gray-900 mb-4 md:mb-0">Available Services</h1>
@@ -17,8 +17,30 @@
       {% endif %}
     </div>
 
+    <!-- Service Tabs -->
+    {% if user.is_authenticated %}
+    <div class="border-b border-gray-200 mb-6">
+      <nav class="-mb-px flex space-x-8">
+        <a
+          href="{% url 'service_list' %}?view=public{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+          class="{% if request.GET.view == 'public' or not request.GET.view %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+        >
+          <i class="fas fa-globe mr-2"></i>
+          Public Services
+        </a>
+        <a
+          href="{% url 'service_list' %}?view=offered{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+          class="{% if request.GET.view == 'offered' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+        >
+          <i class="fas fa-user-circle mr-2"></i>
+          My Services
+        </a>
+      </nav>
+    </div>
+    {% endif %}
+
     <!-- Filters -->
-    <div class="rounded-lg p-6 mb-6">
+    <div class="rounded-lg py-6 mb-6">
       <form method="get" class="space-y-4 md:space-y-0 md:flex md:items-end md:space-x-4">
         <div class="flex-1">
           <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
@@ -45,6 +67,9 @@
             <input type="text" name="search" id="search" value="{{ request.GET.search }}" placeholder="Search services..." class="block w-full pl-10 pr-4 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm rounded-md bg-white shadow-sm transition duration-150 ease-in-out">
           </div>
         </div>
+        {% if user.is_authenticated %}
+        <input type="hidden" name="view" value="{{ request.GET.view|default:'public' }}">
+        {% endif %}
         <div class="flex items-end">
           <button type="submit" class="w-full md:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all duration-200 ease-in-out">
             <i class="fas fa-filter mr-2"></i>Apply Filters
@@ -83,7 +108,7 @@
           <p class="text-gray-500">No services found matching your criteria</p>
           {% if user.is_authenticated %}
           <div class="mt-4 space-y-4">
-            <p class="text-sm text-gray-500">You can view and manage your own services in your <a href="{% url 'profile' %}" class="text-primary hover:text-primary-light">profile</a></p>
+            <p class="text-sm text-gray-500">You can view and manage your own services in your <a href="{% url 'user' profile.id %}" class="text-primary hover:text-primary-light">profile</a></p>
             <a href="{% url 'service_create' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
               <i class="fas fa-plus-circle mr-2"></i>Be the first to offer a service
             </a>
@@ -99,7 +124,7 @@
     <div class="mt-8 flex justify-center">
       <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
         {% if services.has_previous %}
-        <a href="?page={{ services.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+        <a href="?page={{ services.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.view %}&view={{ request.GET.view }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
           <i class="fas fa-chevron-left"></i>
         </a>
         {% endif %}
@@ -110,14 +135,14 @@
           {{ i }}
         </span>
         {% else %}
-        <a href="?page={{ i }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+        <a href="?page={{ i }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.view %}&view={{ request.GET.view }}{% endif %}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
           {{ i }}
         </a>
         {% endif %}
         {% endfor %}
 
         {% if services.has_next %}
-        <a href="?page={{ services.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+        <a href="?page={{ services.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.view %}&view={{ request.GET.view }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
           <i class="fas fa-chevron-right"></i>
         </a>
         {% endif %}
