@@ -38,10 +38,10 @@ urlpatterns = [
         views.RequestCompleteView.as_view(),
         name="request_complete",
     ),
-    path("profile/", views.ProfileView.as_view(), name="profile"),
-    path(
-        "profile/<uuid:pk>/", views.ProfileDetailView.as_view(), name="profile_detail"
-    ),
+    path("users/me/", views.UserView.as_view(), name="user_me"),
+    path("users/me/edit/", views.UserEditView.as_view(), name="user_me_edit"),
+    path("users/<uuid:pk>/", views.UserView.as_view(), name="user"),
+    path("users/<uuid:pk>/edit/", views.UserEditView.as_view(), name="user_edit"),
     path("ledger/", views.LedgerView.as_view(), name="ledger"),
     path(
         "requests/<uuid:pk>/community/",

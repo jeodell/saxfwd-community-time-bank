@@ -11,6 +11,7 @@ from django.views.generic import (
     DetailView,
     ListView,
     TemplateView,
+    UpdateView,
     View,
 )
 
@@ -109,87 +110,85 @@ class RegisterView(CreateView):
         )
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error creating your account.")
+        return render(self.request, self.template_name, {"form": form})
+
 
 """
 PROFILE
 """
 
 
-class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = "profile/profile.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        profile = UserProfile.objects.get_or_create(user=self.request.user)[0]
-        user = self.request.user
-        context.update(
-            {
-                "profile": profile,
-                "user": user,
-                "services": Service.objects.filter(provider=user),
-                "requests": ServiceRequest.objects.filter(requester=user),
-                "given_transactions": TimeBankLedger.objects.filter(
-                    user=user, transaction_type="credit"
-                ).order_by("-created_at")[:5],
-                "received_transactions": TimeBankLedger.objects.filter(
-                    user=user, transaction_type="debit"
-                ).order_by("-created_at")[:5],
-            }
-        )
-        return context
-
-    def get(self, request, *args, **kwargs):
-        profile = UserProfile.objects.get_or_create(user=request.user)[0]
-        return redirect("profile_detail", pk=profile.id)
-
-
-class ProfileDetailView(LoginRequiredMixin, DetailView):
-    model = UserProfile
-    template_name = "profile/profile.html"
-    context_object_name = "profile"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.object.user
-        context.update(
-            {
-                "user": user,
-                "services": Service.objects.filter(provider=user),
-                "requests": ServiceRequest.objects.filter(requester=user),
-                "given_transactions": TimeBankLedger.objects.filter(
-                    user=user, transaction_type="credit"
-                ).order_by("-created_at")[:5],
-                "received_transactions": TimeBankLedger.objects.filter(
-                    user=user, transaction_type="debit"
-                ).order_by("-created_at")[:5],
-                "form": UserProfileForm(instance=self.object),
-            }
-        )
-        return context
+class UserView(LoginRequiredMixin, View):
+    template_name = "users/user.html"
 
     def get_object(self):
-        obj = super().get_object()
-        if self.request.user != obj.user:
+        try:
+            return UserProfile.objects.get(user=self.request.user)
+        except UserProfile.DoesNotExist:
+            messages.error(self.request, "Profile not found.")
+            return None
+
+    def get(self, request, *args, **kwargs):
+        profile = self.get_object()
+        if not profile:
+            return redirect("home")
+
+        if request.user != profile.user:
+            messages.error(request, "You do not have permission to view this profile.")
+            return redirect("home")
+
+        context = {
+            "user": profile.user,
+            "profile": profile,
+            "services": Service.objects.filter(provider=profile.user),
+            "requests": ServiceRequest.objects.filter(requester=profile.user),
+            "given_transactions": TimeBankLedger.objects.filter(
+                user=profile.user, transaction_type="credit"
+            ).order_by("-created_at")[:5],
+            "received_transactions": TimeBankLedger.objects.filter(
+                user=profile.user, transaction_type="debit"
+            ).order_by("-created_at")[:5],
+            "form": UserProfileForm(instance=profile),
+        }
+        return render(request, self.template_name, context)
+
+
+class UserEditView(LoginRequiredMixin, UpdateView):
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = "users/user_edit.html"
+    success_url = reverse_lazy("user_me")
+
+    def get_object(self):
+        return UserProfile.objects.get(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["user"] = self.request.user
+        context["profile"] = self.get_object()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        profile = self.get_object()
+        if not profile:
+            return redirect("home")
+
+        if request.user != profile.user:
             messages.error(
-                self.request, "You do not have permission to view this profile."
+                request, "You do not have permission to update this profile."
             )
             return redirect("home")
-        return obj
 
-    def update(self, request, *args, **kwargs):
-        form = UserProfileForm(request.POST, instance=self.object)
+        form = UserProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect("profile_detail", pk=self.object.id)
-        return render(request, self.template_name, self.get_context_data(form=form))
+            return redirect("user", pk=profile.id)
 
-    def delete(self, request, *args, **kwargs):
-        user = self.object.user
-        self.object.delete()
-        user.delete()  # This will also delete the profile due to CASCADE
-        messages.success(request, "Your account has been successfully deleted.")
-        return redirect("home")
+        context = self.get_context_data(profile=profile, form=form)
+        return render(request, self.template_name, context)
 
 
 """
@@ -203,6 +202,7 @@ class ServiceListView(ListView):
     context_object_name = "services"
 
     def get_queryset(self):
+        # Get category filter
         category_id = self.request.GET.get("category")
         category = None
         if category_id:
@@ -211,26 +211,38 @@ class ServiceListView(ListView):
             except (ServiceCategory.DoesNotExist, ValueError):
                 pass
 
-        return Service.get_active_services(
-            exclude_user=self.request.user
-            if self.request.user.is_authenticated
-            else None,
-            category=category,
-            search=self.request.GET.get("search"),
-        )
+        # Get search filter
+        search = self.request.GET.get("search", "")
+
+        # Get view type filter
+        view_type = self.request.GET.get("view", "public")
+
+        # Show offered services if the user is authenticated
+        if view_type == "offered" and self.request.user.is_authenticated:
+            # Show only services offered by the current user
+            services = Service.objects.filter(
+                Q(title__icontains=search) | Q(description__icontains=search),
+                provider=self.request.user,
+            )
+            if category:
+                services = services.filter(category=category)
+            return services
+        else:
+            # Show public services (excluding user's own services)
+            return Service.get_active_services(
+                exclude_user=self.request.user
+                if self.request.user.is_authenticated
+                else None,
+                category=category,
+                search=search,
+            )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
             {
                 "categories": ServiceCategory.get_all_categories(),
-                "services": Service.get_active_services(
-                    exclude_user=self.request.user
-                    if self.request.user.is_authenticated
-                    else None,
-                    category=self.request.GET.get("category"),
-                    search=self.request.GET.get("search"),
-                ),
+                "services": self.get_queryset(),
             }
         )
         return context
@@ -249,6 +261,10 @@ class ServiceCreateView(LoginRequiredMixin, CreateView):
         form.instance.provider = self.request.user
         messages.success(self.request, "Service created successfully!")
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error creating the service.")
+        return super().form_invalid(form)
 
     def get_success_url(self):
         return reverse_lazy("service_detail", kwargs={"pk": self.object.pk})
@@ -276,11 +292,6 @@ class ServiceDetailView(DetailView):
 
     def delete(self, request, *args, **kwargs):
         service = self.get_object()
-        if not service.can_be_deleted_by(request.user):
-            messages.error(
-                request, "You do not have permission to delete this service."
-            )
-            return redirect("service_list")
         service.delete()
         messages.success(request, "Service deleted successfully!")
         return redirect("service_list")
@@ -300,6 +311,11 @@ class ServiceRequestView(LoginRequiredMixin, CreateView):
         form.instance.requester = self.request.user
         messages.success(self.request, "Service request submitted successfully!")
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print(form.errors)
+        messages.error(self.request, "There was an error submitting the request.")
+        return super().form_invalid(form)
 
     def get_success_url(self):
         return reverse_lazy("request_detail", kwargs={"pk": self.object.pk})
