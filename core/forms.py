@@ -1,8 +1,10 @@
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 
-from .models import Service, ServiceRequest, UserProfile
+from .models import Service, ServiceRequest
+
+User = get_user_model()
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -31,7 +33,6 @@ class UserRegistrationForm(UserCreationForm):
             "first_name",
             "last_name",
             "email",
-            "username",
             "password1",
             "password2",
             "terms_accepted",
@@ -63,7 +64,7 @@ class ServiceRequestForm(forms.ModelForm):
         fields = ["requested_date", "hours_requested", "description"]
 
 
-class UserProfileForm(forms.ModelForm):
+class UserForm(forms.ModelForm):
     first_name = forms.CharField(required=False)
     last_name = forms.CharField(required=False)
     email = forms.EmailField(required=False)
@@ -73,7 +74,7 @@ class UserProfileForm(forms.ModelForm):
     image = forms.ImageField(required=False)
 
     class Meta:
-        model = UserProfile
+        model = User
         fields = [
             "first_name",
             "last_name",

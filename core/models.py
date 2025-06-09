@@ -1,10 +1,78 @@
 import uuid
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+
+
+class UserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        user = self.model(
+            email=self.normalize_email(email),
+            first_name=extra_fields.get("first_name"),
+            last_name=extra_fields.get("last_name"),
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        user = self.create_user(
+            email,
+            password=password,
+            first_name=extra_fields.get("first_name"),
+            last_name=extra_fields.get("last_name"),
+        )
+        user.is_staff = True
+        user.is_superuser = True
+        user.is_active = True
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = None
+    email = models.EmailField(_("email address"), unique=True)
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    bio = models.TextField(blank=True)
+    image = models.ImageField(upload_to="user_images/", blank=True)
+    total_hours_earned = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_hours_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    terms_accepted = models.BooleanField(
+        default=False,
+        help_text="User has agreed to use the platform responsibly and not engage in malicious activities or illegal behavior.",
+    )
+    terms_accepted_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # Fields already included - first_name, last_name, is_staff, is_active, date_joined
+    # Fields overwritten - username, email
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["first_name", "last_name"]
+
+    objects = UserManager()
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+    @property
+    def time_balance(self):
+        return self.total_hours_earned - self.total_hours_spent
+
+    @property
+    def full_name(self):
+        """Get the user's full name from the User model."""
+        return f"{self.first_name} {self.last_name}".strip()
 
 
 class ServiceCategory(models.Model):
@@ -176,7 +244,7 @@ class ServiceRequest(models.Model):
             service_request=self,
             transaction_type="community_request",
             hours=self.hours_requested,
-            balance=self.requester.userprofile.time_balance,
+            balance=self.requester.time_balance,
             description=f"Community hours used for {self.service.title}",
         )
 
@@ -257,12 +325,8 @@ class ServiceRequest(models.Model):
 
             # Update timebank ledger
             hours = self.hours_requested
-            provider_profile = UserProfile.objects.get_or_create(
-                user=self.service.provider
-            )[0]
-            requester_profile = UserProfile.objects.get_or_create(user=self.requester)[
-                0
-            ]
+            provider = User.objects.get_or_create(user=self.service.provider)[0]
+            requester = User.objects.get_or_create(user=self.requester)[0]
 
             # Credit provider
             TimeBankLedger.objects.create(
@@ -270,11 +334,11 @@ class ServiceRequest(models.Model):
                 service_request=self,
                 transaction_type="credit",
                 hours=hours,
-                balance=provider_profile.total_hours_earned + hours,
+                balance=provider.total_hours_earned + hours,
                 description=f"Completed service: {self.service.title}",
             )
-            provider_profile.total_hours_earned += hours
-            provider_profile.save()
+            provider.total_hours_earned += hours
+            provider.save()
 
             # Debit requester
             TimeBankLedger.objects.create(
@@ -282,11 +346,11 @@ class ServiceRequest(models.Model):
                 service_request=self,
                 transaction_type="debit",
                 hours=hours,
-                balance=requester_profile.total_hours_spent + hours,
+                balance=requester.total_hours_spent + hours,
                 description=f"Received service: {self.service.title}",
             )
-            requester_profile.total_hours_spent += hours
-            requester_profile.save()
+            requester.total_hours_spent += hours
+            requester.save()
 
         self.save()
         return self.provider_completed and self.requester_completed
@@ -341,10 +405,10 @@ class TimeBankLedger(models.Model):
     def save(self, *args, **kwargs):
         # Update user's time balance
         if self.transaction_type == "credit":
-            self.user.profile.time_balance += self.hours
+            self.user.time_balance += self.hours
         else:  # debit
-            self.user.profile.time_balance -= self.hours
-        self.user.profile.save()
+            self.user.time_balance -= self.hours
+        self.user.save()
         super().save(*args, **kwargs)
 
     @classmethod
@@ -376,7 +440,7 @@ class TimeBankLedger(models.Model):
     @classmethod
     def get_user_balance(cls, user):
         """Get a user's current time balance."""
-        return user.profile.time_balance
+        return user.time_balance
 
     @classmethod
     def get_user_earnings(cls, user, start_date=None, end_date=None):
@@ -403,52 +467,3 @@ class TimeBankLedger(models.Model):
             queryset = queryset.filter(created_at__lte=end_date)
 
         return queryset.aggregate(total=models.Sum("hours"))["total"] or 0
-
-
-class UserProfile(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
-    bio = models.TextField(blank=True)
-    image = models.ImageField(upload_to="profile_images/", blank=True)
-    is_active = models.BooleanField(default=True)
-    total_hours_earned = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    total_hours_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    terms_accepted = models.BooleanField(
-        default=False,
-        help_text="User has agreed to use the platform responsibly and not engage in malicious activities or illegal behavior.",
-    )
-    terms_accepted_at = models.DateTimeField(null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name}'s profile"
-
-    @property
-    def time_balance(self):
-        return self.total_hours_earned - self.total_hours_spent
-
-    @property
-    def email(self):
-        """Get the user's email from the User model."""
-        return self.user.email
-
-    @property
-    def first_name(self):
-        """Get the user's first name from the User model."""
-        return self.user.first_name
-
-    @property
-    def last_name(self):
-        """Get the user's last name from the User model."""
-        return self.user.last_name
-
-    @property
-    def full_name(self):
-        """Get the user's full name from the User model."""
-        return (
-            f"{self.user.first_name} {self.user.last_name}".strip()
-            or self.user.username
-        )

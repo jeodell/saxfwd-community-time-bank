@@ -18,7 +18,7 @@ from django.views.generic import (
 from .forms import (
     ServiceForm,
     ServiceRequestForm,
-    UserProfileForm,
+    UserForm,
     UserRegistrationForm,
 )
 from .models import (
@@ -26,7 +26,7 @@ from .models import (
     ServiceCategory,
     ServiceRequest,
     TimeBankLedger,
-    UserProfile,
+    User,
 )
 
 """
@@ -98,8 +98,8 @@ class RegisterView(CreateView):
         # Save the User model first
         user = form.save()
 
-        # Create the UserProfile with the terms acceptance data
-        UserProfile.objects.create(
+        # Create the User with the terms acceptance data
+        User.objects.create(
             user=user,
             terms_accepted=form.cleaned_data["terms_accepted"],
             terms_accepted_at=timezone.now(),
@@ -116,7 +116,7 @@ class RegisterView(CreateView):
 
 
 """
-PROFILE
+User
 """
 
 
@@ -125,69 +125,66 @@ class UserView(LoginRequiredMixin, View):
 
     def get_object(self):
         try:
-            return UserProfile.objects.get(user=self.request.user)
-        except UserProfile.DoesNotExist:
-            messages.error(self.request, "Profile not found.")
+            return User.objects.get(id=self.request.user.id)
+        except User.DoesNotExist:
+            messages.error(self.request, "User not found.")
             return None
 
     def get(self, request, *args, **kwargs):
-        profile = self.get_object()
-        if not profile:
+        user = self.get_object()
+        if not user:
             return redirect("home")
 
-        if request.user != profile.user:
-            messages.error(request, "You do not have permission to view this profile.")
+        if request.user != user:
+            messages.error(request, "You do not have permission to view this user.")
             return redirect("home")
 
         context = {
-            "user": profile.user,
-            "profile": profile,
-            "services": Service.objects.filter(provider=profile.user),
-            "requests": ServiceRequest.objects.filter(requester=profile.user),
+            "user": user,
+            "services": Service.objects.filter(provider=user),
+            "requests": ServiceRequest.objects.filter(requester=user),
             "given_transactions": TimeBankLedger.objects.filter(
-                user=profile.user, transaction_type="credit"
+                user=user, transaction_type="credit"
             ).order_by("-created_at")[:5],
             "received_transactions": TimeBankLedger.objects.filter(
-                user=profile.user, transaction_type="debit"
+                user=user, transaction_type="debit"
             ).order_by("-created_at")[:5],
-            "form": UserProfileForm(instance=profile),
+            "form": UserForm(instance=user),
         }
         return render(request, self.template_name, context)
 
 
 class UserEditView(LoginRequiredMixin, UpdateView):
-    model = UserProfile
-    form_class = UserProfileForm
+    model = User
+    form_class = UserForm
     template_name = "users/user_edit.html"
     success_url = reverse_lazy("user_me")
 
     def get_object(self):
-        return UserProfile.objects.get(user=self.request.user)
+        return User.objects.get(id=self.request.user.id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["user"] = self.request.user
-        context["profile"] = self.get_object()
+        context["user"] = self.get_object()
         return context
 
     def post(self, request, *args, **kwargs):
-        profile = self.get_object()
-        if not profile:
+        user = self.get_object()
+        if not user:
             return redirect("home")
 
-        if request.user != profile.user:
-            messages.error(
-                request, "You do not have permission to update this profile."
-            )
+        if request.user != user:
+            messages.error(request, "You do not have permission to update this user.")
             return redirect("home")
 
-        form = UserProfileForm(request.POST, instance=profile)
+        form = UserForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect("user", pk=profile.id)
+            messages.success(request, "User updated successfully!")
+            return redirect("user", pk=user.id)
 
-        context = self.get_context_data(profile=profile, form=form)
+        context = self.get_context_data(user=user, form=form)
         return render(request, self.template_name, context)
 
 

@@ -29,6 +29,15 @@ INSTALLED_APPS = [
     "core",
 ]
 
+# Custom user model
+AUTH_USER_MODEL = "core.User"
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    "core.backends.EmailBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
 # Middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
