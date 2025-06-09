@@ -7,9 +7,9 @@ manage their time bank accounts.
 
 - User registration and authentication
 - Service listing and management
-- Time bank ledger for tracking hours
 - Service request and fulfillment system
-- User profiles with history and info
+- Time bank ledger for tracking hours
+- User account page with history and settings
 
 ## Setup
 
