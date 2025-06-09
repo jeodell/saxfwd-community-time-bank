@@ -500,9 +500,6 @@ class RequestCommunityHoursView(LoginRequiredMixin, View):
 
 
 class ApproveCommunityRequestView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.is_staff
-
     def get(self, request, pk):
         service_request = get_object_or_404(ServiceRequest, pk=pk)
         if not service_request.can_be_approved():
@@ -530,9 +527,6 @@ class ApproveCommunityRequestView(LoginRequiredMixin, UserPassesTestMixin, View)
 
 
 class RejectCommunityRequestView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.is_staff
-
     def get(self, request, pk):
         service_request = get_object_or_404(ServiceRequest, pk=pk)
         if not service_request.can_be_rejected():

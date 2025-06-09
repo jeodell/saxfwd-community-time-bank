@@ -44,6 +44,7 @@ class ServiceRequestAdmin(admin.ModelAdmin):
         "status",
         "requested_date",
         "hours_requested",
+        "hours_completed",
         "provider_completed",
         "requester_completed",
         "completed_at",
@@ -67,7 +68,15 @@ class ServiceRequestAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "Service Information",
-            {"fields": ("service", "requester", "hours_requested", "description")},
+            {
+                "fields": (
+                    "service",
+                    "requester",
+                    "hours_requested",
+                    "hours_completed",
+                    "description",
+                )
+            },
         ),
         (
             "Request Status",

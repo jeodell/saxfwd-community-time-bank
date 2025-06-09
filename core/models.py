@@ -171,6 +171,9 @@ class ServiceRequest(models.Model):
     hours_requested = models.DecimalField(
         max_digits=5, decimal_places=2, validators=[MinValueValidator(0.5)]
     )
+    hours_completed = models.DecimalField(
+        max_digits=5, decimal_places=2, validators=[MinValueValidator(0.5)], default=0
+    )
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -228,7 +231,7 @@ class ServiceRequest(models.Model):
         community_bank, _ = CommunityHours.objects.get_or_create()
 
         # Check if we have enough hours
-        if not community_bank.deduct_hours(self.hours_requested):
+        if not community_bank.deduct_hours(self.hours_completed):
             raise ValueError("Insufficient community hours available")
 
         # Update the request
@@ -243,7 +246,7 @@ class ServiceRequest(models.Model):
             user=self.requester,
             service_request=self,
             transaction_type="community_request",
-            hours=self.hours_requested,
+            hours=self.hours_completed,
             balance=self.requester.time_balance,
             description=f"Community hours used for {self.service.title}",
         )
@@ -324,7 +327,7 @@ class ServiceRequest(models.Model):
             self.completed_at = timezone.now()
 
             # Update timebank ledger
-            hours = self.hours_requested
+            hours = self.hours_completed
             provider = User.objects.get_or_create(user=self.service.provider)[0]
             requester = User.objects.get_or_create(user=self.requester)[0]
 
