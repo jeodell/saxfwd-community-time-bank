@@ -78,11 +78,15 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
               <p class="text-gray-500">Requested by</p>
-              <p class="font-medium text-gray-900">{{ request.requester.username }}</p>
+              <p class="font-medium text-gray-900">
+                {{ request.requester.first_name }} {{ request.requester.last_name }}
+              </p>
             </div>
             <div>
               <p class="text-gray-500">Provider</p>
-              <p class="font-medium text-gray-900">{{ request.service.provider.username }}</p>
+              <p class="font-medium text-gray-900">
+                {{ request.service.provider.first_name }} {{ request.service.provider.last_name }}
+              </p>
             </div>
             <div>
               <p class="text-gray-500">Requested Date</p>

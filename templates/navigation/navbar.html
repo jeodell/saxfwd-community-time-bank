@@ -8,11 +8,9 @@
       <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
       <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
         <a href="{% url 'user_me' %}" class="text-white flex items-center space-x-2 hover:text-white/80">
-          <span class="text-sm">
-            Welcome, {% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}
-          </span>
-          {% if user.profile.avatar %}
-          <img src="{{ user.profile.avatar.url }}" alt="Profile Picture" class="h-6 w-6 rounded-full object-cover" />
+          <span class="text-sm">Welcome, {{ user.first_name }}</span>
+          {% if user.image %}
+          <img src="{{ user.image.url }}" alt="User Image" class="h-6 w-6 rounded-full object-cover" />
           {% else %}
           <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
             <i class="fas fa-user text-sm text-gray-500"></i>
@@ -60,7 +58,7 @@
             href="{% url 'request_list' %}"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
-            Requests
+            My Requests
           </a>
           <a
             href="{% url 'ledger' %}"
@@ -72,7 +70,7 @@
             href="{% url 'user_me' %}"
             class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
-            My Profile
+            My Account
           </a>
           <form method="post" action="{% url 'logout' %}" class="inline">
             {% csrf_token %}
@@ -128,7 +126,7 @@
         href="{% url 'request_list' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
       >
-        Requests
+        My Requests
       </a>
       <a
         href="{% url 'public_ledger' %}"
@@ -147,7 +145,7 @@
         href="{% url 'user_me' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
       >
-        Profile
+        My Account
       </a>
       <form method="post" action="{% url 'logout' %}" class="block">
         {% csrf_token %}

@@ -9,7 +9,9 @@
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold text-gray-900">Request Service</h1>
-          <p class="mt-1 text-sm text-gray-500">Request {{ service.title }} from {{ service.provider.username }}</p>
+          <p class="mt-1 text-sm text-gray-500">
+            Request {{ service.title }} from {{ service.provider.first_name }} {{ service.provider.last_name }}
+          </p>
         </div>
         <a
           href="{% url 'service_detail' service.pk %}"

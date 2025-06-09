@@ -149,12 +149,11 @@
               <div class="flex items-center space-x-3">
                 <i class="fas fa-user-circle text-2xl text-gray-400"></i>
                 <div>
-                  <p class="text-sm font-medium text-gray-900">{{ request.requester.username }}</p>
-                  <a
-                    href="{% url 'user' request.requester.profile.id %}"
-                    class="text-sm text-primary hover:text-primary"
-                  >
-                    View Profile
+                  <p class="text-sm font-medium text-gray-900">
+                    {{ request.requester.first_name }} {{ request.requester.last_name }}
+                  </p>
+                  <a href="{% url 'user' request.requester.id %}" class="text-sm text-primary hover:text-primary">
+                    View Account
                   </a>
                 </div>
               </div>
@@ -164,12 +163,14 @@
               <div class="flex items-center space-x-3">
                 <i class="fas fa-user-circle text-2xl text-gray-400"></i>
                 <div>
-                  <p class="text-sm font-medium text-gray-900">{{ request.service.provider.username }}</p>
+                  <p class="text-sm font-medium text-gray-900">
+                    {{ request.service.provider.first_name }} {{ request.service.provider.last_name }}
+                  </p>
                   <a
-                    href="{% url 'user' request.service.provider.profile.id %}"
+                    href="{% url 'user' request.service.provider.id %}"
                     class="text-sm text-primary hover:text-primary"
                   >
-                    View Profile
+                    View Account
                   </a>
                 </div>
               </div>

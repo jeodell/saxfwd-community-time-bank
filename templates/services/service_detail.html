@@ -108,7 +108,9 @@
               <i class="fas fa-user-circle text-4xl text-gray-400"></i>
             </div>
             <div>
-              <p class="text-sm font-medium text-gray-900">{{ service.provider.username }}</p>
+              <p class="text-sm font-medium text-gray-900">
+                {{ service.provider.first_name }} {{ service.provider.last_name }}
+              </p>
               <p class="text-sm text-gray-500">Member since {{ service.provider.date_joined|date:"F Y" }}</p>
             </div>
           </div>
