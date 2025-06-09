@@ -5,7 +5,7 @@ from .models import (
     ServiceCategory,
     ServiceRequest,
     TimeBankLedger,
-    UserProfile,
+    User,
 )
 
 
@@ -26,7 +26,12 @@ class ServiceAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("category", "is_active", "created_at")
-    search_fields = ("title", "description", "provider__username")
+    search_fields = (
+        "title",
+        "description",
+        "provider__first_name",
+        "provider__last_name",
+    )
     date_hierarchy = "created_at"
 
 
@@ -51,7 +56,12 @@ class ServiceRequestAdmin(admin.ModelAdmin):
         "provider_completed",
         "requester_completed",
     )
-    search_fields = ("service__title", "requester__username", "description")
+    search_fields = (
+        "service__title",
+        "requester__first_name",
+        "requester__last_name",
+        "description",
+    )
     date_hierarchy = "created_at"
     readonly_fields = ("created_at", "updated_at", "completed_at")
     fieldsets = (
@@ -90,48 +100,80 @@ class TimeBankLedgerAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("transaction_type", "created_at")
-    search_fields = ("user__username", "description")
+    search_fields = (
+        "user__email",
+        "user__first_name",
+        "user__last_name",
+        "description",
+    )
     date_hierarchy = "created_at"
 
 
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "user",
-        "is_active",
+        "email",
+        "first_name",
+        "last_name",
+        "phone_number",
+        "address",
         "total_hours_earned",
         "total_hours_spent",
-        "created_at",
+        "is_staff",
+        "is_superuser",
+        "is_active",
+        "date_joined",
         "updated_at",
     )
-    list_filter = ("is_active", "created_at")
+    list_filter = ("is_active", "is_staff", "is_superuser")
     search_fields = (
-        "user__username",
-        "user__first_name",
-        "user__last_name",
-        "user__email",
+        "email",
+        "first_name",
+        "last_name",
         "phone_number",
         "address",
     )
     readonly_fields = (
-        "is_active",
         "total_hours_earned",
         "total_hours_spent",
-        "created_at",
+        "date_joined",
         "updated_at",
     )
     fieldsets = (
         (
             "User Information",
-            {"fields": ("user", "phone_number", "address", "bio", "image")},
+            {
+                "fields": (
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "phone_number",
+                    "address",
+                    "bio",
+                    "image",
+                )
+            },
         ),
         (
             "Time Bank Status",
-            {"fields": ("is_active", "total_hours_earned", "total_hours_spent")},
+            {
+                "fields": (
+                    "total_hours_earned",
+                    "total_hours_spent",
+                )
+            },
         ),
         (
             "System Information",
-            {"fields": ("created_at", "updated_at"), "classes": ("collapse",)},
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "date_joined",
+                    "updated_at",
+                ),
+            },
         ),
     )
