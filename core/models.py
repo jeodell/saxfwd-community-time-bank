@@ -46,7 +46,7 @@ class Service(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.title} by {self.provider.username}"
+        return f"{self.title} by {self.provider.first_name} {self.provider.last_name}"
 
     def can_be_edited_by(self, user):
         """Check if the service can be edited by the given user."""
@@ -129,7 +129,7 @@ class ServiceRequest(models.Model):
     community_request_reviewed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.service.title} request by {self.requester.username}"
+        return f"{self.service.title} request by {self.requester.first_name} {self.requester.last_name}"
 
     class Meta:
         verbose_name_plural = "Service Requests"
@@ -333,7 +333,7 @@ class TimeBankLedger(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.transaction_type} of {self.hours} hours for {self.user.username}"
+        return f"{self.transaction_type} of {self.hours} hours for {self.user.first_name} {self.user.last_name}"
 
     class Meta:
         ordering = ["-created_at"]
@@ -408,10 +408,10 @@ class TimeBankLedger(models.Model):
 class UserProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="profile_images/", blank=True)
-    bio = models.TextField(blank=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
+    bio = models.TextField(blank=True)
+    image = models.ImageField(upload_to="profile_images/", blank=True)
     is_active = models.BooleanField(default=True)
     total_hours_earned = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_hours_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -424,7 +424,7 @@ class UserProfile(models.Model):
     terms_accepted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username}'s profile"
+        return f"{self.user.first_name} {self.user.last_name}'s profile"
 
     @property
     def time_balance(self):

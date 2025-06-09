@@ -69,12 +69,15 @@ class UserProfileForm(forms.ModelForm):
     email = forms.EmailField(required=False)
     phone_number = forms.CharField(required=False)
     address = forms.CharField(required=False)
+    bio = forms.CharField(required=False)
     image = forms.ImageField(required=False)
-    bio = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 4}))
 
     class Meta:
         model = UserProfile
         fields = [
+            "first_name",
+            "last_name",
+            "email",
             "phone_number",
             "address",
             "image",

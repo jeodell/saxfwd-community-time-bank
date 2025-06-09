@@ -124,7 +124,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "User Information",
-            {"fields": ("user", "image", "bio", "phone_number", "address")},
+            {"fields": ("user", "phone_number", "address", "bio", "image")},
         ),
         (
             "Time Bank Status",
