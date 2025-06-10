@@ -84,10 +84,13 @@
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         const messages = document.getElementById('django-messages');
-        setTimeout(function () {
-          messages.remove();
-        }, 10000);
+        if (messages) {
+          setTimeout(function () {
+            messages.remove();
+          }, 10000);
+        }
       });
     </script>
+    {% block extra_js %}{% endblock %}
   </body>
 </html>
