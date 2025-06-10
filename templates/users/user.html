@@ -42,7 +42,7 @@
             Your Offered Services
           </div>
           <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
-          <ul class="pt-2 pb-4 space-y-4 flex flex-col items-center">
+          <ul class="py-2 space-y-4 flex flex-col items-center">
             {% for service in services %}
             <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold">
               <a href="{% url 'service_detail' service.id %}">{{ service.title }}</a>
@@ -51,12 +51,14 @@
             <li class="text-primary">No services offered yet</li>
             {% endfor %}
           </ul>
+          {% if user.id == request.user.id %}
           <a
             href="{% url 'service_create' %}"
-            class="block w-full text-center px-4 py-2 rounded-md bg-primary text-white font-semibold hover:bg-primary-light transition"
+            class="block w-full text-center mt-4 px-4 py-2 rounded-md bg-primary text-white font-semibold hover:bg-primary-light transition"
           >
             Offer New Service
           </a>
+          {% endif %}
         </div>
       </div>
       <!-- Main Activity Section -->
@@ -106,6 +108,7 @@
         <div class="bg-card-bg rounded-lg p-8">
           <div class="flex items-center justify-between mb-4">
             <div class="text-xl font-semibold uppercase tracking-wide text-primary">Account Settings</div>
+            {% if user.id == request.user.id %}
             <a
               href="{% url 'user_edit' user.id %}"
               class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
@@ -113,6 +116,7 @@
               <i class="fas fa-edit mr-2"></i>
               Edit User
             </a>
+            {% endif %}
           </div>
           <div class="border-t-2 border-primary my-2"></div>
 
