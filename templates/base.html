@@ -75,7 +75,11 @@
         </div>
         {% endfor %}
       </div>
-      {% endif %} {% block content %}{% endblock %}
+      {% endif %}
+      <!-- prettier-ignore -->
+      {% block content %}
+      {% endblock %}
+      {% include "navigation/footer.html" %}
     </main>
     <script>
       document.addEventListener('DOMContentLoaded', function () {

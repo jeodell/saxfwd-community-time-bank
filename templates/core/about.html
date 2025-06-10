@@ -144,22 +144,4 @@
 <section class="relative">
   <img src="{% static 'img/sax_lake_in_fall.jpg' %}" alt="Footer" class="w-full h-[600px] object-cover" />
 </section>
-
-<!-- Footer Section -->
-<section class="relative p-8 md:p-12 lg:p-16 bg-primary text-white">
-  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-    <div class="font-bold text-lg flex items-center">SAXAPAHAW TIMEBANK</div>
-    <div class="flex flex-col items-center space-y-2 text-center md:text-left">
-      <a href="{% url 'home' %}">Home</a>
-      <a href="{% url 'about' %}">About</a>
-      <a href="{% url 'service_list' %}">Services</a>
-      <a href="{% url 'user_me' %}">My Account</a>
-    </div>
-    <div class="flex flex-col space-y-2 justify-center items-end text-center md:text-right">
-      <div class="font-bold text-2xl">QUESTIONS?</div>
-      <a href="{% url 'home' %}#contact" class="underline text-lg">CONTACT US</a>
-    </div>
-  </div>
-  <div class="text-center text-3xl pt-16 pb-4 font-bold tracking-widest">NEIGHBORS HELPING NEIGHBORS</div>
-</section>
 {% endblock %}
