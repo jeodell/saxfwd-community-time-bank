@@ -95,8 +95,8 @@ class Command(BaseCommand):
                     "first_name": user_data["first_name"],
                     "last_name": user_data["last_name"],
                     "is_active": True,
-                    "is_staff": False,
-                    "is_superuser": False,
+                    "is_staff": True,
+                    "is_superuser": True,
                 },
             )
             if created:
