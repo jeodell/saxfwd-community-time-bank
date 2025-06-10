@@ -152,6 +152,7 @@ class ServiceRequest(models.Model):
         ("accepted", "Accepted"),
         ("completed", "Completed"),
         ("cancelled", "Cancelled"),
+        ("rejected", "Rejected"),
     ]
 
     COMMUNITY_REQUEST_STATUS = [
@@ -241,12 +242,16 @@ class ServiceRequest(models.Model):
         self.community_request_reviewed_at = timezone.now()
         self.save()
 
+        hours_completed = self.hours_completed
+        if hours_completed == 0:
+            hours_completed = self.hours_requested
+
         # Create a ledger entry for the community hours usage
         TimeBankLedger.objects.create(
             user=self.requester,
             service_request=self,
             transaction_type="community_request",
-            hours=self.hours_completed,
+            hours=hours_completed,
             balance=self.requester.time_balance,
             description=f"Community hours used for {self.service.title}",
         )
@@ -326,14 +331,18 @@ class ServiceRequest(models.Model):
             self.status = "completed"
             self.completed_at = timezone.now()
 
+            hours_completed = self.hours_completed
+            if hours_completed == 0:
+                hours_completed = self.hours_requested
+
             # Update timebank ledger
-            hours = self.hours_completed
-            provider = User.objects.get_or_create(user=self.service.provider)[0]
-            requester = User.objects.get_or_create(user=self.requester)[0]
+            hours = hours_completed
+            provider = self.service.provider
+            requester = self.requester
 
             # Credit provider
             TimeBankLedger.objects.create(
-                user=self.service.provider,
+                user=provider,
                 service_request=self,
                 transaction_type="credit",
                 hours=hours,
@@ -345,7 +354,7 @@ class ServiceRequest(models.Model):
 
             # Debit requester
             TimeBankLedger.objects.create(
-                user=self.requester,
+                user=requester,
                 service_request=self,
                 transaction_type="debit",
                 hours=hours,
@@ -408,9 +417,9 @@ class TimeBankLedger(models.Model):
     def save(self, *args, **kwargs):
         # Update user's time balance
         if self.transaction_type == "credit":
-            self.user.time_balance += self.hours
-        else:  # debit
-            self.user.time_balance -= self.hours
+            self.user.total_hours_earned += self.hours
+        elif self.transaction_type == "debit":
+            self.user.total_hours_spent += self.hours
         self.user.save()
         super().save(*args, **kwargs)
 
