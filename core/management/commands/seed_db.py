@@ -48,7 +48,7 @@ SERVICES = [
         "title": "Lawn Care",
         "description": "Mow the lawn, trim the hedges, and clean up the yard.",
         "category": "Landscaping",
-        "provider_email": "john.doe@example.com",
+        "provider_email": "jane.doe@example.com",
     },
     {
         "title": "Housekeeping",
@@ -60,7 +60,7 @@ SERVICES = [
         "title": "Pet Care",
         "description": "Feed, walk, and play with the pet.",
         "category": "Pet",
-        "provider_email": "john.doe@example.com",
+        "provider_email": "jane.doe@example.com",
     },
 ]
 
@@ -95,8 +95,8 @@ class Command(BaseCommand):
                     "first_name": user_data["first_name"],
                     "last_name": user_data["last_name"],
                     "is_active": True,
-                    "is_staff": True,
-                    "is_superuser": True,
+                    "is_staff": user_data["first_name"] == "John",
+                    "is_superuser": user_data["first_name"] == "John",
                 },
             )
             if created:
