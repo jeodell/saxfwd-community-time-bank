@@ -73,7 +73,12 @@
           Login
         </button>
       </div>
-      <div class="text-center">
+      <div class="text-center space-y-2">
+        <p class="text-sm text-gray-600">
+          <a href="{% url 'password_reset' %}" class="font-medium text-primary hover:text-primary-light">
+            Forgot your password?
+          </a>
+        </p>
         <p class="text-sm text-gray-600">
           Don't have an account?
           <a href="{% url 'register' %}" class="font-medium text-primary hover:text-primary-light">Sign up</a>
