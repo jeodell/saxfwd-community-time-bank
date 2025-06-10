@@ -1,5 +1,5 @@
 {% load static %}
-<nav class="bg-white shadow-sm border-b border-gray-100 h-24">
+<nav class="bg-white shadow-sm border-b border-gray-100 h-32">
   <!-- Desktop menu -->
   <div class="h-8">
     <!-- Login/Welcome-->
@@ -8,12 +8,12 @@
       <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
       <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
         <a href="{% url 'user_me' %}" class="text-white flex items-center space-x-2 hover:text-white/80">
-          <span class="text-sm">Welcome, {{ user.first_name }}</span>
+          <span>Welcome, {{ user.first_name }}</span>
           {% if user.image %}
           <img src="{{ user.image.url }}" alt="User Image" class="h-6 w-6 rounded-full object-cover" />
           {% else %}
           <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
-            <i class="fas fa-user text-sm text-gray-500"></i>
+            <i class="fas fa-user text-gray-500"></i>
           </div>
           {% endif %}
         </a>
@@ -21,14 +21,14 @@
       {% else %}
       <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
       <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
-        <a href="{% url 'login' %}" class="text-sm text-white hover:text-white/80 uppercase">Login</a>
-        <span class="text-white px-1 text-sm">or</span>
-        <a href="{% url 'register' %}" class="text-sm text-white hover:text-white/80 uppercase">Register</a>
+        <a href="{% url 'login' %}" class="text-white hover:text-white/80 uppercase">Login</a>
+        <span class="text-white px-1">or</span>
+        <a href="{% url 'register' %}" class="text-white hover:text-white/80 uppercase">Register</a>
       </div>
       {% endif %}
     </div>
     <!-- Logo and Menu -->
-    <div class="h-16 mx-8">
+    <div class="h-24 mx-8">
       <div class="flex justify-between h-full">
         <div class="flex">
           <div class="flex-shrink-0 flex items-center">
@@ -44,38 +44,38 @@
           {% if user.is_authenticated %}
           <a
             href="{% url 'about' %}"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+            class="inline-flex items-center px-4 py-2 font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
             About
           </a>
           <a
             href="{% url 'service_list' %}"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+            class="inline-flex items-center px-4 py-2 font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
             Services
           </a>
           <a
             href="{% url 'request_list' %}"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+            class="inline-flex items-center px-4 py-2 font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
             My Requests
           </a>
           <a
             href="{% url 'ledger' %}"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+            class="inline-flex items-center px-4 py-2 font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
             Public Ledger
           </a>
           <a
             href="{% url 'user_me' %}"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+            class="inline-flex items-center px-4 py-2 font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
             My Account
           </a>
           <form method="post" action="{% url 'logout' %}" class="inline">
             {% csrf_token %}
             <a
-              class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200 cursor-pointer"
+              class="inline-flex items-center px-4 py-2 font-medium text-gray-700 hover:text-primary transition-colors duration-200 cursor-pointer"
               onclick="this.closest('form').submit(); return false;"
             >
               Logout
@@ -84,13 +84,13 @@
           {% else %}
           <a
             href="{% url 'about' %}"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+            class="inline-flex items-center px-4 py-2 font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
             About
           </a>
           <a
             href="{% url 'service_list' %}"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors duration-200"
+            class="inline-flex items-center px-4 py-2 font-medium text-gray-700 hover:text-primary transition-colors duration-200"
           >
             Services
           </a>
