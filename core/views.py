@@ -144,10 +144,10 @@ class UserView(LoginRequiredMixin, View):
             "user": user,
             "services": Service.objects.filter(provider=user),
             "requests": ServiceRequest.objects.filter(requester=user),
-            "given_transactions": TimeBankLedger.objects.filter(
+            "provider_transactions": TimeBankLedger.objects.filter(
                 user=user, transaction_type="credit"
             ).order_by("-created_at")[:5],
-            "received_transactions": TimeBankLedger.objects.filter(
+            "requester_transactions": TimeBankLedger.objects.filter(
                 user=user, transaction_type="debit"
             ).order_by("-created_at")[:5],
             "form": UserForm(instance=user) if request.user == user else None,

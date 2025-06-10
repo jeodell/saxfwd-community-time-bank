@@ -117,7 +117,7 @@ class Service(models.Model):
         return f"{self.title} by {self.provider.first_name} {self.provider.last_name}"
 
     def can_be_edited_by(self, user):
-        """Check if the service can be edited by the given user."""
+        """Check if the service can be edited by the provider user."""
         return user == self.provider
 
     @classmethod
