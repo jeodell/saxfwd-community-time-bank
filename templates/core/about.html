@@ -80,8 +80,12 @@
 
 <!-- Who It's For Section -->
 <section class="relative">
-  <img src="{% static 'img/sax_village_in_snow.jpg' %}" alt="Who It's For" class="w-full h-3/4 object-cover" />
-  <div class="absolute top-24 right-12 bg-secondary bg-opacity-80 rounded-xl p-8 max-w-xs shadow-lg">
+  <img
+    src="{% static 'img/sax_village_in_snow.jpg' %}"
+    alt="Who It's For"
+    class="w-full h-[700px] object-cover object-[center_25%]"
+  />
+  <div class="absolute top-16 right-12 bg-secondary bg-opacity-80 rounded-xl p-8 max-w-sm shadow-lg">
     <div class="font-bold text-2xl text-primary mb-2 uppercase">Who It's For</div>
     <p class="text-gray-800 text-lg">
       Timebanking works best locally, building relationships and trust among neighbors. Anyone in the Saxapahaw area who
@@ -126,7 +130,7 @@
 </section>
 
 <!-- Ready to Join Section -->
-<section class="text-center px-8 md:px-12 lg:px-16 py-16 md:py-20 lg:py-24">
+<section class="text-center px-8 md:px-12 lg:px-16 py-16 md:py-24 lg:py-32">
   <h2 class="text-3xl font-bold text-primary mb-8 tracking-widest uppercase">Ready to Join Us?</h2>
   <a
     href="{% url 'register' %}"
@@ -136,27 +140,26 @@
   </a>
 </section>
 
+<!-- Footer Image Section -->
+<section class="relative">
+  <img src="{% static 'img/sax_lake_in_fall.jpg' %}" alt="Footer" class="w-full h-[600px] object-cover" />
+</section>
+
 <!-- Footer Section -->
-<section class="relative p-8 md:p-12 lg:p-16">
-  <img src="{% static 'img/footer-photo.jpg' %}" alt="Footer" class="w-full h-64 object-cover" />
-  <div
-    class="absolute inset-0 bg-primary bg-opacity-95 flex flex-col md:flex-row items-center justify-between px-8 py-10"
-  >
-    <div class="flex items-center space-x-4 mb-6 md:mb-0">
-      <img src="{% static 'img/logo.svg' %}" alt="Saxapahaw Timebank Logo" class="h-10 w-auto" />
-      <div class="text-white font-bold text-lg">SAXAPAHW TIMEBANK</div>
+<section class="relative p-8 md:p-12 lg:p-16 bg-primary text-white">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="font-bold text-lg flex items-center">SAXAPAHAW TIMEBANK</div>
+    <div class="flex flex-col items-center space-y-2 text-center md:text-left">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'about' %}">About</a>
+      <a href="{% url 'service_list' %}">Services</a>
+      <a href="{% url 'user_me' %}">My Account</a>
     </div>
-    <div class="text-white space-y-2 text-center md:text-left">
-      <div>Home</div>
-      <div>About</div>
-      <div>Services</div>
-      <div>My Profile</div>
-    </div>
-    <div class="text-white text-center md:text-right">
-      <div class="font-bold mb-1">QUESTIONS?</div>
-      <a href="#" class="underline">CONTACT US</a>
+    <div class="flex flex-col space-y-2 justify-center items-end text-center md:text-right">
+      <div class="font-bold text-2xl">QUESTIONS?</div>
+      <a href="{% url 'home' %}#contact" class="underline text-lg">CONTACT US</a>
     </div>
   </div>
-  <div class="bg-primary text-white text-center py-4 font-bold tracking-widest">NEIGHBORS HELPING NEIGHBORS</div>
+  <div class="text-center text-3xl pt-16 pb-4 font-bold tracking-widest">NEIGHBORS HELPING NEIGHBORS</div>
 </section>
 {% endblock %}
