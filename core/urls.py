@@ -38,6 +38,7 @@ urlpatterns = [
         views.RequestCompleteView.as_view(),
         name="request_complete",
     ),
+    path("users/", views.UserListView.as_view(), name="user_list"),
     path("users/me/", views.UserView.as_view(), name="user_me"),
     path("users/me/edit/", views.UserEditView.as_view(), name="user_me_edit"),
     path("users/<uuid:pk>/", views.UserView.as_view(), name="user"),

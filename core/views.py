@@ -95,15 +95,10 @@ class RegisterView(CreateView):
     success_url = reverse_lazy("login")
 
     def form_valid(self, form):
-        # Save the User model first
-        user = form.save()
-
-        # Create the User with the terms acceptance data
-        User.objects.create(
-            user=user,
-            terms_accepted=form.cleaned_data["terms_accepted"],
-            terms_accepted_at=timezone.now(),
-        )
+        user = form.save(commit=False)
+        user.terms_accepted = form.cleaned_data["terms_accepted"]
+        user.terms_accepted_at = timezone.now()
+        user.save()
 
         messages.success(
             self.request, "Account created successfully! You can now log in."
@@ -120,12 +115,22 @@ User
 """
 
 
+class UserListView(ListView):
+    model = User
+    template_name = "users/user_list.html"
+    context_object_name = "users"
+
+    def get_queryset(self):
+        return User.objects.all().order_by("last_name")
+
+
 class UserView(LoginRequiredMixin, View):
     template_name = "users/user.html"
 
     def get_object(self):
         try:
-            return User.objects.get(id=self.request.user.id)
+            user_id = self.kwargs.get("pk", self.request.user.id)
+            return User.objects.get(id=user_id)
         except User.DoesNotExist:
             messages.error(self.request, "User not found.")
             return None
@@ -133,10 +138,6 @@ class UserView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user = self.get_object()
         if not user:
-            return redirect("home")
-
-        if request.user != user:
-            messages.error(request, "You do not have permission to view this user.")
             return redirect("home")
 
         context = {
@@ -149,7 +150,7 @@ class UserView(LoginRequiredMixin, View):
             "received_transactions": TimeBankLedger.objects.filter(
                 user=user, transaction_type="debit"
             ).order_by("-created_at")[:5],
-            "form": UserForm(instance=user),
+            "form": UserForm(instance=user) if request.user == user else None,
         }
         return render(request, self.template_name, context)
 
