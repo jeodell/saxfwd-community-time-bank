@@ -4,7 +4,7 @@
 {% block title %}Public Ledger - Saxapahaw Timebank{% endblock %}
 {% block content %}
 <div class="max-w-7xl mx-auto p-8">
-  <div class="bg-white rounded-lg shadow-sm p-8">
+  <div class="bg-white rounded-lg shadow-sm p-12">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
       <div>
         <h1 class="text-2xl font-semibold text-gray-900 mb-2">Public Ledger</h1>
@@ -55,13 +55,16 @@
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">{{ transaction.description }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {% if transaction.from_user %} {{ transaction.from_user.first_name }} {{
-                  transaction.from_user.last_name }} {% else %}
+                  <!-- prettier-ignore -->
+                  {% if transaction.from_user %}
+                  {{ transaction.from_user.first_name }} {{ transaction.from_user.last_name }} {% else %}
                   <span class="text-gray-500">Community</span>
                   {% endif %}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {% if transaction.to_user %} {{ transaction.to_user.first_name }} {{ transaction.to_user.last_name }}
+                  <!-- prettier-ignore -->
+                  {% if transaction.to_user %}
+                  {{ transaction.to_user.first_name }} {{ transaction.to_user.last_name }}
                   {% else %}
                   <span class="text-gray-500">Community</span>
                   {% endif %}

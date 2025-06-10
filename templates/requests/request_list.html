@@ -3,7 +3,7 @@
 {% block title %}Service Requests - Saxapahaw Timebank{% endblock %}
 {% block content %}
 <div class="max-w-7xl mx-auto p-8">
-  <div class="bg-white rounded-lg shadow-sm p-8">
+  <div class="bg-white rounded-lg shadow-sm p-12">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
       <h1 class="text-2xl font-semibold text-gray-900 mb-4 md:mb-0">Service Requests</h1>
       <div class="flex space-x-4">
@@ -62,7 +62,8 @@
                   <i class="fas fa-clock mr-1"></i>
                   <!-- prettier-ignore -->
                   {% if request.status == 'completed' %}
-                  {{ request.hours_completed }} hours
+                  {% comment %} TODO fix this {% endcomment %}
+                  {{ request.hours_completed|default:request.hours_requested }} hours
                   {% else %}
                   {{ request.hours_requested }} hours
                   {% endif %}

@@ -28,19 +28,17 @@
       <!-- Sidebar -->
       <div class="space-y-8">
         <!-- Balance Card -->
-        <div class="bg-card-bg-light rounded-xl p-8 shadow-sm flex flex-col items-center text-center">
-          <div class="text-xl font-semibold text-center tracking-wide text-secondary uppercase">Your Balance</div>
-          <div class="border-t-2 border-secondary my-2 w-full max-w-[18ch] mx-auto"></div>
+        <div class="bg-card-light rounded-xl p-8 shadow-sm flex flex-col items-center text-center">
+          <div class="text-xl font-semibold text-center tracking-wide text-secondary uppercase">Balance</div>
+          <div class="border-t-2 border-secondary my-2 w-full max-w-[14ch] mx-auto"></div>
           <div class="text-yellow-500 mb-4 mt-2">
             <i class="fas fa-clock text-4xl"></i>
           </div>
           <div class="text-3xl font-semibold text-yellow-500">{{ user.time_balance | default:0 }} HOURS</div>
         </div>
         <!-- Offered Services Card -->
-        <div class="bg-card-bg rounded-xl p-8 shadow-sm flex flex-col items-stretch">
-          <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">
-            Your Offered Services
-          </div>
+        <div class="bg-card rounded-xl p-8 shadow-sm flex flex-col items-stretch">
+          <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">Offered Services</div>
           <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
           <ul class="py-2 space-y-4 flex flex-col items-center">
             {% for service in services %}
@@ -64,9 +62,9 @@
       <!-- Main Activity Section -->
       <div class="md:col-span-2 flex flex-col space-y-8">
         <!-- Activity Card -->
-        <div class="bg-card-bg rounded-xl p-8 shadow-sm">
+        <div class="bg-card rounded-xl p-8 shadow-sm">
           <div class="flex items-center">
-            <div class="text-xl font-semibold uppercase tracking-wide text-primary mr-4">Your Activity</div>
+            <div class="text-xl font-semibold uppercase tracking-wide text-primary mr-4">Activity</div>
           </div>
           <div class="border-t-2 border-primary my-2"></div>
           <div class="p-2 flex flex-col gap-8">
@@ -105,7 +103,7 @@
           </div>
         </div>
         <!-- Settings Card -->
-        <div class="bg-card-bg rounded-lg p-8">
+        <div class="bg-card rounded-lg p-8">
           <div class="flex items-center justify-between mb-4">
             <div class="text-xl font-semibold uppercase tracking-wide text-primary">Account Settings</div>
             {% if user.id == request.user.id %}
@@ -137,7 +135,7 @@
                 <p class="text-sm text-gray-600">{{ user.phone_number|default:"Not provided" }}</p>
               </div>
               <div>
-                <p class="text-sm text-gray-800 font-semibold">Address</p>
+                <p class="text-sm text-gray-800 font-semibold">Street Address</p>
                 <p class="text-sm text-gray-600">{{ user.address|default:"Not provided" }}</p>
               </div>
               <div class="md:col-span-2">
