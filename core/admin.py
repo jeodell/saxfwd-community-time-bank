@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .models import (
     Service,
@@ -119,7 +120,8 @@ class TimeBankLedgerAdmin(admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(BaseUserAdmin):
+    ordering = ("email",)
     list_display = (
         "id",
         "email",
@@ -155,6 +157,7 @@ class UserAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "email",
+                    "password",
                     "first_name",
                     "last_name",
                     "phone_number",
