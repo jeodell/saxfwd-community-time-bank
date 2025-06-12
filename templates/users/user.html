@@ -79,12 +79,12 @@
                 {% for transaction in provider_transactions %}
                 <li class="flex items-center text-gray-800 text-sm">
                   <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                  <span class="flex-1 px-2 font-medium">{{ transaction.description }}</span>
-                  <span class="flex-1 border-b border-dotted border-gray-300 mx-2"></span>
+                  <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                  <span class="flex-1 border-b border-primary py-1 mx-2"></span>
                   <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                 </li>
                 {% empty %}
-                <li class="text-gray-600">No provided activity</li>
+                <li class="text-gray-600 text-sm">No provided activity</li>
                 {% endfor %}
               </ul>
             </div>
@@ -100,7 +100,7 @@
                   <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                 </li>
                 {% empty %}
-                <li class="text-gray-600">No received activity</li>
+                <li class="text-gray-600 text-sm">No received activity</li>
                 {% endfor %}
               </ul>
             </div>
