@@ -1,6 +1,9 @@
 import uuid
+from datetime import datetime
+from decimal import Decimal
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
@@ -45,8 +48,6 @@ class User(AbstractUser):
     address = models.TextField(blank=True, null=True)
     bio = models.TextField(blank=True)
     image = models.ImageField(upload_to="user_images/", blank=True)
-    total_hours_earned = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    total_hours_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     terms_accepted = models.BooleanField(
         default=False,
         help_text="User has agreed to use the platform responsibly and not engage in malicious activities or illegal behavior.",
@@ -67,7 +68,30 @@ class User(AbstractUser):
 
     @property
     def time_balance(self):
-        return self.total_hours_earned - self.total_hours_spent
+        """Calculate current balance from ledger entries."""
+        credits = TimeBankLedger.objects.filter(
+            user=self, transaction_type="credit"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+        debits = TimeBankLedger.objects.filter(
+            user=self, transaction_type="debit"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+        return credits - debits
+
+    @property
+    def total_hours_earned(self):
+        """Calculate total hours earned from ledger entries."""
+        return TimeBankLedger.objects.filter(
+            user=self, transaction_type="credit"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+    @property
+    def total_hours_spent(self):
+        """Calculate total hours spent from ledger entries."""
+        return TimeBankLedger.objects.filter(
+            user=self, transaction_type="debit"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
 
     @property
     def full_name(self):
@@ -105,10 +129,27 @@ class Service(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=200)
     description = models.TextField()
+    availability = models.TextField(blank=True, null=True)
     provider = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="services_provided"
     )
     category = models.ForeignKey(ServiceCategory, on_delete=models.SET_NULL, null=True)
+    max_hours = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0.25)],
+        help_text="Maximum number of hours per service request",
+        null=True,
+        blank=True,
+    )
+    max_hours_per_month = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        validators=[MinValueValidator(0.25)],
+        help_text="Maximum number of hours per month",
+        null=True,
+        blank=True,
+    )
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -119,6 +160,34 @@ class Service(models.Model):
     def can_be_edited_by(self, user):
         """Check if the service can be edited by the provider user."""
         return user == self.provider
+
+    def get_monthly_hours_used(self):
+        """Calculate the total hours used for this service in the current month."""
+        # Get the first day of the current month
+        now = timezone.now()
+        first_day = datetime(now.year, now.month, 1, tzinfo=now.tzinfo)
+
+        # Get all completed service requests for this service in the current month
+        completed_requests = self.servicerequest_set.filter(
+            status="completed", completed_at__gte=first_day, completed_at__lte=now
+        )
+
+        # Sum up the hours completed
+        total_hours = sum(
+            request.hours_completed or request.hours_requested
+            for request in completed_requests
+        )
+
+        return Decimal(str(total_hours))
+
+    def get_monthly_hours_percentage(self):
+        """Calculate the percentage of monthly hours used."""
+        if not self.max_hours_per_month:
+            return 0
+
+        monthly_hours = self.get_monthly_hours_used()
+        percentage = (monthly_hours / self.max_hours_per_month) * 100
+        return min(percentage, 100)  # Cap at 100%
 
     @classmethod
     def get_active_services(cls, exclude_user=None, category=None, search=None):
@@ -155,13 +224,6 @@ class ServiceRequest(models.Model):
         ("rejected", "Rejected"),
     ]
 
-    COMMUNITY_REQUEST_STATUS = [
-        ("not_requested", "Not Requested"),
-        ("pending", "Pending"),
-        ("approved", "Approved"),
-        ("rejected", "Rejected"),
-    ]
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     requester = models.ForeignKey(
@@ -170,35 +232,40 @@ class ServiceRequest(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     requested_date = models.DateTimeField()
     hours_requested = models.DecimalField(
-        max_digits=5, decimal_places=2, validators=[MinValueValidator(0.5)]
+        max_digits=4, decimal_places=2, validators=[MinValueValidator(0.25)]
     )
-    hours_completed = models.DecimalField(
-        max_digits=5, decimal_places=2, validators=[MinValueValidator(0.5)], default=0
-    )
+    hours_completed = models.DecimalField(max_digits=4, decimal_places=2, default=0)
     description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    rejection_reason = models.TextField(
+        blank=True, help_text="Reason for rejecting this service request"
+    )
+    cancellation_reason = models.TextField(
+        blank=True, help_text="Reason for cancelling this service request"
+    )
     provider_completed = models.BooleanField(default=False)
     requester_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     completed_at = models.DateTimeField(null=True, blank=True)
 
-    # Community hours request fields
-    is_community_request = models.BooleanField(default=False)
-    community_request_status = models.CharField(
-        max_length=20, choices=COMMUNITY_REQUEST_STATUS, default="not_requested"
-    )
-    community_request_reason = models.TextField(
-        blank=True, help_text="Please explain why you need community hours"
-    )
-    community_request_reviewed_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="reviewed_community_requests",
-    )
-    community_request_review_notes = models.TextField(blank=True)
-    community_request_reviewed_at = models.DateTimeField(null=True, blank=True)
+    def clean(self):
+        """Validate that hours_requested doesn't exceed service's max_hours."""
+        if (
+            hasattr(self, "service")
+            and self.service
+            and self.service.max_hours
+            and self.hours_requested > self.service.max_hours
+        ):
+            raise ValidationError(
+                {
+                    "hours_requested": f"Cannot request more than {self.service.max_hours} hours for this service."
+                }
+            )
+        super().clean()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.service.title} request by {self.requester.first_name} {self.requester.last_name}"
@@ -206,91 +273,15 @@ class ServiceRequest(models.Model):
     class Meta:
         verbose_name_plural = "Service Requests"
 
-    def request_community_hours(self, reason):
-        """
-        Convert this service request to a community hours request.
-        """
-        if self.is_community_request:
-            raise ValueError("This request is already a community request")
-
-        self.is_community_request = True
-        self.community_request_status = "pending"
-        self.community_request_reason = reason
-        self.save()
-
-    def approve_community_request(self, reviewer, notes=""):
-        """
-        Approve a community hours request and deduct hours from the community timebank.
-        """
-        if not self.is_community_request:
-            raise ValueError("This is not a community request")
-
-        if self.community_request_status != "pending":
-            raise ValueError("This request is not pending approval")
-
-        # Get the community timebank
-        community_bank, _ = CommunityHours.objects.get_or_create()
-
-        # Check if we have enough hours
-        if not community_bank.deduct_hours(self.hours_completed):
-            raise ValueError("Insufficient community hours available")
-
-        # Update the request
-        self.community_request_status = "approved"
-        self.community_request_reviewed_by = reviewer
-        self.community_request_review_notes = notes
-        self.community_request_reviewed_at = timezone.now()
-        self.save()
-
-        hours_completed = self.hours_completed
-        if hours_completed == 0:
-            hours_completed = self.hours_requested
-
-        # Create a ledger entry for the community hours usage
-        TimeBankLedger.objects.create(
-            user=self.requester,
-            service_request=self,
-            transaction_type="community_request",
-            hours=hours_completed,
-            balance=self.requester.time_balance,
-            description=f"Community hours used for {self.service.title}",
-        )
-
-    def reject_community_request(self, reviewer, notes=""):
-        """
-        Reject a community hours request.
-        """
-        if not self.is_community_request:
-            raise ValueError("This is not a community request")
-
-        if self.community_request_status != "pending":
-            raise ValueError("This request is not pending approval")
-
-        self.community_request_status = "rejected"
-        self.community_request_reviewed_by = reviewer
-        self.community_request_review_notes = notes
-        self.community_request_reviewed_at = timezone.now()
-        self.save()
-
-    def can_request_community_hours(self):
-        """Check if this request can be converted to a community request."""
-        return not self.is_community_request and self.status == "pending"
-
+    @property
     def can_be_approved(self):
-        """Check if this community request can be approved."""
-        return (
-            self.is_community_request
-            and self.community_request_status == "pending"
-            and self.status == "pending"
-        )
+        """Check if this service request can be approved."""
+        return self.status == "pending"
 
+    @property
     def can_be_rejected(self):
-        """Check if this community request can be rejected."""
-        return (
-            self.is_community_request
-            and self.community_request_status == "pending"
-            and self.status == "pending"
-        )
+        """Check if this service request can be rejected."""
+        return self.status == "pending"
 
     def accept_request(self):
         """
@@ -302,17 +293,31 @@ class ServiceRequest(models.Model):
         self.status = "accepted"
         self.save()
 
-    def reject_request(self):
+    def reject_request(self, reason=""):
         """
         Reject this service request.
+
+        Args:
+            reason: Optional reason for rejecting the request
         """
         if self.status != "pending":
             raise ValueError("This request cannot be rejected")
 
         self.status = "rejected"
+        self.rejection_reason = reason
         self.save()
 
-    def complete_request(self, user):
+    def cancel_request(self, reason=""):
+        """
+        Cancel this service request.
+        """
+        if self.status != "pending":
+            raise ValueError("This request cannot be cancelled")
+        self.status = "cancelled"
+        self.cancellation_reason = reason
+        self.save()
+
+    def complete_request(self, user, hours_completed=None):
         """
         Mark this request as complete by either the provider or requester.
         Returns True if both parties have completed, False otherwise.
@@ -322,6 +327,8 @@ class ServiceRequest(models.Model):
 
         if user == self.service.provider:
             self.provider_completed = True
+            if hours_completed is not None:
+                self.hours_completed = hours_completed
         elif user == self.requester:
             self.requester_completed = True
         else:
@@ -331,41 +338,124 @@ class ServiceRequest(models.Model):
             self.status = "completed"
             self.completed_at = timezone.now()
 
-            hours_completed = self.hours_completed
-            if hours_completed == 0:
-                hours_completed = self.hours_requested
-
-            # Update timebank ledger
-            hours = hours_completed
+            # Use hours_completed if set, otherwise use hours_requested
+            hours = (
+                self.hours_completed
+                if self.hours_completed > 0
+                else self.hours_requested
+            )
             provider = self.service.provider
             requester = self.requester
 
-            # Credit provider
+            # Create ledger entries for the transaction
             TimeBankLedger.objects.create(
                 user=provider,
                 service_request=self,
                 transaction_type="credit",
                 hours=hours,
-                balance=provider.total_hours_earned + hours,
                 description=f"Completed service: {self.service.title}",
             )
-            provider.total_hours_earned += hours
-            provider.save()
 
-            # Debit requester
             TimeBankLedger.objects.create(
                 user=requester,
                 service_request=self,
                 transaction_type="debit",
                 hours=hours,
-                balance=requester.total_hours_spent + hours,
                 description=f"Received service: {self.service.title}",
             )
-            requester.total_hours_spent += hours
-            requester.save()
 
         self.save()
         return self.provider_completed and self.requester_completed
+
+
+class CommunityRequest(ServiceRequest):
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
+    ]
+
+    community_status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="pending"
+    )
+    reason = models.TextField(help_text="Please explain why you need community hours")
+    reviewed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reviewed_community_requests",
+    )
+    review_notes = models.TextField(blank=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Community request for {self.service.title} by {self.requester.first_name} {self.requester.last_name}"
+
+    def approve(self, reviewer, notes=""):
+        """
+        Approve this community request and deduct hours from the community timebank.
+        """
+        if self.community_status != "pending":
+            raise ValueError("This request is not pending approval")
+
+        # Get the community timebank
+        community_bank, _ = CommunityHours.objects.get_or_create()
+
+        # Check if we have enough hours
+        hours_to_deduct = self.hours_completed
+        if hours_to_deduct == 0:
+            hours_to_deduct = self.hours_requested
+
+        if not community_bank.deduct_hours(hours_to_deduct):
+            raise ValueError("Insufficient community hours available")
+
+        # Update the request
+        self.community_status = "approved"
+        self.reviewed_by = reviewer
+        self.review_notes = notes
+        self.reviewed_at = timezone.now()
+        self.save()
+
+        # Create a ledger entry for the community hours usage
+        TimeBankLedger.objects.create(
+            user=self.requester,
+            service_request=self,
+            transaction_type="community_request",
+            hours=hours_to_deduct,
+            description=f"Community hours used for {self.service.title}",
+        )
+
+    def reject(self, reviewer, notes=""):
+        """
+        Reject this community request.
+        """
+        if self.community_status != "pending":
+            raise ValueError("This request is not pending approval")
+
+        self.community_status = "rejected"
+        self.reviewed_by = reviewer
+        self.review_notes = notes
+        self.reviewed_at = timezone.now()
+        self.save()
+
+    @property
+    def can_be_approved(self):
+        """Check if this community request can be approved."""
+        return self.community_status == "pending" and self.status == "pending"
+
+    @property
+    def can_be_rejected(self):
+        """Check if this community request can be rejected."""
+        return self.community_status == "pending" and self.status == "pending"
+
+    def accept_request(self):
+        """
+        Accept this community request.
+        """
+        if self.community_status != "approved":
+            raise ValueError("Community request must be approved before accepting")
+        super().accept_request()
 
 
 class CommunityHours(models.Model):
@@ -403,8 +493,9 @@ class TimeBankLedger(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
-    hours = models.DecimalField(max_digits=5, decimal_places=2)
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
+    hours = models.DecimalField(
+        max_digits=4, decimal_places=2, validators=[MinValueValidator(0.25)]
+    )
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -413,69 +504,3 @@ class TimeBankLedger(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-
-    def save(self, *args, **kwargs):
-        # Update user's time balance
-        if self.transaction_type == "credit":
-            self.user.total_hours_earned += self.hours
-        elif self.transaction_type == "debit":
-            self.user.total_hours_spent += self.hours
-        self.user.save()
-        super().save(*args, **kwargs)
-
-    @classmethod
-    def get_user_transactions(
-        cls, user, transaction_type=None, start_date=None, end_date=None
-    ):
-        """
-        Get a user's transaction history with optional filtering.
-
-        Args:
-            user: The user to get transactions for
-            transaction_type: Optional filter by transaction type
-            start_date: Optional start date for filtering
-            end_date: Optional end date for filtering
-        """
-        queryset = cls.objects.filter(user=user)
-
-        if transaction_type:
-            queryset = queryset.filter(transaction_type=transaction_type)
-
-        if start_date:
-            queryset = queryset.filter(created_at__gte=start_date)
-
-        if end_date:
-            queryset = queryset.filter(created_at__lte=end_date)
-
-        return queryset
-
-    @classmethod
-    def get_user_balance(cls, user):
-        """Get a user's current time balance."""
-        return user.time_balance
-
-    @classmethod
-    def get_user_earnings(cls, user, start_date=None, end_date=None):
-        """Get a user's total earnings for a period."""
-        queryset = cls.objects.filter(user=user, transaction_type="credit")
-
-        if start_date:
-            queryset = queryset.filter(created_at__gte=start_date)
-
-        if end_date:
-            queryset = queryset.filter(created_at__lte=end_date)
-
-        return queryset.aggregate(total=models.Sum("hours"))["total"] or 0
-
-    @classmethod
-    def get_user_spending(cls, user, start_date=None, end_date=None):
-        """Get a user's total spending for a period."""
-        queryset = cls.objects.filter(user=user, transaction_type="debit")
-
-        if start_date:
-            queryset = queryset.filter(created_at__gte=start_date)
-
-        if end_date:
-            queryset = queryset.filter(created_at__lte=end_date)
-
-        return queryset.aggregate(total=models.Sum("hours"))["total"] or 0
