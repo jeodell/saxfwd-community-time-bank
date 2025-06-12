@@ -174,6 +174,53 @@ class RequestCancelView(LoginRequiredMixin, View):
         return redirect("request_detail", pk=pk)
 
 
+class RequestCancelFormView(LoginRequiredMixin, View):
+    template_name = "requests/request_cancel_form.html"
+
+    def get(self, request, pk):
+        service_request = get_object_or_404(ServiceRequest, pk=pk)
+        if request.user != service_request.requester:
+            messages.error(request, "Only the requester can cancel requests.")
+            return redirect("home")
+
+        if service_request.status != "pending":
+            messages.error(request, "This request cannot be cancelled.")
+            return redirect("request_detail", pk=pk)
+
+        form = ServiceRequestRejectForm()  # Reusing the reject form for cancellation
+        return render(
+            request, self.template_name, {"request": service_request, "form": form}
+        )
+
+    def post(self, request, pk):
+        service_request = get_object_or_404(ServiceRequest, pk=pk)
+        if request.user != service_request.requester:
+            messages.error(request, "Only the requester can cancel requests.")
+            return redirect("home")
+
+        if service_request.status != "pending":
+            messages.error(request, "This request cannot be cancelled.")
+            return redirect("request_detail", pk=pk)
+
+        form = ServiceRequestRejectForm(request.POST)
+        if form.is_valid():
+            cancellation_reason = form.cleaned_data["rejection_reason"]
+            try:
+                service_request.cancel_request(cancellation_reason)
+                messages.success(request, "Request cancelled successfully!")
+                return redirect("request_detail", pk=pk)
+            except ValueError as e:
+                messages.error(request, str(e))
+        else:
+            messages.error(
+                request, "Please provide a reason for cancelling the request."
+            )
+
+        return render(
+            request, self.template_name, {"request": service_request, "form": form}
+        )
+
+
 class RequestCompleteView(LoginRequiredMixin, View):
     def post(self, request, pk):
         service_request = get_object_or_404(ServiceRequest, pk=pk)
