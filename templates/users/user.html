@@ -34,7 +34,11 @@
           <div class="text-yellow-500 mb-4 mt-2">
             <i class="fas fa-clock text-4xl"></i>
           </div>
+          {% if user.id == request.user.id %}
           <div class="text-3xl font-semibold text-yellow-500">{{ user.time_balance | default:0 }} HOURS</div>
+          {% else %}
+          <div class="text-3xl font-semibold text-yellow-500">Private</div>
+          {% endif %}
         </div>
         <!-- Offered Services Card -->
         <div class="bg-card rounded-xl p-8 shadow-sm flex flex-col items-stretch">
