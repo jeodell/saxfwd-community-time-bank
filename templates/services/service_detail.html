@@ -41,15 +41,21 @@
         {% elif user == service.provider %}
         <div class="mt-4 md:mt-0">
           <div class="flex space-x-4">
-            <form method="POST" action="{% url 'service_detail' service.pk %}" class="inline">
+            <a
+              href="{% url 'service_edit' service.pk %}"
+              class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+            >
+              <i class="fas fa-edit mr-2"></i>
+              Edit Service
+            </a>
+            <form method="POST" action="{% url 'service_toggle_active' service.pk %}" class="inline">
               {% csrf_token %}
-              <input type="hidden" name="_method" value="PUT" />
               <button
                 type="submit"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md {% if service.is_active %}text-red-700 bg-white hover:bg-red-50{% else %}text-green-700 bg-white hover:bg-green-50{% endif %} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
               >
-                <i class="fas fa-edit mr-2"></i>
-                Edit Service
+                <i class="fas {% if service.is_active %}fa-pause{% else %}fa-play{% endif %} mr-2"></i>
+                {% if service.is_active %}Deactivate Service{% else %}Activate Service{% endif %}
               </button>
             </form>
             <form
@@ -91,9 +97,33 @@
           <h2 class="text-xl font-semibold text-gray-900 mb-4">Description</h2>
           <p class="text-gray-600 mb-6">{{ service.description }}</p>
 
-          {% if service.requirements %}
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Requirements</h2>
-          <p class="text-gray-600 mb-6">{{ service.requirements }}</p>
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Availability</h2>
+          <p class="text-gray-600 mb-6">{{ service.availability|default:"No availability specified" }}</p>
+
+          {% if service.max_hours or service.max_hours_per_month %}
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Service Limits</h2>
+          <div class="space-y-4">
+            {% if service.max_hours %}
+            <div>
+              <p class="text-sm font-medium text-gray-500">Maximum Hours per Request</p>
+              <p class="text-gray-600">{{ service.max_hours }} hours</p>
+            </div>
+            {% endif %} {% if service.max_hours_per_month %}
+            <div>
+              <p class="text-sm font-medium text-gray-500">Monthly Hours Limit</p>
+              <p class="text-gray-600 mb-2">{{ service.max_hours_per_month }} hours</p>
+              {% with monthly_hours=service.get_monthly_hours_used %}
+              <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div
+                  class="bg-primary h-2.5 rounded-full"
+                  style="width: {{ service.get_monthly_hours_percentage }}%"
+                ></div>
+              </div>
+              <p class="text-sm text-gray-500 mt-1">{{ monthly_hours }} hours used this month</p>
+              {% endwith %}
+            </div>
+            {% endif %}
+          </div>
           {% endif %}
         </div>
       </div>
