@@ -106,7 +106,6 @@ class TimeBankLedgerAdmin(admin.ModelAdmin):
         "service_request",
         "transaction_type",
         "hours",
-        "balance",
         "created_at",
     )
     list_filter = ("transaction_type", "created_at")
@@ -131,6 +130,7 @@ class UserAdmin(BaseUserAdmin):
         "address",
         "total_hours_earned",
         "total_hours_spent",
+        "time_balance",
         "is_staff",
         "is_superuser",
         "is_active",
@@ -148,6 +148,7 @@ class UserAdmin(BaseUserAdmin):
     readonly_fields = (
         "total_hours_earned",
         "total_hours_spent",
+        "time_balance",
         "date_joined",
         "updated_at",
     )
@@ -173,6 +174,7 @@ class UserAdmin(BaseUserAdmin):
                 "fields": (
                     "total_hours_earned",
                     "total_hours_spent",
+                    "time_balance",
                 )
             },
         ),
