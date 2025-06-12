@@ -3,10 +3,12 @@
   <!-- Desktop menu -->
   <div class="h-8">
     <!-- Login/Welcome-->
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 h-full">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 h-full">
       {% if user.is_authenticated %}
-      <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
-      <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
+      <div class="hidden sm:flex col-span-1 lg:col-span-4 xl:col-span-5 items-center justify-start bg-primary"></div>
+      <div
+        class="col-span-1 lg:col-span-3 xl:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12 space-x-4"
+      >
         <a href="{% url 'user_me' %}" class="text-white flex items-center space-x-2 hover:text-white/80">
           <span>Welcome, {{ user.first_name }}</span>
           {% if user.image %}
@@ -17,16 +19,21 @@
           </div>
           {% endif %}
         </a>
+        <form method="post" action="{% url 'logout' %}" class="inline" id="logout-form">
+          {% csrf_token %}
+          <a class="text-white hover:text-white/80 cursor-pointer" onclick="logout(); return false;">Logout</a>
+        </form>
       </div>
       {% else %}
-      <div class="col-span-1 sm:col-span-2 lg:col-span-3 flex items-center justify-start bg-primary"></div>
-      <div class="col-span-1 flex items-center justify-end bg-secondary pr-4 lg:pr-12">
+      <div class="hidden sm:flex col-span-1 lg:col-span-4 xl:col-span-5 items-center justify-start bg-primary"></div>
+      <div class="col-span-1 lg:col-span-3 xl:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12">
         <a href="{% url 'login' %}" class="text-white hover:text-white/80 uppercase">Login</a>
         <span class="text-white px-1">or</span>
         <a href="{% url 'register' %}" class="text-white hover:text-white/80 uppercase">Register</a>
       </div>
       {% endif %}
     </div>
+
     <!-- Logo and Menu -->
     <div class="h-24 mx-8">
       <div class="flex justify-between h-full">
@@ -34,13 +41,14 @@
           <div class="flex-shrink-0 flex items-center">
             <a
               href="{% url 'home' %}"
-              class="text-xl font-bold text-primary hover:text-primary/80 transition-colors duration-200 uppercase"
+              class="text-xl font-bold text-primary hover:text-primary/80 transition-colors duration-200 uppercase flex flex-col items-start"
             >
-              Saxapahaw Timebank
+              <span>Saxapahaw</span>
+              <span>Timebank</span>
             </a>
           </div>
         </div>
-        <div class="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+        <div class="hidden lg:ml-6 lg:flex lg:items-center space-x-4">
           {% if user.is_authenticated %}
           <a
             href="{% url 'about' %}"
@@ -78,15 +86,6 @@
           >
             My Account
           </a>
-          <form method="post" action="{% url 'logout' %}" class="inline">
-            {% csrf_token %}
-            <a
-              class="inline-flex items-center px-4 py-2 font-medium cursor-pointer text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2"
-              onclick="this.closest('form').submit(); return false;"
-            >
-              Logout
-            </a>
-          </form>
           {% else %}
           <a
             href="{% url 'about' %}"
@@ -102,15 +101,16 @@
           </a>
           {% endif %}
         </div>
-        <div class="-mr-2 flex items-center sm:hidden">
+        <div class="-mr-2 flex items-center lg:hidden">
           <button
             type="button"
-            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary transition-colors duration-200"
+            class="inline-flex items-center justify-center p-2 rounded-md text-primary hover:text-primary/80 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary transition-colors duration-200"
             aria-controls="mobile-menu"
             aria-expanded="false"
+            onclick="toggleMobileMenu()"
           >
             <span class="sr-only">Open main menu</span>
-            <i class="fas fa-bars"></i>
+            <i class="fas fa-bars w-6 h-6 flex items-center justify-center" id="menu-icon"></i>
           </button>
         </div>
       </div>
@@ -118,10 +118,18 @@
   </div>
 
   <!-- Mobile menu -->
-  {% comment %}
-  <div class="sm:hidden hidden" id="mobile-menu">
+  <div
+    class="lg:hidden hidden transform transition-all duration-300 ease-in-out absolute top-32 left-0 right-0 bg-white shadow-lg z-50"
+    id="mobile-menu"
+  >
     <div class="pt-2 pb-3 space-y-1">
       {% if user.is_authenticated %}
+      <a
+        href="{% url 'about' %}"
+        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+      >
+        About
+      </a>
       <a
         href="{% url 'service_list' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
@@ -135,35 +143,72 @@
         My Requests
       </a>
       <a
-        href="{% url 'public_ledger' %}"
+        href="{% url 'ledger' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
       >
         Public Ledger
       </a>
       <a
-        href="{% url 'ledger' %}"
+        href="{% url 'user_list' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
       >
-        Ledger
+        Members
       </a>
-      {% endif %} {% if user.is_authenticated %}
       <a
         href="{% url 'user_me' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
       >
         My Account
       </a>
-      <form method="post" action="{% url 'logout' %}" class="block">
-        {% csrf_token %}
-        <a
-          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200 cursor-pointer"
-          onclick="this.closest('form').submit(); return false;"
-        >
-          Logout
-        </a>
-      </form>
+      {% else %}
+      <a
+        href="{% url 'about' %}"
+        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+      >
+        About
+      </a>
+      <a
+        href="{% url 'service_list' %}"
+        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+      >
+        Services
+      </a>
       {% endif %}
     </div>
   </div>
-  {% endcomment %}
 </nav>
+
+<script>
+  function logout() {
+    document.getElementById('logout-form').submit();
+  }
+
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const icon = document.getElementById('menu-icon');
+
+    menu.classList.toggle('hidden');
+
+    // Toggle between hamburger and close icon
+    if (menu.classList.contains('hidden')) {
+      icon.classList.remove('fa-times');
+      icon.classList.add('fa-bars');
+    } else {
+      icon.classList.remove('fa-bars');
+      icon.classList.add('fa-times');
+    }
+  }
+
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', function (event) {
+    const menu = document.getElementById('mobile-menu');
+    const button = document.querySelector('button[aria-controls="mobile-menu"]');
+
+    if (!menu.classList.contains('hidden') && !menu.contains(event.target) && !button.contains(event.target)) {
+      menu.classList.add('hidden');
+      const icon = document.getElementById('menu-icon');
+      icon.classList.remove('fa-times');
+      icon.classList.add('fa-bars');
+    }
+  });
+</script>
