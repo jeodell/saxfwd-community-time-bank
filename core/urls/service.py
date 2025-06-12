@@ -11,30 +11,30 @@ from core.views.service import (
 )
 
 urlpatterns = [
-    path("services/", ServiceListView.as_view(), name="service_list"),
-    path("services/create/", ServiceCreateView.as_view(), name="service_create"),
+    path("", ServiceListView.as_view(), name="service_list"),
+    path("create/", ServiceCreateView.as_view(), name="service_create"),
     path(
-        "services/<uuid:pk>/",
+        "<uuid:pk>/",
         ServiceDetailView.as_view(),
         name="service_detail",
     ),
     path(
-        "services/<uuid:pk>/edit/",
+        "<uuid:pk>/edit/",
         ServiceEditView.as_view(),
         name="service_edit",
     ),
     path(
-        "services/<uuid:pk>/delete/",
+        "<uuid:pk>/delete/",
         ServiceDeleteView.as_view(),
         name="service_delete",
     ),
     path(
-        "services/<uuid:pk>/request/",
+        "<uuid:pk>/request/",
         ServiceRequestView.as_view(),
         name="service_request",
     ),
     path(
-        "services/<uuid:pk>/toggle-active/",
+        "<uuid:pk>/toggle-active/",
         ServiceToggleActiveView.as_view(),
         name="service_toggle_active",
     ),

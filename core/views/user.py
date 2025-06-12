@@ -2,32 +2,10 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.utils import timezone
-from django.views.generic import CreateView, ListView, UpdateView, View
+from django.views.generic import ListView, UpdateView, View
 
-from ..forms import UserForm, UserRegistrationForm
+from ..forms import UserForm
 from ..models import Service, ServiceRequest, TimeBankLedger, User
-
-
-class RegisterView(CreateView):
-    form_class = UserRegistrationForm
-    template_name = "registration/register.html"
-    success_url = reverse_lazy("login")
-
-    def form_valid(self, form):
-        user = form.save(commit=False)
-        user.terms_accepted = form.cleaned_data["terms_accepted"]
-        user.terms_accepted_at = timezone.now()
-        user.save()
-
-        messages.success(
-            self.request, "Account created successfully! You can now log in."
-        )
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, "There was an error creating your account.")
-        return render(self.request, self.template_name, {"form": form})
 
 
 class UserListView(ListView):
