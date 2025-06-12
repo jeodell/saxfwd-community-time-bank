@@ -151,6 +151,7 @@ class Service(models.Model):
         blank=True,
     )
     is_active = models.BooleanField(default=True)
+    is_deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -199,7 +200,7 @@ class Service(models.Model):
             category: Category name to filter by
             search: Search term to filter by title or description
         """
-        queryset = cls.objects.filter(is_active=True)
+        queryset = cls.objects.filter(is_active=True, is_deleted=False)
 
         if exclude_user:
             queryset = queryset.exclude(provider=exclude_user)
@@ -353,7 +354,7 @@ class ServiceRequest(models.Model):
                 service_request=self,
                 transaction_type="credit",
                 hours=hours,
-                description=f"Completed service: {self.service.title}",
+                description=self.service.title,
             )
 
             TimeBankLedger.objects.create(
@@ -361,7 +362,7 @@ class ServiceRequest(models.Model):
                 service_request=self,
                 transaction_type="debit",
                 hours=hours,
-                description=f"Received service: {self.service.title}",
+                description=self.service.title,
             )
 
         self.save()
@@ -423,7 +424,7 @@ class CommunityRequest(ServiceRequest):
             service_request=self,
             transaction_type="community_request",
             hours=hours_to_deduct,
-            description=f"Community hours used for {self.service.title}",
+            description=self.service.title,
         )
 
     def reject(self, reviewer, notes=""):

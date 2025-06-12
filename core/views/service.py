@@ -43,6 +43,7 @@ class ServiceListView(ListView):
             services = Service.objects.filter(
                 Q(title__icontains=search) | Q(description__icontains=search),
                 provider=self.request.user,
+                is_deleted=False,
             )
             if category:
                 services = services.filter(category=category)
@@ -103,6 +104,30 @@ class ServiceDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Service.objects.filter(provider=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        service = self.get_object()
+
+        # Check for any pending or accepted requests
+        outstanding_requests = service.servicerequest_set.filter(
+            status__in=["pending", "accepted"]
+        ).exists()
+
+        if outstanding_requests:
+            messages.error(
+                request,
+                "Cannot delete service while there are pending or accepted requests. Please handle all outstanding requests first.",
+            )
+            return redirect("service_detail", pk=service.pk)
+
+        # Soft delete the service
+        service.is_deleted = True
+        service.is_active = False  # Also deactivate it
+        service.save()
+
+        # Add success message and redirect
+        messages.success(request, "Service deleted successfully.")
+        return redirect(self.success_url)
 
 
 class ServiceEditView(LoginRequiredMixin, UpdateView):

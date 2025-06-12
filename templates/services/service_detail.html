@@ -58,12 +58,7 @@
                 {% if service.is_active %}Deactivate Service{% else %}Activate Service{% endif %}
               </button>
             </form>
-            <form
-              method="POST"
-              action="{% url 'service_detail' service.pk %}"
-              class="inline"
-              onsubmit="return confirm('Are you sure you want to delete this service?');"
-            >
+            <form method="POST" action="{% url 'service_delete' service.pk %}" class="inline">
               {% csrf_token %}
               <input type="hidden" name="_method" value="DELETE" />
               <button
