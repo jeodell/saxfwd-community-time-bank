@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: saxfwd-community-time-bank
+    name: saxapahaw-timebank
     runtime: python
     plan: starter
     buildCommand: |
