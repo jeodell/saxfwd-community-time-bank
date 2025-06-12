@@ -55,7 +55,14 @@ class UserRegistrationForm(UserCreationForm):
 class ServiceForm(forms.ModelForm):
     class Meta:
         model = Service
-        fields = ["title", "description", "category"]
+        fields = [
+            "title",
+            "description",
+            "availability",
+            "category",
+            "max_hours",
+            "max_hours_per_month",
+        ]
 
 
 class ServiceRequestForm(forms.ModelForm):
@@ -65,14 +72,6 @@ class ServiceRequestForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
-    first_name = forms.CharField(required=False)
-    last_name = forms.CharField(required=False)
-    email = forms.EmailField(required=False)
-    phone_number = forms.CharField(required=False)
-    address = forms.CharField(required=False)
-    bio = forms.CharField(required=False)
-    image = forms.ImageField(required=False)
-
     class Meta:
         model = User
         fields = [
@@ -84,3 +83,17 @@ class UserForm(forms.ModelForm):
             "image",
             "bio",
         ]
+
+
+class ServiceRequestCompleteForm(forms.ModelForm):
+    class Meta:
+        model = ServiceRequest
+        fields = ["hours_completed", "cancellation_reason"]
+
+
+class ServiceRequestRejectForm(forms.Form):
+    rejection_reason = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 6}),
+        required=True,
+        help_text="Please provide a reason for rejecting this request",
+    )
