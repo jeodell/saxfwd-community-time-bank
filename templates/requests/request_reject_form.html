@@ -1,0 +1,55 @@
+{% extends 'base.html' %} {% block title %}Reject Request - Saxapahaw Timebank{% endblock %} {% block content %}
+<div class="max-w-7xl mx-auto p-8">
+  <div class="bg-white rounded-lg shadow-sm p-8">
+    <!-- Back Button -->
+    <div class="mb-6">
+      <a
+        href="{% url 'request_detail' request.pk %}"
+        class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200"
+      >
+        <i class="fas fa-arrow-left mr-2"></i>
+        Back to Request
+      </a>
+    </div>
+
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Reject Request</h1>
+
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      <div class="space-y-2">
+        <label for="id_rejection_reason" class="text-sm font-semibold text-gray-700">Reason for Rejection</label>
+        <textarea
+          name="rejection_reason"
+          id="id_rejection_reason"
+          rows="6"
+          class="w-full px-4 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm rounded-md bg-white shadow-sm transition duration-150 ease-in-out"
+          required
+        >
+{{ form.rejection_reason.value|default:'' }}</textarea
+        >
+        {% if form.rejection_reason.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ form.rejection_reason.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="flex justify-end space-x-4">
+        <a
+          href="{% url 'request_detail' request.pk %}"
+          class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+        >
+          Cancel
+        </a>
+        <button
+          type="submit"
+          class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+        >
+          <i class="fas fa-times mr-2"></i>
+          Reject Request
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
