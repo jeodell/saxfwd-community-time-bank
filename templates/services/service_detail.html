@@ -58,6 +58,7 @@
                 {% if service.is_active %}Deactivate Service{% else %}Activate Service{% endif %}
               </button>
             </form>
+            {% comment %} TODO add confirmation {% endcomment %}
             <form method="POST" action="{% url 'service_delete' service.pk %}" class="inline">
               {% csrf_token %}
               <input type="hidden" name="_method" value="DELETE" />
