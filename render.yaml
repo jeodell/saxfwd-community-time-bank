@@ -2,7 +2,7 @@ services:
   - type: web
     name: saxfwd-community-time-bank
     runtime: python
-    plan: free
+    plan: starter
     buildCommand: |
       pip install -r requirements.txt
       cd theme/static_src && npm install && npm run build && cd ../..
