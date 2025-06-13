@@ -7,8 +7,9 @@ User = get_user_model()
 
 CATEGORIES = [
     {"name": "Arts and Crafts", "is_featured": True},
+    {"name": "Beauty", "is_featured": False},
+    {"name": "Caregiving", "is_featured": False},
     {"name": "Education", "is_featured": False},
-    {"name": "Elder Care", "is_featured": False},
     {"name": "Entertainment", "is_featured": False},
     {"name": "Financial", "is_featured": True},
     {"name": "Fitness", "is_featured": False},
