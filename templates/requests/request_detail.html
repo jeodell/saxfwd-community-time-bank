@@ -73,13 +73,13 @@
         </div>
         {% elif request.status == 'pending' and user == request.requester %}
         <div class="mt-4 md:mt-0">
-          <a
-            href="{% url 'request_cancel_form' request.pk %}"
+          <button
+            id="cancelButton"
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
           >
             <i class="fas fa-ban mr-2"></i>
             Cancel Request
-          </a>
+          </button>
         </div>
         {% elif request.status == 'accepted' %}
         <div class="mt-4 md:mt-0 space-y-2">
@@ -135,6 +135,13 @@
           <h2 class="text-xl font-semibold text-gray-900 mb-4 mt-8">Rejection Reason</h2>
           <div class="rounded-lg p-6 bg-red-50 border border-red-100">
             <p class="text-red-800">{{ request.rejection_reason }}</p>
+          </div>
+          {% endif %}
+          <!-- prettier-ignore -->
+          {% if request.status == 'canceled' and request.cancellation_reason %}
+          <h2 class="text-xl font-semibold text-gray-900 mb-4 mt-8">Cancellation Reason</h2>
+          <div class="rounded-lg p-6 bg-red-50 border border-red-100">
+            <p class="text-red-800">{{ request.cancellation_reason }}</p>
           </div>
           {% endif %}
         </div>
@@ -216,4 +223,65 @@
     </div>
   </div>
 </div>
+
+<!-- Cancel Request Modal -->
+<div id="cancellationModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Cancel Request</h3>
+        <button
+          onclick="document.getElementById('cancellationModal').classList.add('hidden')"
+          class="text-gray-400 hover:text-gray-500"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form method="post" action="{% url 'request_cancel' request.pk %}" class="space-y-4">
+        {% csrf_token %}
+        <div>
+          <label for="cancellation_reason" class="block text-sm font-medium text-gray-700">
+            Reason for Cancellation (Optional)
+          </label>
+          <textarea
+            name="cancellation_reason"
+            id="cancellation_reason"
+            rows="3"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+          ></textarea>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            type="button"
+            onclick="document.getElementById('cancellationModal').classList.add('hidden')"
+            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          >
+            Back
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            Cancel Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!-- prettier-ignore -->
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const cancellationModal = document.getElementById('cancellationModal');
+    const cancelButton = document.getElementById('cancelButton');
+
+    cancelButton.addEventListener('click', function () {
+      cancellationModal.classList.remove('hidden');
+      cancellationModal.classList.add('flex');
+    });
+  });
+</script>
 {% endblock %}

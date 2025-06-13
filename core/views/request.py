@@ -3,7 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView, View
 
-from ..forms import ServiceRequestCompleteForm, ServiceRequestRejectForm
+from ..forms import (
+    ServiceRequestCancelForm,
+    ServiceRequestCompleteForm,
+    ServiceRequestRejectForm,
+)
 from ..models import ServiceRequest
 
 
@@ -29,6 +33,8 @@ class RequestListView(LoginRequiredMixin, ListView):
         if by_me_status:
             if by_me_status == "active":
                 my_requests = my_requests.filter(status__in=["pending", "accepted"])
+            elif by_me_status == "declined":
+                my_requests = my_requests.filter(status__in=["rejected", "canceled"])
             else:
                 my_requests = my_requests.filter(status=by_me_status)
         else:
@@ -40,6 +46,10 @@ class RequestListView(LoginRequiredMixin, ListView):
             if to_me_status == "active":
                 requests_to_me = requests_to_me.filter(
                     status__in=["pending", "accepted"]
+                )
+            elif to_me_status == "declined":
+                requests_to_me = requests_to_me.filter(
+                    status__in=["rejected", "canceled"]
                 )
             else:
                 requests_to_me = requests_to_me.filter(status=to_me_status)
@@ -165,12 +175,18 @@ class RequestCancelView(LoginRequiredMixin, View):
             messages.error(request, "Only the requester can cancel requests.")
             return redirect("home")
 
-        try:
-            service_request.cancel_request()
-            messages.success(request, "Request cancelled successfully!")
-            return redirect("request_detail", pk=pk)
-        except ValueError as e:
-            messages.error(request, str(e))
+        form = ServiceRequestCancelForm(request.POST)
+        if form.is_valid():
+            try:
+                cancellation_reason = form.cleaned_data.get("cancellation_reason", "")
+                service_request.cancel_request(cancellation_reason)
+                messages.success(request, "Request canceled successfully!")
+            except ValueError as e:
+                messages.error(request, str(e))
+        else:
+            messages.error(request, "There was an error processing your request.")
+            return redirect("request_cancel_form", pk=pk)
+
         return redirect("request_detail", pk=pk)
 
 
@@ -184,10 +200,10 @@ class RequestCancelFormView(LoginRequiredMixin, View):
             return redirect("home")
 
         if service_request.status != "pending":
-            messages.error(request, "This request cannot be cancelled.")
+            messages.error(request, "This request cannot be canceled.")
             return redirect("request_detail", pk=pk)
 
-        form = ServiceRequestRejectForm()  # Reusing the reject form for cancellation
+        form = ServiceRequestCancelForm()
         return render(
             request, self.template_name, {"request": service_request, "form": form}
         )
@@ -199,22 +215,20 @@ class RequestCancelFormView(LoginRequiredMixin, View):
             return redirect("home")
 
         if service_request.status != "pending":
-            messages.error(request, "This request cannot be cancelled.")
+            messages.error(request, "This request cannot be canceled.")
             return redirect("request_detail", pk=pk)
 
-        form = ServiceRequestRejectForm(request.POST)
+        form = ServiceRequestCancelForm(request.POST)
         if form.is_valid():
-            cancellation_reason = form.cleaned_data["rejection_reason"]
+            cancellation_reason = form.cleaned_data.get("cancellation_reason", "")
             try:
                 service_request.cancel_request(cancellation_reason)
-                messages.success(request, "Request cancelled successfully!")
+                messages.success(request, "Request canceled successfully!")
                 return redirect("request_detail", pk=pk)
             except ValueError as e:
                 messages.error(request, str(e))
         else:
-            messages.error(
-                request, "Please provide a reason for cancelling the request."
-            )
+            messages.error(request, "There was an error processing your request.")
 
         return render(
             request, self.template_name, {"request": service_request, "form": form}
@@ -328,31 +342,24 @@ class RequestCompleteFormView(LoginRequiredMixin, View):
 
         form = ServiceRequestCompleteForm(request.POST)
         if form.is_valid():
-            action = request.POST.get("action")
-
-            if action == "cancel":
-                cancellation_reason = form.cleaned_data.get("cancellation_reason", "")
-                service_request.reject_request(cancellation_reason)
-                messages.success(request, "Request cancelled successfully!")
-            else:  # complete
-                hours_completed = form.cleaned_data["hours_completed"]
-                try:
-                    is_fully_completed = service_request.complete_request(
-                        request.user, hours_completed=hours_completed
+            hours_completed = form.cleaned_data["hours_completed"]
+            try:
+                is_fully_completed = service_request.complete_request(
+                    request.user, hours_completed=hours_completed
+                )
+                if is_fully_completed:
+                    messages.success(
+                        request,
+                        "Request completed successfully! Time credits have been transferred.",
                     )
-                    if is_fully_completed:
-                        messages.success(
-                            request,
-                            "Request completed successfully! Time credits have been transferred.",
-                        )
-                    else:
-                        messages.success(
-                            request,
-                            "Completion status updated. Waiting for the other party to complete.",
-                        )
-                except ValueError as e:
-                    messages.error(request, str(e))
-                    return redirect("request_detail", pk=pk)
+                else:
+                    messages.success(
+                        request,
+                        "Completion status updated. Waiting for the other party to complete.",
+                    )
+            except ValueError as e:
+                messages.error(request, str(e))
+                return redirect("request_detail", pk=pk)
 
             return redirect("request_detail", pk=pk)
 

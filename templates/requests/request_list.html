@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 {% block title %}Service Requests - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="mx-16 p-8">
+<div class="lg:mx-8 p-8">
   <div class="bg-white rounded-lg shadow-sm p-12">
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
       <h1 class="text-2xl font-semibold text-gray-900 mb-4 md:mb-0">Service Requests</h1>
@@ -18,12 +18,12 @@
     </div>
 
     <!-- Request Tabs -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Requests to Me Column -->
       <div class="bg-white rounded-lg shadow-sm p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Requests to Me</h2>
         <div class="border-b border-gray-200 mb-4">
-          <nav class="-mb-px flex space-x-8">
+          <nav class="flex flex-wrap space-x-4 lg:space-x-8">
             <a
               href="?to_me_status=active{% if request.GET.by_me_status %}&by_me_status={{ request.GET.by_me_status }}{% endif %}"
               class="{% if request.GET.to_me_status == 'active' or not request.GET.to_me_status %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
@@ -38,12 +38,13 @@
               <i class="fas fa-flag-checkered mr-2"></i>
               Completed
             </a>
+
             <a
-              href="?to_me_status=rejected{% if request.GET.by_me_status %}&by_me_status={{ request.GET.by_me_status }}{% endif %}"
-              class="{% if request.GET.to_me_status == 'rejected' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+              href="?to_me_status=declined{% if request.GET.by_me_status %}&by_me_status={{ request.GET.by_me_status }}{% endif %}"
+              class="{% if request.GET.to_me_status == 'declined' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
             >
-              <i class="fas fa-times-circle mr-2"></i>
-              Rejected
+              <i class="fas fa-ban mr-2"></i>
+              Declined
             </a>
           </nav>
         </div>
@@ -112,7 +113,7 @@
       <div class="bg-white rounded-lg shadow-sm p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Requests by Me</h2>
         <div class="border-b border-gray-200 mb-4">
-          <nav class="-mb-px flex space-x-8">
+          <nav class="flex flex-wrap space-x-4 lg:space-x-8">
             <a
               href="?by_me_status=active{% if request.GET.to_me_status %}&to_me_status={{ request.GET.to_me_status }}{% endif %}"
               class="{% if request.GET.by_me_status == 'active' or not request.GET.by_me_status %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
@@ -128,11 +129,11 @@
               Completed
             </a>
             <a
-              href="?by_me_status=rejected{% if request.GET.to_me_status %}&to_me_status={{ request.GET.to_me_status }}{% endif %}"
-              class="{% if request.GET.by_me_status == 'rejected' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+              href="?by_me_status=declined{% if request.GET.to_me_status %}&to_me_status={{ request.GET.to_me_status }}{% endif %}"
+              class="{% if request.GET.by_me_status == 'declined' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
             >
-              <i class="fas fa-times-circle mr-2"></i>
-              Rejected
+              <i class="fas fa-ban mr-2"></i>
+              Declined
             </a>
           </nav>
         </div>

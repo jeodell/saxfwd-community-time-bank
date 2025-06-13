@@ -4,7 +4,6 @@ from core.views.request import (
     ApproveCommunityRequestView,
     RejectCommunityRequestView,
     RequestAcceptView,
-    RequestCancelFormView,
     RequestCancelView,
     RequestCommunityHoursView,
     RequestCompleteFormView,
@@ -37,11 +36,6 @@ urlpatterns = [
         "<uuid:pk>/cancel/",
         RequestCancelView.as_view(),
         name="request_cancel",
-    ),
-    path(
-        "<uuid:pk>/cancel-form/",
-        RequestCancelFormView.as_view(),
-        name="request_cancel_form",
     ),
     path(
         "<uuid:pk>/complete/",

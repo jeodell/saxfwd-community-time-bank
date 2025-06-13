@@ -110,3 +110,9 @@ class ServiceRequestRejectForm(forms.Form):
         required=True,
         help_text="Please provide a reason for rejecting this request",
     )
+
+
+class ServiceRequestCancelForm(forms.Form):
+    cancellation_reason = forms.CharField(
+        help_text="Please provide a reason for canceling this request",
+    )
