@@ -1,10 +1,17 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 
 from .models import Service, ServiceRequest
 
 User = get_user_model()
+
+
+def validate_file_size(value):
+    filesize = value.size
+    if filesize > 5 * 1024 * 1024:  # 5MB
+        raise ValidationError("The maximum file size that can be uploaded is 5MB")
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -72,6 +79,12 @@ class ServiceRequestForm(forms.ModelForm):
 
 
 class UserForm(forms.ModelForm):
+    image = forms.ImageField(
+        required=False,
+        validators=[validate_file_size],
+        help_text="Maximum file size: 5MB",
+    )
+
     class Meta:
         model = User
         fields = [

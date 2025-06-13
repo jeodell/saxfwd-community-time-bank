@@ -1,3 +1,4 @@
+import os
 import uuid
 from datetime import datetime
 from decimal import Decimal
@@ -47,7 +48,12 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     bio = models.TextField(blank=True)
-    image = models.ImageField(upload_to="user_images/", blank=True)
+
+    def user_image_path(instance, filename):
+        ext = filename.split(".")[-1]
+        return f"user_images/{timezone.now().strftime('%Y/%m/%d')}/{instance.id}.{ext}"
+
+    image = models.ImageField(upload_to=user_image_path, blank=True)
     terms_accepted = models.BooleanField(
         default=False,
         help_text="User has agreed to use the platform responsibly and not engage in malicious activities or illegal behavior.",
@@ -97,6 +103,33 @@ class User(AbstractUser):
     def full_name(self):
         """Get the user's full name from the User model."""
         return f"{self.first_name} {self.last_name}".strip()
+
+    def save(self, *args, **kwargs):
+        # Delete the old image file and empty directory if it has changed
+        if self.pk:
+            try:
+                user = User.objects.get(pk=self.pk)
+                if user.image and user.image != self.image:
+                    if os.path.isfile(user.image.path):
+                        os.remove(user.image.path)
+                        try:
+                            os.rmdir(os.path.dirname(user.image.path))
+                        except OSError:
+                            pass
+            except User.DoesNotExist:
+                pass
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        # Delete the image file and empty directory when the user is deleted
+        if self.image:
+            if os.path.isfile(self.image.path):
+                os.remove(self.image.path)
+                try:
+                    os.rmdir(os.path.dirname(self.image.path))
+                except OSError:
+                    pass  # Directory not empty or doesn't exist
+        super().delete(*args, **kwargs)
 
 
 class ServiceCategory(models.Model):

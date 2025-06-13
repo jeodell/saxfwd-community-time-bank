@@ -72,7 +72,7 @@ class UserEditView(LoginRequiredMixin, UpdateView):
             messages.error(request, "You do not have permission to update this user.")
             return redirect("home")
 
-        form = UserForm(request.POST, instance=user)
+        form = UserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, "User updated successfully!")
