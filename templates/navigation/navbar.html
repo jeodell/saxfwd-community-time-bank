@@ -3,30 +3,56 @@
   <!-- Desktop menu -->
   <div class="h-8">
     <!-- Login/Welcome-->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 h-full">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 h-full">
       {% if user.is_authenticated %}
-      <div class="hidden sm:flex col-span-1 lg:col-span-4 xl:col-span-5 items-center justify-start bg-primary"></div>
+      <div class="hidden sm:flex col-span-1 md:col-span-4 lg:col-span-5 items-center justify-start bg-primary"></div>
       <div
-        class="col-span-1 lg:col-span-3 xl:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12 space-x-4"
+        class="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12 space-x-4"
       >
-        <a href="{% url 'user_me' %}" class="text-white flex items-center space-x-2 hover:text-white/80">
-          <span>Welcome, {{ user.first_name }}</span>
-          {% if user.image %}
-          <img src="{{ user.image.url }}" alt="User Image" class="h-6 w-6 rounded-full object-cover" />
-          {% else %}
-          <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
-            <i class="fas fa-user text-gray-500"></i>
+        <div class="relative">
+          <button
+            onclick="toggleProfileMenu()"
+            class="text-white flex items-center space-x-2 hover:text-white/80 focus:outline-none"
+          >
+            <span>Welcome, {{ user.first_name }}</span>
+            {% if user.image %}
+            <img src="{{ user.image.url }}" alt="User Image" class="h-6 w-6 rounded-full object-cover" />
+            {% else %}
+            <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
+              <i class="fas fa-user text-gray-500"></i>
+            </div>
+            {% endif %}
+            <i class="fas fa-chevron-down text-xs"></i>
+          </button>
+          <div
+            id="profile-menu"
+            class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+          >
+            <div class="py-1" role="menu" aria-orientation="vertical">
+              <a
+                href="{% url 'user_me' %}"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary"
+                role="menuitem"
+              >
+                My Profile
+              </a>
+              <form method="post" action="{% url 'logout' %}" class="block" id="logout-form">
+                {% csrf_token %}
+                <a
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary cursor-pointer"
+                  role="menuitem"
+                  onclick="logout(); return false;"
+                >
+                  Logout
+                </a>
+              </form>
+            </div>
           </div>
-          {% endif %}
-        </a>
-        <form method="post" action="{% url 'logout' %}" class="inline" id="logout-form">
-          {% csrf_token %}
-          <a class="text-white hover:text-white/80 cursor-pointer" onclick="logout(); return false;">Logout</a>
-        </form>
+        </div>
       </div>
       {% else %}
-      <div class="hidden sm:flex col-span-1 lg:col-span-4 xl:col-span-5 items-center justify-start bg-primary"></div>
-      <div class="col-span-1 lg:col-span-3 xl:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12">
+      <div class="hidden sm:flex col-span-1 md:col-span-4 lg:col-span-5 items-center justify-start bg-primary"></div>
+      <div class="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12">
         <a href="{% url 'login' %}" class="text-white hover:text-white/80 uppercase">Login</a>
         <span class="text-white px-1">or</span>
         <a href="{% url 'register' %}" class="text-white hover:text-white/80 uppercase">Register</a>
@@ -182,6 +208,21 @@
   function logout() {
     document.getElementById('logout-form').submit();
   }
+
+  function toggleProfileMenu() {
+    const menu = document.getElementById('profile-menu');
+    menu.classList.toggle('hidden');
+  }
+
+  // Close profile menu when clicking outside
+  document.addEventListener('click', function (event) {
+    const menu = document.getElementById('profile-menu');
+    const button = document.querySelector('button[onclick="toggleProfileMenu()"]');
+
+    if (!menu.classList.contains('hidden') && !menu.contains(event.target) && !button.contains(event.target)) {
+      menu.classList.add('hidden');
+    }
+  });
 
   function toggleMobileMenu() {
     const menu = document.getElementById('mobile-menu');
