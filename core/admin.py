@@ -12,14 +12,19 @@ from .models import (
 
 @admin.register(ServiceCategory)
 class ServiceCategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "description", "is_featured")
-    search_fields = ("name",)
+    ordering = ("name",)
+    list_display = ("name", "description", "is_featured", "created_at")
+    search_fields = (
+        "id",
+        "name",
+    )
+    date_hierarchy = "created_at"
 
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
+    ordering = ("-created_at",)
     list_display = (
-        "id",
         "title",
         "provider",
         "category",
@@ -28,6 +33,7 @@ class ServiceAdmin(admin.ModelAdmin):
     )
     list_filter = ("category", "is_active", "created_at")
     search_fields = (
+        "id",
         "title",
         "description",
         "provider__first_name",
@@ -38,8 +44,8 @@ class ServiceAdmin(admin.ModelAdmin):
 
 @admin.register(ServiceRequest)
 class ServiceRequestAdmin(admin.ModelAdmin):
+    ordering = ("-created_at",)
     list_display = (
-        "id",
         "service",
         "requester",
         "status",
@@ -59,6 +65,7 @@ class ServiceRequestAdmin(admin.ModelAdmin):
         "requester_completed",
     )
     search_fields = (
+        "id",
         "service__title",
         "requester__first_name",
         "requester__last_name",
@@ -87,6 +94,8 @@ class ServiceRequestAdmin(admin.ModelAdmin):
                     "requested_date",
                     "provider_completed",
                     "requester_completed",
+                    "cancellation_reason",
+                    "rejection_reason",
                     "completed_at",
                 )
             },
@@ -100,8 +109,8 @@ class ServiceRequestAdmin(admin.ModelAdmin):
 
 @admin.register(TimeBankLedger)
 class TimeBankLedgerAdmin(admin.ModelAdmin):
+    ordering = ("-created_at",)
     list_display = (
-        "id",
         "user",
         "service_request",
         "transaction_type",
@@ -110,6 +119,7 @@ class TimeBankLedgerAdmin(admin.ModelAdmin):
     )
     list_filter = ("transaction_type", "created_at")
     search_fields = (
+        "user__id",
         "user__email",
         "user__first_name",
         "user__last_name",
@@ -120,9 +130,8 @@ class TimeBankLedgerAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    ordering = ("email",)
+    ordering = ("-date_joined",)
     list_display = (
-        "id",
         "email",
         "first_name",
         "last_name",
@@ -139,6 +148,7 @@ class UserAdmin(BaseUserAdmin):
     )
     list_filter = ("is_active", "is_staff", "is_superuser")
     search_fields = (
+        "id",
         "email",
         "first_name",
         "last_name",
