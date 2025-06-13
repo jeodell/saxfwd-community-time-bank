@@ -43,6 +43,12 @@ class UserView(LoginRequiredMixin, View):
             "requester_transactions": TimeBankLedger.objects.filter(
                 user=user, transaction_type="debit"
             ).order_by("-created_at")[:5],
+            "community_donations": TimeBankLedger.objects.filter(
+                user=user, transaction_type="community_donation"
+            ).order_by("-created_at")[:5],
+            "community_requests": TimeBankLedger.objects.filter(
+                user=user, transaction_type="community_request"
+            ).order_by("-created_at")[:5],
             "form": UserForm(instance=user) if request.user == user else None,
         }
         return render(request, self.template_name, context)

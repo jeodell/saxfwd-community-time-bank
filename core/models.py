@@ -83,7 +83,11 @@ class User(AbstractUser):
             user=self, transaction_type="debit"
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
 
-        return credits - debits
+        community_donations = TimeBankLedger.objects.filter(
+            user=self, transaction_type="community_donation"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+        return credits - debits - community_donations
 
     @property
     def total_hours_earned(self):
@@ -95,9 +99,19 @@ class User(AbstractUser):
     @property
     def total_hours_spent(self):
         """Calculate total hours spent from ledger entries."""
-        return TimeBankLedger.objects.filter(
+        debits = TimeBankLedger.objects.filter(
             user=self, transaction_type="debit"
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+        community_donations = TimeBankLedger.objects.filter(
+            user=self, transaction_type="community_donation"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+        community_requests = TimeBankLedger.objects.filter(
+            user=self, transaction_type="community_request"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+        return debits + community_requests + community_donations
 
     @property
     def full_name(self):
@@ -254,7 +268,7 @@ class ServiceRequest(models.Model):
         ("pending", "Pending"),
         ("accepted", "Accepted"),
         ("completed", "Completed"),
-        ("cancelled", "Cancelled"),
+        ("canceled", "Canceled"),
         ("rejected", "Rejected"),
     ]
 
@@ -346,8 +360,8 @@ class ServiceRequest(models.Model):
         Cancel this service request.
         """
         if self.status != "pending":
-            raise ValueError("This request cannot be cancelled")
-        self.status = "cancelled"
+            raise ValueError("This request cannot be canceled")
+        self.status = "canceled"
         self.cancellation_reason = reason
         self.save()
 
@@ -400,6 +414,33 @@ class ServiceRequest(models.Model):
 
         self.save()
         return self.provider_completed and self.requester_completed
+
+    def can_request_community_hours(self):
+        """Check if this service request can be converted to a community request."""
+        return self.status == "pending"
+
+    def request_community_hours(self, reason):
+        """Convert this service request to a community request."""
+        if not self.can_request_community_hours():
+            raise ValueError("This request cannot be converted to a community request")
+
+        # Create a new CommunityRequest instance
+        community_request = CommunityRequest.objects.create(
+            servicerequest_ptr=self, reason=reason, community_status="pending"
+        )
+        return community_request
+
+    def approve_community_request(self, reviewer, notes=""):
+        """Approve this service request as a community request."""
+        if not isinstance(self, CommunityRequest):
+            raise ValueError("This is not a community request")
+        return self.approve(reviewer, notes)
+
+    def reject_community_request(self, reviewer, notes=""):
+        """Reject this service request as a community request."""
+        if not isinstance(self, CommunityRequest):
+            raise ValueError("This is not a community request")
+        return self.reject(reviewer, notes)
 
 
 class CommunityRequest(ServiceRequest):
@@ -489,6 +530,8 @@ class CommunityRequest(ServiceRequest):
         """
         if self.community_status != "approved":
             raise ValueError("Community request must be approved before accepting")
+        if self.status != "pending":
+            raise ValueError("This request cannot be accepted")
         super().accept_request()
 
 
@@ -525,7 +568,9 @@ class TimeBankLedger(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    service_request = models.ForeignKey(ServiceRequest, on_delete=models.CASCADE)
+    service_request = models.ForeignKey(
+        ServiceRequest, on_delete=models.CASCADE, null=True, blank=True
+    )
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
     hours = models.DecimalField(
         max_digits=4, decimal_places=2, validators=[MinValueValidator(0.25)]

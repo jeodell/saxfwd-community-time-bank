@@ -104,6 +104,38 @@
                 {% endfor %}
               </ul>
             </div>
+            <!-- Community Donations -->
+            <div>
+              <div class="font-semibold text-gray-800 mb-2">Community Donations</div>
+              <ul class="space-y-2">
+                {% for transaction in community_donations %}
+                <li class="flex items-center text-gray-800 text-sm">
+                  <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
+                  <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                  <span class="flex-1 border-b border-primary py-1 mx-2"></span>
+                  <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-600 text-sm">No community donations</li>
+                {% endfor %}
+              </ul>
+            </div>
+            <!-- Community Requests -->
+            <div>
+              <div class="font-semibold text-gray-800 mb-2">Community Requests</div>
+              <ul class="space-y-2">
+                {% for transaction in community_requests %}
+                <li class="flex items-center text-gray-800 text-sm">
+                  <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
+                  <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                  <span class="flex-1 border-b border-primary py-1 mx-2"></span>
+                  <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-600 text-sm">No community requests</li>
+                {% endfor %}
+              </ul>
+            </div>
           </div>
         </div>
         <!-- Settings Card -->
