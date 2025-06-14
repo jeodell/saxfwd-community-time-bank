@@ -4,9 +4,13 @@
 {% block title %}About - Saxapahaw Timebank{% endblock %}
 {% block content %}
 <!-- About Section -->
-<section class="grid grid-cols-1 md:grid-cols-2 gap-10 p-8 md:p-12 lg:p-16 max-w-7xl mx-auto">
-  <div class="space-y-12 md:pt-12">
-    <h2 class="text-5xl font-bold text-primary tracking-widest uppercase">About</h2>
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-12 pb-16">
+  <h2
+    class="col-span-1 lg:col-span-2 text-5xl font-bold text-primary tracking-widest uppercase bg-card w-full text-left px-8 lg:pl-24 lg:pr-8 py-12"
+  >
+    About
+  </h2>
+  <div class="col-span-1 space-y-12 px-8 lg:pl-24 lg:pr-8">
     <p class="text-gray-700 text-lg">
       In a Timebank, people exchange time instead of money. One hour of service earns one credit, which can be spent by
       receiving help from another member.
@@ -26,11 +30,11 @@
       </p>
     </div>
   </div>
-  <div>
+  <div class="col-span-1 lg:-mt-24 px-8 lg:pr-24 lg:pl-8 flex items-center justify-center">
     <img
       src="{% static 'img/sax_mill_area.jpg' %}"
       alt="About Saxapahaw"
-      class="rounded-xl shadow-lg w-full object-cover h-full"
+      class="rounded-xl shadow-xl w-full object-cover h-full object-center"
     />
   </div>
 </section>
