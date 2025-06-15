@@ -33,7 +33,7 @@ class RequestListView(LoginRequiredMixin, ListView):
         if by_me_status:
             if by_me_status == "active":
                 my_requests = my_requests.filter(status__in=["pending", "accepted"])
-            elif by_me_status == "declined":
+            elif by_me_status == "closed":
                 my_requests = my_requests.filter(status__in=["rejected", "canceled"])
             else:
                 my_requests = my_requests.filter(status=by_me_status)
@@ -47,7 +47,7 @@ class RequestListView(LoginRequiredMixin, ListView):
                 requests_to_me = requests_to_me.filter(
                     status__in=["pending", "accepted"]
                 )
-            elif to_me_status == "declined":
+            elif to_me_status == "closed":
                 requests_to_me = requests_to_me.filter(
                     status__in=["rejected", "canceled"]
                 )
