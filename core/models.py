@@ -2,14 +2,17 @@ import os
 import uuid
 from datetime import datetime
 from decimal import Decimal
+from io import BytesIO
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from PIL import Image
 
 
 class UserManager(BaseUserManager):
@@ -132,6 +135,39 @@ class User(AbstractUser):
                             pass
             except User.DoesNotExist:
                 pass
+
+        # Resize and crop image to 200x200
+        if self.image:
+            img = Image.open(self.image)
+            if img.mode in ("RGBA", "LA"):
+                background = Image.new("RGB", img.size, (255, 255, 255))
+                background.paste(img, mask=img.split()[-1])
+                img = background
+
+            # Crop image to square
+            width, height = img.size
+            size = min(width, height)
+            left = (width - size) // 2
+            top = (height - size) // 2
+            right = left + size
+            bottom = top + size
+            img = img.crop((left, top, right, bottom))
+
+            # Resize image to thumbnail size (200x200)
+            img = img.resize((200, 200), Image.Resampling.LANCZOS)
+
+            # Save the resized image
+            buffer = BytesIO()
+            img.save(buffer, format="JPEG", quality=85)
+            buffer.seek(0)
+
+            # Generate new filename
+            ext = self.image.name.split(".")[-1]
+            filename = f"{self.id}.{ext}"
+
+            # Save the resized image
+            self.image.save(filename, ContentFile(buffer.read()), save=False)
+
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
