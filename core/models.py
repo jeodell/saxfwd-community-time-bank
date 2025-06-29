@@ -122,6 +122,11 @@ class User(AbstractUser):
         return f"{self.first_name} {self.last_name}".strip()
 
     def save(self, *args, **kwargs):
+        # Check if this is just a last_login update and skips image processing if so
+        if self.pk and len(args) == 0 and kwargs.get("update_fields") == ["last_login"]:
+            super().save(*args, **kwargs)
+            return
+
         # Delete the old image file and empty directory if it has changed
         if self.pk:
             try:
