@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views.generic import CreateView, TemplateView, View
 
 from ..forms import UserRegistrationForm
-from ..models import ServiceCategory
+from ..models import MeetingNotes, ServiceCategory
 
 
 class HomeView(TemplateView):
@@ -58,6 +58,11 @@ class ContactView(View):
 
 class AboutView(TemplateView):
     template_name = "core/about.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["meeting_notes"] = MeetingNotes.objects.filter(is_public=True)
+        return context
 
 
 class RegisterView(CreateView):

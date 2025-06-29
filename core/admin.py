@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .models import (
+    MeetingNotes,
     Service,
     ServiceCategory,
     ServiceRequest,
@@ -201,3 +202,26 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
     )
+
+
+@admin.register(MeetingNotes)
+class MeetingNotesAdmin(admin.ModelAdmin):
+    list_display = ["meeting_date", "is_public", "created_by", "created_at"]
+    list_filter = ["meeting_date", "is_public", "created_at"]
+    date_hierarchy = "meeting_date"
+    readonly_fields = ["created_at", "updated_at"]
+
+    fieldsets = (
+        ("Meeting Information", {"fields": ("meeting_date",)}),
+        ("File Upload", {"fields": ("pdf_file",)}),
+        ("Settings", {"fields": ("is_public", "created_by")}),
+        (
+            "Timestamps",
+            {"fields": ("created_at", "updated_at"), "classes": ("collapse",)},
+        ),
+    )
+
+    def save_model(self, request, obj, form, change):
+        if not change:  # Only set created_by on creation
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)

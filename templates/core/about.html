@@ -150,4 +150,25 @@
 <section class="relative">
   <img src="{% static 'img/sax_lake_in_fall.jpg' %}" alt="Footer" class="w-full h-[600px] object-cover" />
 </section>
+
+<!-- Meeting Notes Section -->
+<section class="bg-card rounded-2xl px-8 md:px-12 lg:px-16 py-16 md:py-20 lg:py-24">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-5xl font-bold text-center text-primary mb-16 tracking-widest uppercase">Meeting Notes</h2>
+
+    {% if meeting_notes %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {% for notes in meeting_notes %}
+      <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
+        <div class="font-bold text-2xl mb-2 text-primary uppercase">{{ notes.meeting_date|date:"F j, Y" }}</div>
+        <div class="h-[2px] bg-primary my-4"></div>
+        <a href="{{ notes.pdf_file.url }}" class="text-primary hover:underline" target="_blank">View Full Notes →</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-gray-600 text-lg">No meeting notes available yet.</p>
+    {% endif %}
+  </div>
+</section>
 {% endblock %}

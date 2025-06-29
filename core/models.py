@@ -619,3 +619,37 @@ class TimeBankLedger(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class MeetingNotes(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    meeting_date = models.DateField()
+    pdf_file = models.FileField(upload_to="meeting_notes/")
+    is_public = models.BooleanField(default=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.meeting_date}"
+
+    class Meta:
+        ordering = ["-meeting_date", "-created_at"]
+        verbose_name_plural = "Meeting Notes"
+
+    def clean(self):
+        if self.pdf_file:
+            # Validate file extension
+            if not self.pdf_file.name.lower().endswith(".pdf"):
+                raise ValidationError("Only PDF files are allowed.")
+
+            # Validate file size (max 10MB)
+            if self.pdf_file.size > 10 * 1024 * 1024:  # 10MB
+                raise ValidationError("File size must be under 10MB.")
+
+    def delete(self, *args, **kwargs):
+        # Delete the PDF file when the meeting notes are deleted
+        if self.pdf_file:
+            if os.path.isfile(self.pdf_file.path):
+                os.remove(self.pdf_file.path)
+        super().delete(*args, **kwargs)
