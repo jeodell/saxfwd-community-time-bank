@@ -1,7 +1,7 @@
 <!-- prettier-ignore -->
 {% extends 'base.html' %}
 {% block title %}
-{{ user.first_name }} {{ user.last_name }}'s Account - Saxapahaw Timebank
+{{ profile_user.first_name }} {{ profile_user.last_name }}'s Account - Saxapahaw Timebank
 {% endblock %}
 {% block content %}
 <div class="max-w-7xl mx-auto p-8">
@@ -9,13 +9,19 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl md:text-3xl font-semibold text-gray-800">
+        <!-- prettier-ignore -->
+        {% if profile_user.id == request.user.id %}
         Welcome,
-        <span class="text-primary">{{ user.first_name }}</span>
+        <span class="text-primary">{{ profile_user.first_name }}</span>
+        <!-- prettier-ignore -->
+        {% else %}
+        {{ profile_user.first_name }}'s Account
+        {% endif %}
       </h1>
       <div class="flex items-center space-x-3">
-        {% if user.image %}
+        {% if profile_user.image %}
         <img
-          src="{{ user.image.url }}"
+          src="{{ profile_user.image.url }}"
           alt="User Image"
           class="w-14 h-14 rounded-full object-cover border-2 border-primary"
         />
@@ -34,8 +40,8 @@
           <div class="text-yellow-500 mb-4 mt-2">
             <i class="fas fa-clock text-4xl"></i>
           </div>
-          {% if user.id == request.user.id %}
-          <div class="text-3xl font-semibold text-yellow-500">{{ user.time_balance | default:0 }} HOURS</div>
+          {% if profile_user.id == request.user.id %}
+          <div class="text-3xl font-semibold text-yellow-500">{{ profile_user.time_balance | default:0 }} HOURS</div>
           {% else %}
           <div class="text-3xl font-semibold text-yellow-500">Private</div>
           {% endif %}
@@ -53,7 +59,7 @@
             <li class="text-primary">No services offered yet</li>
             {% endfor %}
           </ul>
-          {% if user.id == request.user.id %}
+          {% if profile_user.id == request.user.id %}
           <a
             href="{% url 'service_create' %}"
             class="block w-full text-center mt-4 px-4 py-2 rounded-md bg-primary text-white font-semibold hover:bg-primary-light transition"
@@ -142,9 +148,9 @@
         <div class="bg-card rounded-lg p-8">
           <div class="flex items-center justify-between mb-4">
             <div class="text-xl font-semibold uppercase tracking-wide text-primary">Account Settings</div>
-            {% if user.id == request.user.id %}
+            {% if profile_user.id == request.user.id %}
             <a
-              href="{% url 'user_edit' user.id %}"
+              href="{% url 'user_edit' profile_user.id %}"
               class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
             >
               <i class="fas fa-edit mr-2"></i>
@@ -160,23 +166,23 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <p class="text-sm text-gray-800 font-semibold">Name</p>
-                <p class="text-sm text-gray-600">{{ user.first_name }} {{ user.last_name }}</p>
+                <p class="text-sm text-gray-600">{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-800 font-semibold">Email</p>
-                <p class="text-sm text-gray-600">{{ user.email|default:"Not provided" }}</p>
+                <p class="text-sm text-gray-600">{{ profile_user.email|default:"Not provided" }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-800 font-semibold">Phone</p>
-                <p class="text-sm text-gray-600">{{ user.phone_number|default:"Not provided" }}</p>
+                <p class="text-sm text-gray-600">{{ profile_user.phone_number|default:"Not provided" }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-800 font-semibold">Street Address</p>
-                <p class="text-sm text-gray-600">{{ user.address|default:"Not provided" }}</p>
+                <p class="text-sm text-gray-600">{{ profile_user.address|default:"Not provided" }}</p>
               </div>
               <div class="md:col-span-2">
                 <p class="text-sm text-gray-800 font-semibold">Bio</p>
-                <p class="text-sm text-gray-600">{{ user.bio|default:"Not provided" }}</p>
+                <p class="text-sm text-gray-600">{{ profile_user.bio|default:"Not provided" }}</p>
               </div>
             </div>
           </div>
@@ -187,11 +193,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <p class="text-sm text-gray-800 font-semibold">Member Since</p>
-                <p class="text-sm text-gray-600">{{ user.date_joined|date:"F j, Y" }}</p>
+                <p class="text-sm text-gray-600">{{ profile_user.date_joined|date:"F j, Y" }}</p>
               </div>
               <div>
                 <p class="text-sm text-gray-800 font-semibold">Last Updated</p>
-                <p class="text-sm text-gray-600">{{ user.updated_at|date:"F j, Y" }}</p>
+                <p class="text-sm text-gray-600">{{ profile_user.updated_at|date:"F j, Y" }}</p>
               </div>
             </div>
           </div>

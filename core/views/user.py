@@ -34,7 +34,7 @@ class UserView(LoginRequiredMixin, View):
             return redirect("home")
 
         context = {
-            "user": user,
+            "profile_user": user,
             "services": Service.objects.filter(provider=user),
             "requests": ServiceRequest.objects.filter(requester=user),
             "provider_transactions": TimeBankLedger.objects.filter(
