@@ -10,7 +10,6 @@ from core.views.request import (
     RequestCompleteView,
     RequestDetailView,
     RequestListView,
-    RequestRejectFormView,
     RequestRejectView,
 )
 
@@ -26,11 +25,6 @@ urlpatterns = [
         "<uuid:pk>/reject/",
         RequestRejectView.as_view(),
         name="request_reject",
-    ),
-    path(
-        "<uuid:pk>/reject-form/",
-        RequestRejectFormView.as_view(),
-        name="request_reject_form",
     ),
     path(
         "<uuid:pk>/cancel/",

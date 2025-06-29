@@ -106,7 +106,6 @@ class ServiceRequestCompleteForm(forms.ModelForm):
 
 class ServiceRequestRejectForm(forms.Form):
     rejection_reason = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 6}),
         required=True,
         help_text="Please provide a reason for rejecting this request",
     )
@@ -114,5 +113,6 @@ class ServiceRequestRejectForm(forms.Form):
 
 class ServiceRequestCancelForm(forms.Form):
     cancellation_reason = forms.CharField(
+        required=False,
         help_text="Please provide a reason for canceling this request",
     )

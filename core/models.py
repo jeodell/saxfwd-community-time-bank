@@ -391,14 +391,15 @@ class ServiceRequest(models.Model):
         self.rejection_reason = reason
         self.save()
 
-    def cancel_request(self, reason=""):
+    def cancel_request(self, reason=None):
         """
         Cancel this service request.
         """
         if self.status != "pending":
             raise ValueError("This request cannot be canceled")
         self.status = "canceled"
-        self.cancellation_reason = reason
+        if reason:
+            self.cancellation_reason = reason
         self.save()
 
     def complete_request(self, user, hours_completed=None):

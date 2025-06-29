@@ -116,56 +116,8 @@ class RequestRejectView(LoginRequiredMixin, View):
             messages.error(
                 request, "Please provide a reason for rejecting the request."
             )
-            return redirect("request_reject_form", pk=pk)
 
         return redirect("request_detail", pk=pk)
-
-
-class RequestRejectFormView(LoginRequiredMixin, View):
-    template_name = "requests/request_reject_form.html"
-
-    def get(self, request, pk):
-        service_request = get_object_or_404(ServiceRequest, pk=pk)
-        if request.user != service_request.service.provider:
-            messages.error(request, "Only the service provider can reject requests.")
-            return redirect("home")
-
-        if service_request.status != "pending":
-            messages.error(request, "This request cannot be rejected.")
-            return redirect("request_detail", pk=pk)
-
-        form = ServiceRequestRejectForm()
-        return render(
-            request, self.template_name, {"request": service_request, "form": form}
-        )
-
-    def post(self, request, pk):
-        service_request = get_object_or_404(ServiceRequest, pk=pk)
-        if request.user != service_request.service.provider:
-            messages.error(request, "Only the service provider can reject requests.")
-            return redirect("home")
-
-        if service_request.status != "pending":
-            messages.error(request, "This request cannot be rejected.")
-            return redirect("request_detail", pk=pk)
-
-        form = ServiceRequestRejectForm(request.POST)
-        if form.is_valid():
-            rejection_reason = form.cleaned_data["rejection_reason"]
-            try:
-                service_request.reject_request(rejection_reason)
-                messages.success(request, "Request rejected successfully!")
-                return redirect("request_detail", pk=pk)
-            except ValueError as e:
-                messages.error(request, str(e))
-        else:
-            messages.error(
-                request, "Please provide a reason for rejecting the request."
-            )
-
-        return render(
-            request, self.template_name, {"request": service_request, "form": form}
-        )
 
 
 class RequestCancelView(LoginRequiredMixin, View):
@@ -185,54 +137,8 @@ class RequestCancelView(LoginRequiredMixin, View):
                 messages.error(request, str(e))
         else:
             messages.error(request, "There was an error processing your request.")
-            return redirect("request_cancel_form", pk=pk)
 
         return redirect("request_detail", pk=pk)
-
-
-class RequestCancelFormView(LoginRequiredMixin, View):
-    template_name = "requests/request_cancel_form.html"
-
-    def get(self, request, pk):
-        service_request = get_object_or_404(ServiceRequest, pk=pk)
-        if request.user != service_request.requester:
-            messages.error(request, "Only the requester can cancel requests.")
-            return redirect("home")
-
-        if service_request.status != "pending":
-            messages.error(request, "This request cannot be canceled.")
-            return redirect("request_detail", pk=pk)
-
-        form = ServiceRequestCancelForm()
-        return render(
-            request, self.template_name, {"request": service_request, "form": form}
-        )
-
-    def post(self, request, pk):
-        service_request = get_object_or_404(ServiceRequest, pk=pk)
-        if request.user != service_request.requester:
-            messages.error(request, "Only the requester can cancel requests.")
-            return redirect("home")
-
-        if service_request.status != "pending":
-            messages.error(request, "This request cannot be canceled.")
-            return redirect("request_detail", pk=pk)
-
-        form = ServiceRequestCancelForm(request.POST)
-        if form.is_valid():
-            cancellation_reason = form.cleaned_data.get("cancellation_reason", "")
-            try:
-                service_request.cancel_request(cancellation_reason)
-                messages.success(request, "Request canceled successfully!")
-                return redirect("request_detail", pk=pk)
-            except ValueError as e:
-                messages.error(request, str(e))
-        else:
-            messages.error(request, "There was an error processing your request.")
-
-        return render(
-            request, self.template_name, {"request": service_request, "form": form}
-        )
 
 
 class RequestCompleteView(LoginRequiredMixin, View):

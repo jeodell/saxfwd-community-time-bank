@@ -63,13 +63,13 @@
               Accept Request
             </button>
           </form>
-          <a
-            href="{% url 'request_reject_form' request.pk %}"
+          <button
+            id="rejectButton"
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
           >
             <i class="fas fa-times mr-2"></i>
             Reject Request
-          </a>
+          </button>
         </div>
         {% elif request.status == 'pending' and user == request.requester %}
         <div class="mt-4 md:mt-0">
@@ -269,6 +269,64 @@
     </div>
   </div>
 </div>
+
+<!-- Reject Request Modal -->
+<div id="rejectionModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Reject Request</h3>
+        <button
+          onclick="document.getElementById('rejectionModal').classList.add('hidden')"
+          class="text-gray-400 hover:text-gray-500"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-yellow-700">
+              Are you sure you want to reject this request? Please provide a reason for rejection.
+            </p>
+          </div>
+        </div>
+      </div>
+      <form method="post" action="{% url 'request_reject' request.pk %}" class="space-y-4">
+        {% csrf_token %}
+        <div>
+          <label for="rejection_reason" class="block text-sm font-medium text-gray-700">Reason for Rejection</label>
+          <textarea
+            name="rejection_reason"
+            id="rejection_reason"
+            rows="4"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+            required
+          ></textarea>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            type="button"
+            onclick="document.getElementById('rejectionModal').classList.add('hidden')"
+            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          >
+            Back
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            <i class="fas fa-times mr-2"></i>
+            Reject Request
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 <!-- prettier-ignore -->
@@ -277,11 +335,22 @@
   document.addEventListener('DOMContentLoaded', function () {
     const cancellationModal = document.getElementById('cancellationModal');
     const cancelButton = document.getElementById('cancelButton');
+    const rejectionModal = document.getElementById('rejectionModal');
+    const rejectButton = document.getElementById('rejectButton');
 
-    cancelButton.addEventListener('click', function () {
-      cancellationModal.classList.remove('hidden');
-      cancellationModal.classList.add('flex');
-    });
+    if (cancelButton) {
+      cancelButton.addEventListener('click', function () {
+        cancellationModal.classList.remove('hidden');
+        cancellationModal.classList.add('flex');
+      });
+    }
+
+    if (rejectButton) {
+      rejectButton.addEventListener('click', function () {
+        rejectionModal.classList.remove('hidden');
+        rejectionModal.classList.add('flex');
+      });
+    }
   });
 </script>
 {% endblock %}
