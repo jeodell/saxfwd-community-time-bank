@@ -1,4 +1,3 @@
-import os
 import uuid
 from datetime import datetime
 from decimal import Decimal
@@ -54,7 +53,7 @@ class User(AbstractUser):
 
     def user_image_path(instance, filename):
         ext = filename.split(".")[-1]
-        return f"uploads/user_images/{timezone.now().strftime('%Y/%m/%d')}/{instance.id}.{ext}"
+        return f"uploads/user_images/{instance.id}.{ext}"
 
     image = models.ImageField(upload_to=user_image_path, blank=True)
     terms_accepted = models.BooleanField(
@@ -127,17 +126,13 @@ class User(AbstractUser):
             super().save(*args, **kwargs)
             return
 
-        # Delete the old image file and empty directory if it has changed
+        # Delete the old image file if it has changed
         if self.pk:
             try:
                 user = User.objects.get(pk=self.pk)
                 if user.image and user.image != self.image:
-                    if os.path.isfile(user.image.path):
-                        os.remove(user.image.path)
-                        try:
-                            os.rmdir(os.path.dirname(user.image.path))
-                        except OSError:
-                            pass
+                    # Use storage backend to delete the file (works with both local and S3)
+                    user.image.delete(save=False)
             except User.DoesNotExist:
                 pass
 
