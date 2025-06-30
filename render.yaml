@@ -3,13 +3,7 @@ services:
     name: saxapahaw-timebank
     runtime: python
     plan: starter
-    buildCommand: |
-      pip install -r requirements.txt
-      cd theme/static_src && npm install && npm run build && cd ../..
-    startCommand: >
-      python manage.py tailwind build &&
-      python manage.py collectstatic --noinput &&
-      python manage.py migrate &&
-      python -m gunicorn timebank.wsgi:application -k uvicorn.workers.UvicornWorker
+    buildCommand: ./build.sh
+    startCommand: python -m gunicorn timebank.asgi:application -k uvicorn.workers.UvicornWorker
     envVars:
       - fromGroup: timebank-env
