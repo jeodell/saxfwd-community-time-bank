@@ -54,7 +54,7 @@ class User(AbstractUser):
 
     def user_image_path(instance, filename):
         ext = filename.split(".")[-1]
-        return f"user_images/{timezone.now().strftime('%Y/%m/%d')}/{instance.id}.{ext}"
+        return f"uploads/user_images/{timezone.now().strftime('%Y/%m/%d')}/{instance.id}.{ext}"
 
     image = models.ImageField(upload_to=user_image_path, blank=True)
     terms_accepted = models.BooleanField(
@@ -176,14 +176,10 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        # Delete the image file and empty directory when the user is deleted
+        # Delete the image file when the user is deleted
         if self.image:
-            if os.path.isfile(self.image.path):
-                os.remove(self.image.path)
-                try:
-                    os.rmdir(os.path.dirname(self.image.path))
-                except OSError:
-                    pass  # Directory not empty or doesn't exist
+            # Use the storage backend to delete the file (works with both local and S3)
+            self.image.delete(save=False)
         super().delete(*args, **kwargs)
 
 
@@ -630,11 +626,8 @@ class TimeBankLedger(models.Model):
 class MeetingNotes(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     meeting_date = models.DateField()
-    pdf_file = models.FileField(upload_to="meeting_notes/")
-    is_public = models.BooleanField(default=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    pdf_file = models.FileField(upload_to="uploads/meeting_notes/")
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.meeting_date}"
@@ -656,6 +649,6 @@ class MeetingNotes(models.Model):
     def delete(self, *args, **kwargs):
         # Delete the PDF file when the meeting notes are deleted
         if self.pdf_file:
-            if os.path.isfile(self.pdf_file.path):
-                os.remove(self.pdf_file.path)
+            # Use the storage backend to delete the file (works with both local and S3)
+            self.pdf_file.delete(save=False)
         super().delete(*args, **kwargs)

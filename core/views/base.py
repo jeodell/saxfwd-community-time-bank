@@ -61,7 +61,7 @@ class AboutView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["meeting_notes"] = MeetingNotes.objects.filter(is_public=True)
+        context["meeting_notes"] = MeetingNotes.objects.all()
         return context
 
 
