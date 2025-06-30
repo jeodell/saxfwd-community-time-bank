@@ -11,7 +11,8 @@ urlpatterns = [
     path("requests/", include("core.urls.request")),
     path("users/", include("core.urls.user")),
     path("ledger/", include("core.urls.ledger")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
