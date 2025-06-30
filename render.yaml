@@ -10,6 +10,6 @@ services:
       python manage.py tailwind build &&
       python manage.py collectstatic --noinput &&
       python manage.py migrate &&
-      gunicorn timebank.wsgi:application
+      python -m gunicorn timebank.wsgi:application -k uvicorn.workers.UvicornWorker
     envVars:
       - fromGroup: timebank-env
