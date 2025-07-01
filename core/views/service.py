@@ -43,6 +43,7 @@ class ServiceListView(ListView):
             services = Service.objects.filter(
                 Q(title__icontains=search) | Q(description__icontains=search),
                 provider=self.request.user,
+                is_active=True,
                 is_deleted=False,
             )
             if category:

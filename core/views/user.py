@@ -35,7 +35,9 @@ class UserView(LoginRequiredMixin, View):
 
         context = {
             "profile_user": user,
-            "services": Service.objects.filter(provider=user),
+            "services": Service.objects.filter(
+                provider=user, is_active=True, is_deleted=False
+            ),
             "requests": ServiceRequest.objects.filter(requester=user),
             "provider_transactions": TimeBankLedger.objects.filter(
                 user=user, transaction_type="credit"
