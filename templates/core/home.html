@@ -116,7 +116,7 @@
       Have questions about our time bank? We'd love to hear from you. Send us a message and we'll respond as soon as
       possible.
     </p>
-    <form method="post" action="{% url 'contact' %}" class="bg-white rounded-lg shadow-lg p-8">
+    <form method="post" action="{% url 'home' %}" class="bg-white rounded-lg shadow-lg p-8">
       {% csrf_token %}
       <div class="space-y-6">
         <div>
@@ -128,6 +128,9 @@
             class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
             required
           />
+          {% if form.name.errors %}
+          <p class="mt-2 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+          {% endif %}
         </div>
         <div>
           <label for="email" class="block text-sm font-medium text-primary mb-2">Email</label>
@@ -138,6 +141,9 @@
             class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
             required
           />
+          {% if form.email.errors %}
+          <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+          {% endif %}
         </div>
         <div>
           <label for="message" class="block text-sm font-medium text-primary mb-2">Message</label>
@@ -148,6 +154,15 @@
             class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors resize-none"
             required
           ></textarea>
+          {% if form.message.errors %}
+          <p class="mt-2 text-sm text-red-600">{{ form.message.errors.0 }}</p>
+          {% endif %}
+        </div>
+        <div>
+          <div class="flex justify-center">{{ form.captcha }}</div>
+          {% if form.captcha.errors %}
+          <p class="mt-2 text-sm text-red-600 text-center">{{ form.captcha.errors.0 }}</p>
+          {% endif %}
         </div>
         <div>
           <button

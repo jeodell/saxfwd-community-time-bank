@@ -4,55 +4,59 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.views.generic import CreateView, TemplateView, View
+from django.views.generic import CreateView, TemplateView
 
-from ..forms import UserRegistrationForm
+from ..forms import ContactForm, UserRegistrationForm
 from ..models import MeetingNotes, ServiceCategory
 
 
 class HomeView(TemplateView):
     template_name = "core/home.html"
+    form_class = ContactForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["categories"] = ServiceCategory.get_featured_categories()
+        context["recaptcha_public_key"] = settings.RECAPTCHA_PUBLIC_KEY
+        context["form"] = self.form_class()
         return context
 
-
-class ContactView(View):
     def post(self, request):
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        message = request.POST.get("message")
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data["name"]
+            email = form.cleaned_data["email"]
+            message = form.cleaned_data["message"]
 
-        subject = f"New Contact Form Submission from {name}"
-        email_message = f"""
-        Name: {name}
-        Email: {email}
+            subject = f"New Contact Form Submission from {name}"
+            email_message = f"""
+            Name: {name}
+            Email: {email}
 
-        Message:
-        {message}
-        """
+            Message:
+            {message}
+            """
 
-        try:
-            send_mail(
-                subject=subject,
-                message=email_message,
-                from_email=email,
-                recipient_list=[settings.EMAIL_HOST_USER],
-                fail_silently=False,
-            )
-            messages.success(request, "Your message has been sent successfully!")
-        except Exception as e:
-            print(f"Email error: {str(e)}")
-            messages.error(
-                request,
-                "There was an error sending your message. Please try again later.",
-            )
+            try:
+                send_mail(
+                    subject=subject,
+                    message=email_message,
+                    from_email=email,
+                    recipient_list=[settings.EMAIL_HOST_USER],
+                    fail_silently=False,
+                )
+                messages.success(request, "Your message has been sent successfully!")
+            except Exception as e:
+                print(f"Email error: {str(e)}")
+                messages.error(
+                    request,
+                    "There was an error sending your message. Please try again later.",
+                )
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
 
-        return redirect("home")
-
-    def get(self, request):
         return redirect("home")
 
 

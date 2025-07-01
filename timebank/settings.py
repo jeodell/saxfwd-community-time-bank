@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "theme",
     "core",
     "storages",
+    "django_recaptcha",
 ]
 
 # Custom user model
@@ -162,3 +163,8 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+# reCAPTCHA Configuration
+RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY", "")
+RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY", "")
+RECAPTCHA_REQUIRED_SCORE = 0.85
