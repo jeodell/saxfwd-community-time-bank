@@ -212,7 +212,7 @@ class ApplicationReviewListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
     model = Application
     template_name = "admin/application_review_list.html"
     context_object_name = "applications"
-    paginate_by = 1
+    paginate_by = 10
 
     def test_func(self):
         """Check if user is staff."""
