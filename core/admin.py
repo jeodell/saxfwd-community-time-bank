@@ -276,6 +276,7 @@ class ApplicationAdmin(admin.ModelAdmin):
             "Applicant Information",
             {
                 "fields": (
+                    "user",
                     "user_full_name",
                     "email",
                     "referral_member",
