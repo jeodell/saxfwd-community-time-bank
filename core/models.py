@@ -120,10 +120,59 @@ class User(AbstractUser):
         """Get the user's full name from the User model."""
         return f"{self.first_name} {self.last_name}".strip()
 
-    def save(self, *args, **kwargs):
-        # Check if this is just a last_login update and skips image processing if so
-        if self.pk and len(args) == 0 and kwargs.get("update_fields") == ["last_login"]:
-            super().save(*args, **kwargs)
+    @property
+    def is_fully_approved(self):
+        """Check if user has both referral approval and onboarding completed."""
+        return self.is_referral_approved and self.is_onboarded
+
+    @property
+    def is_referral_approved(self):
+        """Check if user has referral approval through their application."""
+        try:
+            return self.application.is_referral_approved
+        except Application.DoesNotExist:
+            return False
+
+    @property
+    def referral_approved_by(self):
+        """Get the user who approved the referral from the application."""
+        try:
+            return self.application.referral_approved_by
+        except Application.DoesNotExist:
+            return None
+
+    @property
+    def referral_approved_at(self):
+        """Get the referral approval timestamp from the application."""
+        try:
+            return self.application.referral_approved_at
+        except Application.DoesNotExist:
+            return None
+
+    @property
+    def is_onboarded(self):
+        """Check if user has completed onboarding through their application."""
+        try:
+            return self.application.is_onboarded
+        except Application.DoesNotExist:
+            return False
+
+    @property
+    def onboarded_at(self):
+        """Get the onboarding completion timestamp from the application."""
+        try:
+            return self.application.onboarded_at
+        except Application.DoesNotExist:
+            return None
+
+    @property
+    def can_login(self):
+        """Check if user can log in (must be active and fully approved)."""
+        return self.is_active and self.is_fully_approved
+
+    def process_image(self):
+        """Process and resize the user's image. Call this method when the image is updated."""
+        if not self.image:
             return
 
         # Delete the old image file if it has changed
@@ -137,36 +186,41 @@ class User(AbstractUser):
                 pass
 
         # Resize and crop image to 200x200
-        if self.image:
-            img = Image.open(self.image)
-            if img.mode in ("RGBA", "LA"):
-                background = Image.new("RGB", img.size, (255, 255, 255))
-                background.paste(img, mask=img.split()[-1])
-                img = background
+        img = Image.open(self.image)
+        if img.mode in ("RGBA", "LA"):
+            background = Image.new("RGB", img.size, (255, 255, 255))
+            background.paste(img, mask=img.split()[-1])
+            img = background
 
-            # Crop image to square
-            width, height = img.size
-            size = min(width, height)
-            left = (width - size) // 2
-            top = (height - size) // 2
-            right = left + size
-            bottom = top + size
-            img = img.crop((left, top, right, bottom))
+        # Crop image to square
+        width, height = img.size
+        size = min(width, height)
+        left = (width - size) // 2
+        top = (height - size) // 2
+        right = left + size
+        bottom = top + size
+        img = img.crop((left, top, right, bottom))
 
-            # Resize image to thumbnail size (200x200)
-            img = img.resize((200, 200), Image.Resampling.LANCZOS)
+        # Resize image to thumbnail size (200x200)
+        img = img.resize((200, 200), Image.Resampling.LANCZOS)
 
-            # Save the resized image
-            buffer = BytesIO()
-            img.save(buffer, format="JPEG", quality=85)
-            buffer.seek(0)
+        # Save the resized image
+        buffer = BytesIO()
+        img.save(buffer, format="JPEG", quality=85)
+        buffer.seek(0)
 
-            # Generate new filename
-            ext = self.image.name.split(".")[-1]
-            filename = f"{self.id}.{ext}"
+        # Generate new filename
+        ext = self.image.name.split(".")[-1]
+        filename = f"{self.id}.{ext}"
 
-            # Save the resized image
-            self.image.save(filename, ContentFile(buffer.read()), save=False)
+        # Save the resized image
+        self.image.save(filename, ContentFile(buffer.read()), save=False)
+
+    def save(self, *args, **kwargs):
+        # Check if this is just a last_login update and skip image processing if so
+        if self.pk and len(args) == 0 and kwargs.get("update_fields") == ["last_login"]:
+            super().save(*args, **kwargs)
+            return
 
         super().save(*args, **kwargs)
 
@@ -647,3 +701,82 @@ class MeetingNotes(models.Model):
             # Use the storage backend to delete the file (works with both local and S3)
             self.pdf_file.delete(save=False)
         super().delete(*args, **kwargs)
+
+
+class Application(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="application"
+    )
+
+    # Application fields
+    referral_member = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="referrals_made",
+    )
+    writeup = models.TextField()
+
+    # Status tracking
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+
+    # Referral approval tracking
+    is_referral_approved = models.BooleanField(default=False)
+    referral_approved_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="approved_applications",
+    )
+    referral_approved_at = models.DateTimeField(null=True, blank=True)
+
+    # Onboarding tracking
+    is_onboarded = models.BooleanField(default=False)
+    onboarded_at = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Application from {self.user.full_name}"
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def approve(self, reviewer, notes=""):
+        """Approve the application and mark the user as referral approved."""
+        self.is_referral_approved = True
+        self.referral_approved_by = reviewer
+        self.referral_approved_at = timezone.now()
+        self.save()
+
+    def mark_onboarded(self):
+        """Mark the user as having completed onboarding."""
+        self.is_onboarded = True
+        self.onboarded_at = timezone.now()
+        if self.is_referral_approved and self.status == "pending":
+            self.status = "approved"
+        self.save()
+
+    def reject(self, reviewer, notes=""):
+        """Reject the application."""
+        self.status = "rejected"
+        self.save()
+
+    @property
+    def can_be_approved(self):
+        """Check if the application can be approved."""
+        return self.status == "pending"
+
+    @property
+    def can_be_rejected(self):
+        """Check if the application can be rejected."""
+        return self.status == "pending"

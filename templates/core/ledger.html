@@ -113,10 +113,10 @@
                   Service
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Recipient
+                  Spending Hours
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Provider
+                  Receiving Hours
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Hours
@@ -133,16 +133,25 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   <!-- prettier-ignore -->
                   {% if transaction.from_user %}
-                  {{ transaction.from_user.first_name }} {{ transaction.from_user.last_name }} {% else %}
-                  <span class="text-gray-500">Community</span>
+                  {% if transaction.from_user == "Community" %}
+                  Community
+                  {% else %} {{ transaction.from_user.first_name }} {{ transaction.from_user.last_name }}
+                  <!-- prettier-ignore -->
+                  {% endif %}
+                  {% else %}
+                  Community
                   {% endif %}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   <!-- prettier-ignore -->
                   {% if transaction.to_user %}
-                  {{ transaction.to_user.first_name }} {{ transaction.to_user.last_name }}
+                  {% if transaction.to_user == "Community" %}
+                  Community
+                  {% else %} {{ transaction.to_user.first_name }} {{ transaction.to_user.last_name }}
+                  <!-- prettier-ignore -->
+                  {% endif %}
                   {% else %}
-                  <span class="text-gray-500">Community</span>
+                  Community
                   {% endif %}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.hours }}</td>
@@ -156,6 +165,7 @@
           </table>
         </div>
 
+        <!-- Pagination -->
         {% if is_paginated %}
         <div class="mt-8 flex justify-center">
           <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">

@@ -55,7 +55,7 @@
       <div class="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12">
         <a href="{% url 'login' %}" class="text-white hover:text-white/80 uppercase">Login</a>
         <span class="text-white px-1">or</span>
-        <a href="{% url 'register' %}" class="text-white hover:text-white/80 uppercase">Register</a>
+        <a href="{% url 'apply' %}" class="text-white hover:text-white/80 uppercase">Apply</a>
       </div>
       {% endif %}
     </div>
@@ -112,7 +112,14 @@
           >
             My Account
           </a>
-          {% else %}
+          {% if user.is_staff %}
+          <a
+            href="{% url 'application_review_list' %}"
+            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/admin/applications/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+          >
+            Admin
+          </a>
+          {% endif %} {% else %}
           <a
             href="{% url 'about' %}"
             class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/about/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
@@ -186,7 +193,14 @@
       >
         My Account
       </a>
-      {% else %}
+      {% if user.is_staff %}
+      <a
+        href="{% url 'application_review_list' %}"
+        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+      >
+        Admin
+      </a>
+      {% endif %} {% else %}
       <a
         href="{% url 'about' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"

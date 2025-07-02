@@ -42,9 +42,9 @@ class LedgerView(ListView):
                     if transaction.service_request
                     and transaction.service_request.service
                     else (
-                        None
+                        "Community"
                         if transaction.transaction_type == "community_donation"
-                        else "Community"
+                        else None
                     ),
                 }
 

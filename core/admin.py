@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from .models import (
+    Application,
     MeetingNotes,
     Service,
     ServiceCategory,
@@ -9,6 +10,7 @@ from .models import (
     TimeBankLedger,
     User,
 )
+from .views.base import send_approval_email
 
 
 @admin.register(ServiceCategory)
@@ -147,7 +149,11 @@ class UserAdmin(BaseUserAdmin):
         "date_joined",
         "updated_at",
     )
-    list_filter = ("is_active", "is_staff", "is_superuser")
+    list_filter = (
+        "is_active",
+        "is_staff",
+        "is_superuser",
+    )
     search_fields = (
         "id",
         "email",
@@ -203,6 +209,20 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
 
+    def save_model(self, request, obj, form, change):
+        """Override save_model to send approval email when user becomes fully approved."""
+        if change:  # Only for existing users
+            try:
+                old_obj = User.objects.get(pk=obj.pk)
+                # Check if user just became fully approved
+                if not old_obj.is_fully_approved and obj.is_fully_approved:
+                    # Send approval email
+                    send_approval_email(obj)
+            except User.DoesNotExist:
+                pass
+
+        super().save_model(request, obj, form, change)
+
 
 @admin.register(MeetingNotes)
 class MeetingNotesAdmin(admin.ModelAdmin):
@@ -219,3 +239,107 @@ class MeetingNotesAdmin(admin.ModelAdmin):
             {"fields": ("created_at",), "classes": ("collapse",)},
         ),
     )
+
+
+@admin.register(Application)
+class ApplicationAdmin(admin.ModelAdmin):
+    list_display = (
+        "user_full_name",
+        "email",
+        "status",
+        "referral_approved_by",
+        "referral_approved_at",
+        "referral_member_name",
+        "is_referral_approved",
+        "onboarded_at",
+        "is_onboarded",
+        "created_at",
+        "updated_at",
+    )
+    list_filter = ("status", "created_at")
+    search_fields = (
+        "user__first_name",
+        "user__last_name",
+        "user__email",
+        "referral_member__first_name",
+        "referral_member__last_name",
+        "writeup",
+    )
+    readonly_fields = (
+        "user_full_name",
+        "email",
+        "created_at",
+        "updated_at",
+    )
+    fieldsets = (
+        (
+            "Applicant Information",
+            {
+                "fields": (
+                    "user_full_name",
+                    "email",
+                    "referral_member",
+                    "writeup",
+                )
+            },
+        ),
+        (
+            "Review Information",
+            {
+                "fields": (
+                    "status",
+                    "referral_approved_by",
+                    "referral_approved_at",
+                    "is_referral_approved",
+                    "onboarded_at",
+                    "is_onboarded",
+                )
+            },
+        ),
+        (
+            "Timestamps",
+            {
+                "fields": (
+                    "created_at",
+                    "updated_at",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+    )
+    actions = ["approve_applications", "reject_applications"]
+
+    def user_full_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
+
+    user_full_name.short_description = "Applicant Name"
+
+    def email(self, obj):
+        return obj.user.email
+
+    email.short_description = "Email"
+
+    def referral_member_name(self, obj):
+        if obj.referral_member:
+            return f"{obj.referral_member.first_name} {obj.referral_member.last_name}"
+        return "No referral"
+
+    referral_member_name.short_description = "Referral Member"
+
+    def approve_applications(self, request, queryset):
+        count = 0
+        for application in queryset.filter(status="pending"):
+            application.approve(request.user)
+            count += 1
+        self.message_user(request, f"Successfully approved {count} application(s).")
+
+    approve_applications.short_description = "Approve selected applications"
+
+    def reject_applications(self, request, queryset):
+        count = 0
+        for application in queryset.filter(status="pending"):
+            application.reject(request.user)
+            count += 1
+        self.message_user(request, f"Successfully rejected {count} application(s).")
+
+    reject_applications.short_description = "Reject selected applications"

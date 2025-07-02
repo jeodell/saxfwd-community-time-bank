@@ -82,7 +82,8 @@ class UserEditView(LoginRequiredMixin, UpdateView):
 
         form = UserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            user.process_image()
             messages.success(request, "User updated successfully!")
             return redirect("user", pk=user.id)
 

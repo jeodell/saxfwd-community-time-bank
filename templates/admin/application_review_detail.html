@@ -1,0 +1,344 @@
+<!-- prettier-ignore -->
+{% extends "base.html" %}
+{% block title %}Review Application - Saxapahaw Timebank{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto p-8">
+  <div class="bg-white rounded-lg shadow-sm p-8">
+    <!-- Back Button -->
+    <div class="mb-6">
+      <a
+        href="{% url 'application_review_list' %}"
+        class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200"
+      >
+        <i class="fas fa-arrow-left mr-2"></i>
+        Back to Applications
+      </a>
+    </div>
+
+    <!-- Application Header -->
+    <div class="border-b border-gray-200 pb-6 mb-6">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">Review Application</h1>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-gray-500">
+              Application from {{ application_user.first_name }} {{ application_user.last_name }}
+            </span>
+            {% if application.status == 'pending' %}
+            <span
+              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800"
+            >
+              Pending
+            </span>
+            {% elif application.status == 'approved' %}
+            <span
+              class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
+            >
+              Approved
+            </span>
+            {% elif application.status == 'rejected' %}
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+              Rejected
+            </span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Content -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Main Content -->
+      <div class="md:col-span-2">
+        <div class="prose max-w-none">
+          <!-- Applicant Information -->
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Applicant Information</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-gray-700">Name</label>
+              <p class="text-sm text-gray-900">{{ application_user.first_name }} {{ application_user.last_name }}</p>
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-gray-700">Email</label>
+              <p class="text-sm text-gray-900">{{ application_user.email }}</p>
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-gray-700">Phone</label>
+              <p class="text-sm text-gray-900">{{ application_user.phone_number|default:"Not provided" }}</p>
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-gray-700">Address</label>
+              <p class="text-sm text-gray-900">{{ application_user.address|default:"Not provided" }}</p>
+            </div>
+          </div>
+
+          <!-- Application Details -->
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Application Details</h2>
+          <div class="space-y-6 mb-8">
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-gray-700">Referral Member</label>
+              <p class="text-sm text-gray-900">
+                {{ application.referral_member.first_name }} {{ application.referral_member.last_name }}
+              </p>
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-gray-700">Why do you want to join?</label>
+              <div class="p-4 bg-gray-50 rounded-md">
+                <p class="text-sm text-gray-900 whitespace-pre-wrap">{{ application.writeup }}</p>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="text-sm font-semibold text-gray-700">Application Date</label>
+              <p class="text-sm text-gray-900">{{ application.created_at|date:"F j, Y \a\t g:i A" }}</p>
+            </div>
+          </div>
+
+          <!-- Review Form -->
+          {% if not application_user.is_referral_approved %}
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Review Decision</h2>
+          <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div class="space-y-2">
+              <label for="review_notes" class="text-sm font-semibold text-gray-700">Review Notes (optional)</label>
+              <textarea
+                id="review_notes"
+                name="review_notes"
+                rows="4"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+                placeholder="Add any notes about your decision..."
+              ></textarea>
+            </div>
+            <div class="flex items-center justify-end space-x-4">
+              <button
+                type="submit"
+                name="action"
+                value="reject"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+              >
+                <i class="fas fa-times mr-2"></i>
+                Reject Application
+              </button>
+              <button
+                type="submit"
+                name="action"
+                value="approve"
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+              >
+                Approve Application
+              </button>
+            </div>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="md:col-span-1">
+        <!-- Application Status -->
+        <div class="rounded-lg p-6 mb-6 border border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Application Status</h3>
+          <dl class="space-y-4">
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Application Status</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {% if application.status == 'rejected' %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                >
+                  Rejected
+                </span>
+                {% elif application_user.is_referral_approved and application_user.is_onboarded %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                >
+                  Approved
+                </span>
+                {% else %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                >
+                  Pending
+                </span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Referral Approval</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {% if application_user.is_referral_approved %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                >
+                  Approved
+                </span>
+                {% else %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                >
+                  Pending
+                </span>
+                {% endif %}
+              </dd>
+            </div>
+
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Onboarding Complete</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {% if application_user.is_onboarded %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                >
+                  Complete
+                </span>
+                {% else %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                >
+                  Pending
+                </span>
+                {% endif %}
+              </dd>
+            </div>
+
+            {% if application.referral_approved_by %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Reviewed by</dt>
+              <dd class="mt-1 text-sm text-gray-900">
+                {{ application.referral_approved_by.first_name }} {{ application.referral_approved_by.last_name }}
+              </dd>
+            </div>
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Reviewed on</dt>
+              <dd class="mt-1 text-sm text-gray-900">{{ application.referral_approved_at|date:"M j, Y" }}</dd>
+            </div>
+            {% endif %} {% if application_user.referral_approved_at %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Referral Approved on</dt>
+              <dd class="mt-1 text-sm text-gray-900">{{ application_user.referral_approved_at|date:"M j, Y" }}</dd>
+            </div>
+            {% endif %} {% if application_user.onboarded_at %}
+            <div>
+              <dt class="text-sm font-medium text-gray-500">Onboarding Completed on</dt>
+              <dd class="mt-1 text-sm text-gray-900">{{ application_user.onboarded_at|date:"M j, Y" }}</dd>
+            </div>
+            {% endif %}
+          </dl>
+
+          <!-- Onboarding Button -->
+          {% if application_user.is_referral_approved and not application_user.is_onboarded %}
+          <div class="mt-6">
+            <h4 class="text-sm font-semibold text-gray-900 mb-3">Onboarding Confirmation</h4>
+            <p class="text-sm text-gray-600 mb-3">
+              Click the button below to confirm that this user has received and completed their onboarding.
+            </p>
+            <button
+              type="button"
+              id="onboardingButton"
+              class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+            >
+              <i class="fas fa-check-circle mr-2"></i>
+              Confirm Onboarding Complete
+            </button>
+          </div>
+          {% elif not application_user.is_referral_approved %}
+          <div class="mt-6">
+            <div class="bg-gray-50 border border-gray-200 rounded-md p-4">
+              <p class="text-sm text-gray-600">User must be referral approved before onboarding can be confirmed.</p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Review Notes -->
+        {% if application.review_notes %}
+        <div class="rounded-lg p-6 border border-gray-200">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Review Notes</h3>
+          <div class="p-4 bg-gray-50 rounded-md">
+            <p class="text-sm text-gray-900 whitespace-pre-wrap">{{ application.review_notes }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Onboarding Confirmation Modal -->
+<div id="onboardingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+  <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div class="mt-3 text-center">
+      <i class="fas fa-check-circle text-primary text-4xl"></i>
+      <h3 class="text-lg font-medium text-gray-900 mt-4">Confirm Onboarding</h3>
+      <div class="mt-2 px-7 py-3">
+        <p class="text-sm text-gray-500">
+          Are you sure you want to mark this user as onboarded? This will send them an approval email if they are fully
+          approved.
+        </p>
+      </div>
+      <div class="items-center text-center px-4 py-3">
+        <form method="post" action="{% url 'mark_user_onboarded' application_user.id %}">
+          {% csrf_token %}
+          <div class="flex justify-center space-x-3">
+            <button
+              type="button"
+              id="cancelOnboardingButton"
+              class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-200"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-primary text-white text-base font-medium rounded-md shadow-sm hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-200"
+            >
+              Confirm
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const onboardingModal = document.getElementById('onboardingModal');
+    const onboardingButton = document.getElementById('onboardingButton');
+    const cancelOnboardingButton = document.getElementById('cancelOnboardingButton');
+
+    if (onboardingButton) {
+      onboardingButton.addEventListener('click', function () {
+        openOnboardingModal();
+      });
+    }
+
+    if (cancelOnboardingButton) {
+      cancelOnboardingButton.addEventListener('click', function () {
+        closeOnboardingModal();
+      });
+    }
+
+    function openOnboardingModal() {
+      onboardingModal.classList.remove('hidden');
+    }
+
+    function closeOnboardingModal() {
+      onboardingModal.classList.add('hidden');
+    }
+
+    // Close modal when clicking outside of it
+    onboardingModal.addEventListener('click', function (e) {
+      if (e.target === this) {
+        closeOnboardingModal();
+      }
+    });
+
+    // Close modal with Escape key
+    onboardingModal.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeOnboardingModal();
+      }
+    });
+  });
+</script>
+{% endblock %}

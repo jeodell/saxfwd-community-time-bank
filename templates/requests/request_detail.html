@@ -106,8 +106,8 @@
           <div class="mt-2 text-sm text-gray-600">
             <p>Completion Status:</p>
             <ul class="list-disc list-inside">
-              <li>Provider: {% if request.provider_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
-              <li>Requester: {% if request.requester_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
+              <li>Provider: {% if request.provider_completed %}Completed{% else %}Waiting...{% endif %}</li>
+              <li>Requester: {% if request.requester_completed %}Completed{% else %}Waiting...{% endif %}</li>
             </ul>
           </div>
           {% endif %}
