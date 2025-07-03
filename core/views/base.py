@@ -112,16 +112,23 @@ class PasswordSetupView(FormView):
 
     def dispatch(self, request, *args, **kwargs):
         # Get user from token
-        token = request.GET.get("token")
-        if not token:
+        token_with_uid = request.GET.get("token")
+        if not token_with_uid:
             messages.error(request, "Invalid password setup link.")
             return redirect("login")
 
         try:
-            uidb64 = token.split(".")[0]
+            # Split the combined token to get uid and token parts
+            parts = token_with_uid.split(".")
+            if len(parts) != 2:
+                messages.error(request, "Invalid password setup link.")
+                return redirect("login")
+
+            uidb64, token = parts
             uid = urlsafe_base64_decode(uidb64).decode()
             self.user = User.objects.get(pk=uid)
 
+            # Check if the token is valid (pass only the token part, not the full token_with_uid)
             if not default_token_generator.check_token(self.user, token):
                 messages.error(request, "Invalid or expired password setup link.")
                 return redirect("login")
