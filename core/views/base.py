@@ -1,3 +1,4 @@
+import sentry_sdk
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -43,8 +44,8 @@ class HomeView(TemplateView):
                 send_mail(
                     f"Contact Form Message from {name}",
                     f"Name: {name}\nEmail: {email}\nMessage: {message}",
-                    email,
-                    [settings.DEFAULT_FROM_EMAIL],
+                    "Saxapahaw Timebank <noreply@saxapahawtimebank.org>",
+                    [email],
                     fail_silently=False,
                 )
                 messages.success(request, "Your message has been sent successfully!")
@@ -190,12 +191,14 @@ def send_approval_email(user):
         send_mail(
             subject,
             message,
-            settings.DEFAULT_FROM_EMAIL,
+            "Saxapahaw Timebank <noreply@saxapahawtimebank.org>",
             [user.email],
             fail_silently=False,
         )
         return True
     except Exception as e:
+        # TODO remove
+        sentry_sdk.capture_exception(e)
         print(f"Error sending approval email to {user.email}: {str(e)}")
         print(
             f"Email settings: HOST={getattr(settings, 'EMAIL_HOST', 'Not set')}, "

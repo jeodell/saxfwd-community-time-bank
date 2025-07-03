@@ -1,7 +1,14 @@
 import os
 from pathlib import Path
 
+import sentry_sdk
 from dotenv import load_dotenv
+
+sentry_sdk.init(
+    dsn="https://01a6b4790fc4449d8bbc7127ce33ce53@o4509601876148224.ingest.us.sentry.io/4509601877458944",
+    send_default_pii=True,
+    environment=os.getenv("ENVIRONMENT", "local"),
+)
 
 load_dotenv()
 
@@ -157,13 +164,12 @@ LOGOUT_REDIRECT_URL = "home"
 LOGIN_URL = "login"
 
 # Email Configuration
-EMAIL_BACKEND = "core.backends.CustomSMTPEmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 
 # reCAPTCHA Configuration
 RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY", "")
