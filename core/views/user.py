@@ -2,19 +2,10 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, UpdateView, View
+from django.views.generic import UpdateView, View
 
 from ..forms import UserForm
 from ..models import Service, ServiceRequest, TimeBankLedger, User
-
-
-class UserListView(ListView):
-    model = User
-    template_name = "users/user_list.html"
-    context_object_name = "users"
-
-    def get_queryset(self):
-        return User.objects.all().order_by("last_name")
 
 
 class UserView(LoginRequiredMixin, View):

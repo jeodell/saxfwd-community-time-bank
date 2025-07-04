@@ -5,12 +5,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.views.generic import ListView, View
 
-from ..models import CommunityHours, TimeBankLedger
+from ..models import CommunityHours, TimeBankLedger, User
 
 
-class LedgerView(ListView):
+class CommunityView(ListView):
     model = TimeBankLedger
-    template_name = "core/ledger.html"
+    template_name = "core/community.html"
     context_object_name = "transactions"
     paginate_by = 50  # Show 50 transactions per page
 
@@ -66,6 +66,9 @@ class LedgerView(ListView):
         if self.request.user.is_authenticated:
             context["user_time_balance"] = self.request.user.time_balance
 
+        # Add community members data
+        context["users"] = User.objects.all().order_by("last_name")
+
         return context
 
 
@@ -79,7 +82,7 @@ class DonateCommunityHoursView(LoginRequiredMixin, View):
                 messages.error(
                     request, "Please enter a positive number of hours to donate."
                 )
-                return redirect("ledger")
+                return redirect("community")
 
             # Check if user has enough hours
             user_balance = request.user.time_balance
@@ -87,7 +90,7 @@ class DonateCommunityHoursView(LoginRequiredMixin, View):
                 messages.error(
                     request, "You don't have enough hours to make this donation."
                 )
-                return redirect("ledger")
+                return redirect("community")
 
             # Create ledger entry for the donation
             TimeBankLedger.objects.create(
@@ -110,4 +113,4 @@ class DonateCommunityHoursView(LoginRequiredMixin, View):
         except Exception as e:
             messages.error(request, f"An error occurred: {str(e)}")
 
-        return redirect("ledger")
+        return redirect("community")

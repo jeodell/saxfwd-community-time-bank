@@ -10,7 +10,8 @@ urlpatterns = [
     path("services/", include("core.urls.service")),
     path("requests/", include("core.urls.request")),
     path("users/", include("core.urls.user")),
-    path("ledger/", include("core.urls.ledger")),
+    path("community/", include("core.urls.community")),
+    path("admin/", include("core.urls.admin")),
 ]
 
 # Serve static and media files in development only

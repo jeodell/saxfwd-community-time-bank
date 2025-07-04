@@ -2,12 +2,9 @@ from django.urls import path
 
 from core.views.base import (
     AboutView,
-    ApplicationReviewDetailView,
-    ApplicationReviewListView,
     ApplicationSubmittedView,
     ApplicationView,
     HomeView,
-    MarkUserOnboardedView,
     PasswordSetupView,
 )
 
@@ -22,21 +19,5 @@ urlpatterns = [
     ),
     path(
         "accounts/password-setup/", PasswordSetupView.as_view(), name="password_setup"
-    ),
-    # Staff application review URLs
-    path(
-        "admin/applications/",
-        ApplicationReviewListView.as_view(),
-        name="application_review_list",
-    ),
-    path(
-        "admin/applications/<uuid:application_id>/",
-        ApplicationReviewDetailView.as_view(),
-        name="application_review_detail",
-    ),
-    path(
-        "admin/users/<uuid:user_id>/mark-onboarded/",
-        MarkUserOnboardedView.as_view(),
-        name="mark_user_onboarded",
     ),
 ]

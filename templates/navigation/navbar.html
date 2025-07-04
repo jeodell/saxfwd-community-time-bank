@@ -89,22 +89,16 @@
             Services
           </a>
           <a
+            href="{% url 'community' %}"
+            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/community/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+          >
+            Community
+          </a>
+          <a
             href="{% url 'request_list' %}"
             class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/requests/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
           >
             My Requests
-          </a>
-          <a
-            href="{% url 'ledger' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/ledger/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            Public Ledger
-          </a>
-          <a
-            href="{% url 'user_list' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/users/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            Members
           </a>
           <a
             href="{% url 'user_me' %}"
@@ -170,22 +164,16 @@
         Services
       </a>
       <a
+        href="{% url 'community' %}"
+        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+      >
+        Community
+      </a>
+      <a
         href="{% url 'request_list' %}"
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
       >
         My Requests
-      </a>
-      <a
-        href="{% url 'ledger' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        Public Ledger
-      </a>
-      <a
-        href="{% url 'user_list' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        Members
       </a>
       <a
         href="{% url 'user_me' %}"
