@@ -1,6 +1,6 @@
 from django.urls import path
 
-from core.views.ledger import CommunityView, DonateCommunityHoursView
+from core.views.community import CommunityView, DonateCommunityHoursView
 
 urlpatterns = [
     path("", CommunityView.as_view(), name="community"),
