@@ -12,9 +12,9 @@ from ..forms import (
 from ..models import Request, ServiceTransaction
 
 
-class RequestListView(LoginRequiredMixin, ListView):
+class UserRequestListView(LoginRequiredMixin, ListView):
     model = ServiceTransaction
-    template_name = "requests/request_list.html"
+    template_name = "my_requests/request_list.html"
     context_object_name = "requests"
 
     def get_context_data(self, **kwargs):
@@ -67,7 +67,7 @@ class RequestListView(LoginRequiredMixin, ListView):
 
 class RequestDetailView(LoginRequiredMixin, DetailView):
     model = ServiceTransaction
-    template_name = "requests/request_detail.html"
+    template_name = "services/service_transaction_detail.html"
     context_object_name = "request"
 
     def get_object(self):
@@ -166,7 +166,7 @@ class RequestCompleteView(LoginRequiredMixin, View):
 
 
 class RequestCompleteFormView(LoginRequiredMixin, View):
-    template_name = "requests/request_complete_form.html"
+    template_name = "services/service_transaction_complete_form.html"
 
     def get(self, request, pk):
         service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
@@ -285,7 +285,7 @@ class RequestCommunityHoursView(LoginRequiredMixin, View):
             return redirect("request_detail", pk=pk)
         return render(
             request,
-            "requests/community_request_form.html",
+            "services/service_transaction_form.html",
             {"request": service_transaction},
         )
 
@@ -366,9 +366,9 @@ class RejectCommunityTransactionView(LoginRequiredMixin, UserPassesTestMixin, Vi
         return redirect("request_detail", pk=pk)
 
 
-class CommunityRequestListView(LoginRequiredMixin, ListView):
+class RequestListView(LoginRequiredMixin, ListView):
     model = Request
-    template_name = "requests/community_request_list.html"
+    template_name = "requests/request_list.html"
     context_object_name = "requests"
     paginate_by = 20
 

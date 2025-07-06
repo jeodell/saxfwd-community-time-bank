@@ -2,7 +2,6 @@ from django.urls import path
 
 from core.views.request import (
     ApproveCommunityTransactionView,
-    CommunityRequestListView,
     RejectCommunityTransactionView,
     RequestAcceptView,
     RequestCancelView,
@@ -16,9 +15,6 @@ from core.views.request import (
 
 urlpatterns = [
     path("", RequestListView.as_view(), name="request_list"),
-    path(
-        "community/", CommunityRequestListView.as_view(), name="community_request_list"
-    ),
     path("<uuid:pk>/", RequestDetailView.as_view(), name="request_detail"),
     path(
         "<uuid:pk>/accept/",
