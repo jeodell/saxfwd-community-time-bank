@@ -80,6 +80,7 @@
           rows="6"
           required
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+          placeholder="Describe the service you offer (e.g., 'I offer house cleaning services', 'I can help with basic home repairs', 'I can teach you how to use a sewing machine')"
         >{{ form.description.value|default:'' }}</textarea>
         {% if form.description.errors %}
         <p class="mt-2 text-sm text-red-600">{{ form.description.errors.0 }}</p>
@@ -98,6 +99,21 @@
         >{{ form.availability.value|default:'' }}</textarea>
         {% if form.availability.errors %}
         <p class="mt-2 text-sm text-red-600">{{ form.availability.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Experience -->
+      <div class="space-y-2">
+        <label for="id_experience" class="text-sm font-semibold text-gray-700">Experience (optional)</label>
+        <textarea
+          name="experience"
+          id="id_experience"
+          rows="3"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+          placeholder="Describe your experience (e.g., 'I've been a yoga instructor for 10 years' or 'I have a Brother sewing machine and can teach you how to use it')"
+        >{{ form.experience.value|default:'' }}</textarea>
+        {% if form.experience.errors %}
+        <p class="mt-2 text-sm text-red-600">{{ form.experience.errors.0 }}</p>
         {% endif %}
       </div>
 

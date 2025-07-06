@@ -4,12 +4,6 @@ from pathlib import Path
 import sentry_sdk
 from dotenv import load_dotenv
 
-sentry_sdk.init(
-    dsn="https://01a6b4790fc4449d8bbc7127ce33ce53@o4509601876148224.ingest.us.sentry.io/4509601877458944",
-    send_default_pii=True,
-    environment=os.getenv("ENVIRONMENT", "local"),
-)
-
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -178,3 +172,10 @@ RECAPTCHA_REQUIRED_SCORE = 0.85
 
 # Site URL for email links
 SITE_URL = os.getenv("SITE_URL", "http://localhost:8000")
+
+if not DEBUG:
+    sentry_sdk.init(
+        dsn="https://01a6b4790fc4449d8bbc7127ce33ce53@o4509601876148224.ingest.us.sentry.io/4509601877458944",
+        send_default_pii=True,
+        environment=os.getenv("ENVIRONMENT", "local"),
+    )

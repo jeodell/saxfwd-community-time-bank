@@ -89,6 +89,12 @@
             Services
           </a>
           <a
+            href="{% url 'community_request_list' %}"
+            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/requests/community/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+          >
+            Requests
+          </a>
+          <a
             href="{% url 'community' %}"
             class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/community/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
           >
@@ -162,6 +168,12 @@
         class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
       >
         Services
+      </a>
+      <a
+        href="{% url 'community_request_list' %}"
+        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+      >
+        Requests
       </a>
       <a
         href="{% url 'community' %}"

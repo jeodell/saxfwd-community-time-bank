@@ -8,7 +8,7 @@ from django.views.generic import ListView, View
 from ..models import CommunityHours, TimeBankLedger, User
 
 
-class CommunityView(ListView):
+class CommunityView(LoginRequiredMixin, ListView):
     model = TimeBankLedger
     template_name = "core/community.html"
     context_object_name = "transactions"
@@ -18,34 +18,52 @@ class CommunityView(ListView):
         # Get all transactions and order by created_at
         transactions = TimeBankLedger.objects.all().order_by("-created_at")
 
-        # Group transactions by service request or create_at for non-service transactions
+        # Group transactions
         grouped_transactions = {}
         for transaction in transactions:
-            key = transaction.service_request_id or f"direct_{transaction.id}"
+            key = (
+                transaction.service_transaction_id
+                or transaction.request_transaction_id
+                or f"direct_{transaction.id}"
+            )
+
             if key not in grouped_transactions:
+                description = None
+                from_user = None
+                to_user = None
+
+                # Service
+                if transaction.service_transaction:
+                    service_transaction = transaction.service_transaction
+                    description = service_transaction.service.title
+                    from_user = service_transaction.requester
+                    to_user = service_transaction.service.provider
+                else:
+                    service_transaction = None
+
+                # Request
+                if transaction.request_transaction:
+                    request_transaction = transaction.request_transaction
+                    description = request_transaction.request.title
+                    from_user = request_transaction.request.requester
+                    to_user = request_transaction.provider
+                else:
+                    request_transaction = None
+
+                # Community
+                if transaction.transaction_type == "community_donation":
+                    description = "Community Hours Donation"
+                    from_user = transaction.user
+                    to_user = "Community"
+
                 grouped_transactions[key] = {
                     "created_at": transaction.created_at,
-                    "service_request": transaction.service_request,
+                    "service_transaction": service_transaction,
+                    "request_transaction": request_transaction,
                     "hours": transaction.hours,
-                    "description": transaction.service_request.service.title
-                    if transaction.service_request
-                    and transaction.service_request.service
-                    else transaction.description,
-                    "from_user": transaction.service_request.requester
-                    if transaction.service_request
-                    else (
-                        transaction.user
-                        if transaction.transaction_type == "community_donation"
-                        else None
-                    ),
-                    "to_user": transaction.service_request.service.provider
-                    if transaction.service_request
-                    and transaction.service_request.service
-                    else (
-                        "Community"
-                        if transaction.transaction_type == "community_donation"
-                        else None
-                    ),
+                    "description": description,
+                    "from_user": from_user,
+                    "to_user": to_user,
                 }
 
         # Convert the grouped transactions to a list and sort by date

@@ -6,8 +6,8 @@ from core.views.service import (
     ServiceDetailView,
     ServiceEditView,
     ServiceListView,
-    ServiceRequestView,
     ServiceToggleActiveView,
+    ServiceTransactionView,
 )
 
 urlpatterns = [
@@ -29,9 +29,9 @@ urlpatterns = [
         name="service_delete",
     ),
     path(
-        "<uuid:pk>/request/",
-        ServiceRequestView.as_view(),
-        name="service_request",
+        "<uuid:pk>/transaction/",
+        ServiceTransactionView.as_view(),
+        name="service_transaction",
     ),
     path(
         "<uuid:pk>/toggle-active/",

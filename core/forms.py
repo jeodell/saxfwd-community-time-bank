@@ -7,7 +7,7 @@ from django.utils.http import urlsafe_base64_decode
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV3
 
-from .models import Service, ServiceRequest
+from .models import Service, ServiceTransaction
 
 User = get_user_model()
 
@@ -138,15 +138,16 @@ class ServiceForm(forms.ModelForm):
             "title",
             "description",
             "availability",
+            "experience",
             "category",
             "max_hours",
             "max_hours_per_month",
         ]
 
 
-class ServiceRequestForm(forms.ModelForm):
+class ServiceTransactionForm(forms.ModelForm):
     class Meta:
-        model = ServiceRequest
+        model = ServiceTransaction
         fields = ["requested_date", "hours_requested", "description"]
 
 
@@ -170,20 +171,20 @@ class UserForm(forms.ModelForm):
         ]
 
 
-class ServiceRequestCompleteForm(forms.ModelForm):
+class ServiceTransactionCompleteForm(forms.ModelForm):
     class Meta:
-        model = ServiceRequest
+        model = ServiceTransaction
         fields = ["hours_completed", "cancellation_reason"]
 
 
-class ServiceRequestRejectForm(forms.Form):
+class ServiceTransactionRejectForm(forms.Form):
     rejection_reason = forms.CharField(
         required=True,
         help_text="Please provide a reason for rejecting this request",
     )
 
 
-class ServiceRequestCancelForm(forms.Form):
+class ServiceTransactionCancelForm(forms.Form):
     cancellation_reason = forms.CharField(
         required=False,
         help_text="Please provide a reason for canceling this request",

@@ -68,6 +68,21 @@
           </a>
           {% endif %}
         </div>
+
+        <!-- Requested Services Card -->
+        <div class="bg-card rounded-xl p-8 shadow-sm flex flex-col items-stretch">
+          <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">Requested Services</div>
+          <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
+          <ul class="py-2 space-y-4 flex flex-col items-center">
+            {% for request in requests %}
+            <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold">
+              <a href="{% url 'request_detail' request.id %}">{{ request.title }}</a>
+            </li>
+            {% empty %}
+            <li class="text-primary">No services requested</li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
       <!-- Main Activity Section -->
       <div class="md:col-span-2 flex flex-col space-y-8">
@@ -80,9 +95,10 @@
           <div class="p-2 flex flex-col gap-8">
             <!-- Provided -->
             <div>
-              <div class="font-semibold text-gray-800 mb-2">Provided</div>
+              <div class="font-semibold text-gray-800 mb-2">Provided Services</div>
               <ul class="space-y-2">
-                {% for transaction in provider_transactions %}
+                <!-- Service and Request Credits -->
+                {% for transaction in all_credits %}
                 <li class="flex items-center text-gray-800 text-sm">
                   <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
                   <span class="pl-2 font-medium">{{ transaction.description }}</span>
@@ -96,9 +112,10 @@
             </div>
             <!-- Received -->
             <div>
-              <div class="font-semibold text-gray-800 mb-2">Received</div>
+              <div class="font-semibold text-gray-800 mb-2">Received Services</div>
               <ul class="space-y-2">
-                {% for transaction in requester_transactions %}
+                <!-- Service and Request Debits -->
+                {% for transaction in all_debits %}
                 <li class="flex items-center text-gray-800 text-sm">
                   <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
                   <span class="pl-2 font-medium">{{ transaction.description }}</span>

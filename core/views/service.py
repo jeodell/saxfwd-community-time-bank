@@ -12,7 +12,7 @@ from django.views.generic import (
     View,
 )
 
-from ..forms import ServiceForm, ServiceRequestForm
+from ..forms import ServiceForm, ServiceTransactionForm
 from ..models import Service, ServiceCategory
 
 
@@ -110,7 +110,7 @@ class ServiceDeleteView(LoginRequiredMixin, DeleteView):
         service = self.get_object()
 
         # Check for any pending or accepted requests
-        outstanding_requests = service.servicerequest_set.filter(
+        outstanding_requests = service.ServiceTransaction_set.filter(
             status__in=["pending", "accepted"]
         ).exists()
 
@@ -148,8 +148,8 @@ class ServiceEditView(LoginRequiredMixin, UpdateView):
         return reverse_lazy("service_detail", kwargs={"pk": self.object.pk})
 
 
-class ServiceRequestView(LoginRequiredMixin, CreateView):
-    form_class = ServiceRequestForm
+class ServiceTransactionView(LoginRequiredMixin, CreateView):
+    form_class = ServiceTransactionForm
     template_name = "requests/request_form.html"
 
     def get_context_data(self, **kwargs):
@@ -177,7 +177,7 @@ class ServiceToggleActiveView(LoginRequiredMixin, View):
         service = get_object_or_404(Service, pk=pk, provider=request.user)
 
         # Check for any outstanding requests (pending or accepted)
-        outstanding_requests = service.servicerequest_set.filter(
+        outstanding_requests = service.ServiceTransaction_set.filter(
             status__in=["pending", "accepted"]
         ).exists()
 

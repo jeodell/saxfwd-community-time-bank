@@ -4,9 +4,11 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import (
     Application,
     MeetingNotes,
+    Request,
+    RequestTransaction,
     Service,
     ServiceCategory,
-    ServiceRequest,
+    ServiceTransaction,
     TimeBankLedger,
     User,
 )
@@ -45,8 +47,8 @@ class ServiceAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
 
 
-@admin.register(ServiceRequest)
-class ServiceRequestAdmin(admin.ModelAdmin):
+@admin.register(ServiceTransaction)
+class ServiceTransactionAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
     list_display = (
         "service",
@@ -115,7 +117,8 @@ class TimeBankLedgerAdmin(admin.ModelAdmin):
     ordering = ("-created_at",)
     list_display = (
         "user",
-        "service_request",
+        "service_transaction",
+        "request_transaction",
         "transaction_type",
         "hours",
         "created_at",
@@ -344,3 +347,89 @@ class ApplicationAdmin(admin.ModelAdmin):
         self.message_user(request, f"Successfully rejected {count} application(s).")
 
     reject_applications.short_description = "Reject selected applications"
+
+
+@admin.register(Request)
+class RequestAdmin(admin.ModelAdmin):
+    ordering = ("-created_at",)
+    list_display = (
+        "title",
+        "requester",
+        "category",
+        "urgency",
+        "estimated_hours",
+        "num_users_needed",
+        "is_active",
+        "created_at",
+    )
+    list_filter = ("category", "urgency", "is_active", "created_at")
+    search_fields = (
+        "id",
+        "title",
+        "description",
+        "requester__first_name",
+        "requester__last_name",
+    )
+    date_hierarchy = "created_at"
+
+
+@admin.register(RequestTransaction)
+class RequestTransactionAdmin(admin.ModelAdmin):
+    ordering = ("-created_at",)
+    list_display = (
+        "request",
+        "provider",
+        "status",
+        "proposed_hours",
+        "hours_completed",
+        "provider_completed",
+        "requester_completed",
+        "completed_at",
+        "created_at",
+    )
+    list_filter = (
+        "status",
+        "created_at",
+        "provider_completed",
+        "requester_completed",
+    )
+    search_fields = (
+        "id",
+        "request__title",
+        "provider__first_name",
+        "provider__last_name",
+        "message",
+    )
+    date_hierarchy = "created_at"
+    readonly_fields = ("created_at", "updated_at", "completed_at")
+    fieldsets = (
+        (
+            "Request Information",
+            {
+                "fields": (
+                    "request",
+                    "provider",
+                    "proposed_hours",
+                    "hours_completed",
+                    "message",
+                )
+            },
+        ),
+        (
+            "Offer Status",
+            {
+                "fields": (
+                    "status",
+                    "provider_completed",
+                    "requester_completed",
+                    "cancellation_reason",
+                    "rejection_reason",
+                    "completed_at",
+                )
+            },
+        ),
+        (
+            "System Information",
+            {"fields": ("created_at", "updated_at"), "classes": ("collapse",)},
+        ),
+    )
