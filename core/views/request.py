@@ -1,14 +1,17 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
-from django.views.generic import DetailView, ListView, View
-
-from ..forms import (
-    ServiceTransactionCancelForm,
-    ServiceTransactionCompleteForm,
-    ServiceTransactionRejectForm,
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    ListView,
+    UpdateView,
+    View,
 )
+
+from ..forms import RequestTransactionForm
 from ..models import Request, ServiceTransaction
 
 
@@ -66,304 +69,36 @@ class UserRequestListView(LoginRequiredMixin, ListView):
 
 
 class RequestDetailView(LoginRequiredMixin, DetailView):
-    model = ServiceTransaction
-    template_name = "services/service_transaction_detail.html"
+    model = Request
+    template_name = "requests/request_detail.html"
     context_object_name = "request"
 
     def get_object(self):
         obj = super().get_object()
-        if (
-            self.request.user != obj.requester
-            and self.request.user != obj.service.provider
-        ):
-            messages.error(
-                self.request, "You do not have permission to view this request."
-            )
-            return redirect("home")
+        # Community requests can be viewed by anyone who is logged in
         return obj
 
 
-class RequestAcceptView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-        if request.user != service_transaction.service.provider:
-            messages.error(request, "Only the service provider can accept requests.")
-            return redirect("home")
+class RequestCreateView(LoginRequiredMixin, CreateView):
+    model = Request
+    template_name = "requests/request_form.html"
+    fields = [
+        "title",
+        "description",
+        "category",
+        "preferred_date",
+        "estimated_hours",
+        "num_users_needed",
+        "urgency",
+    ]
 
-        try:
-            service_transaction.accept_request()
-            messages.success(request, "Request accepted successfully!")
-        except ValueError as e:
-            messages.error(request, str(e))
-        return redirect("request_detail", pk=pk)
+    def form_valid(self, form):
+        form.instance.requester = self.request.user
+        messages.success(self.request, "Community request created successfully!")
+        return super().form_valid(form)
 
-
-class RequestRejectView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-        if request.user != service_transaction.service.provider:
-            messages.error(request, "Only the service provider can reject requests.")
-            return redirect("home")
-
-        form = ServiceTransactionRejectForm(request.POST)
-        if form.is_valid():
-            try:
-                rejection_reason = form.cleaned_data["rejection_reason"]
-                service_transaction.reject_request(rejection_reason)
-                messages.success(request, "Request rejected successfully!")
-            except ValueError as e:
-                messages.error(request, str(e))
-        else:
-            messages.error(
-                request, "Please provide a reason for rejecting the request."
-            )
-
-        return redirect("request_detail", pk=pk)
-
-
-class RequestCancelView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-        if request.user != service_transaction.requester:
-            messages.error(request, "Only the requester can cancel requests.")
-            return redirect("home")
-
-        form = ServiceTransactionCancelForm(request.POST)
-        if form.is_valid():
-            try:
-                cancellation_reason = form.cleaned_data.get("cancellation_reason", "")
-                service_transaction.cancel_request(cancellation_reason)
-                messages.success(request, "Request canceled successfully!")
-            except ValueError as e:
-                messages.error(request, str(e))
-        else:
-            messages.error(request, "There was an error processing your request.")
-
-        return redirect("request_detail", pk=pk)
-
-
-class RequestCompleteView(LoginRequiredMixin, View):
-    def post(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-
-        try:
-            is_fully_completed = service_transaction.complete_request(request.user)
-            if is_fully_completed:
-                messages.success(
-                    request,
-                    "Request completed successfully! Time credits have been transferred.",
-                )
-            else:
-                messages.success(
-                    request,
-                    "Completion status updated. Waiting for the other party to complete.",
-                )
-        except ValueError as e:
-            messages.error(request, str(e))
-            return redirect("home")
-
-        return redirect("request_detail", pk=pk)
-
-
-class RequestCompleteFormView(LoginRequiredMixin, View):
-    template_name = "services/service_transaction_complete_form.html"
-
-    def get(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-
-        # Check if user has permission to complete this request
-        if (
-            request.user != service_transaction.service.provider
-            and request.user != service_transaction.requester
-        ):
-            messages.error(
-                request, "You do not have permission to complete this request."
-            )
-            return redirect("home")
-
-        # Check if request is in a state that can be completed
-        if service_transaction.status != "accepted":
-            messages.error(request, "This request cannot be completed at this time.")
-            return redirect("request_detail", pk=pk)
-
-        # Check if user has already completed their part
-        if (
-            request.user == service_transaction.service.provider
-            and service_transaction.provider_completed
-        ):
-            messages.error(
-                request, "You have already marked this request as completed."
-            )
-            return redirect("request_detail", pk=pk)
-        if (
-            request.user == service_transaction.requester
-            and service_transaction.requester_completed
-        ):
-            messages.error(
-                request, "You have already confirmed this request as completed."
-            )
-            return redirect("request_detail", pk=pk)
-
-        form = ServiceTransactionCompleteForm(
-            initial={"hours_completed": service_transaction.hours_requested}
-        )
-        return render(
-            request, self.template_name, {"request": service_transaction, "form": form}
-        )
-
-    def post(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-
-        # Check if user has permission to complete this request
-        if (
-            request.user != service_transaction.service.provider
-            and request.user != service_transaction.requester
-        ):
-            messages.error(
-                request, "You do not have permission to complete this request."
-            )
-            return redirect("home")
-
-        # Check if request is in a state that can be completed
-        if service_transaction.status != "accepted":
-            messages.error(request, "This request cannot be completed at this time.")
-            return redirect("request_detail", pk=pk)
-
-        # Check if user has already completed their part
-        if (
-            request.user == service_transaction.service.provider
-            and service_transaction.provider_completed
-        ):
-            messages.error(
-                request, "You have already marked this request as completed."
-            )
-            return redirect("request_detail", pk=pk)
-        if (
-            request.user == service_transaction.requester
-            and service_transaction.requester_completed
-        ):
-            messages.error(
-                request, "You have already confirmed this request as completed."
-            )
-            return redirect("request_detail", pk=pk)
-
-        form = ServiceTransactionCompleteForm(request.POST)
-        if form.is_valid():
-            hours_completed = form.cleaned_data["hours_completed"]
-            try:
-                is_fully_completed = service_transaction.complete_request(
-                    request.user, hours_completed=hours_completed
-                )
-                if is_fully_completed:
-                    messages.success(
-                        request,
-                        "Request completed successfully! Time credits have been transferred.",
-                    )
-                else:
-                    messages.success(
-                        request,
-                        "Completion status updated. Waiting for the other party to complete.",
-                    )
-            except ValueError as e:
-                messages.error(request, str(e))
-                return redirect("request_detail", pk=pk)
-
-            return redirect("request_detail", pk=pk)
-
-        return render(
-            request, self.template_name, {"request": service_transaction, "form": form}
-        )
-
-
-class RequestCommunityHoursView(LoginRequiredMixin, View):
-    def get(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-        if not service_transaction.can_request_community_hours():
-            messages.error(
-                request, "This request cannot be converted to a community request."
-            )
-            return redirect("request_detail", pk=pk)
-        return render(
-            request,
-            "services/service_transaction_form.html",
-            {"request": service_transaction},
-        )
-
-    def post(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-        if request.user != service_transaction.requester:
-            messages.error(
-                request, "Only the requester can convert to a community request."
-            )
-            return redirect("request_detail", pk=pk)
-
-        if not service_transaction.can_request_community_hours():
-            messages.error(
-                request, "This request cannot be converted to a community request."
-            )
-            return redirect("request_detail", pk=pk)
-
-        reason = request.POST.get("reason", "")
-        if not reason:
-            messages.error(
-                request, "Please provide a reason for requesting community hours."
-            )
-            return redirect("request_detail", pk=pk)
-
-        service_transaction.request_community_hours(reason)
-        messages.success(request, "Community hours request submitted successfully!")
-        return redirect("request_detail", pk=pk)
-
-
-class ApproveCommunityTransactionView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def get(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-        if not service_transaction.can_be_approved():
-            messages.error(request, "This request cannot be approved.")
-            return redirect("request_detail", pk=pk)
-        return render(
-            request,
-            "requests/community_request_review.html",
-            {"request": service_transaction},
-        )
-
-    def post(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-        if not service_transaction.can_be_approved():
-            messages.error(request, "This request cannot be approved.")
-            return redirect("request_detail", pk=pk)
-
-        notes = request.POST.get("notes", "")
-        try:
-            service_transaction.approve_community_request(request.user, notes)
-            messages.success(request, "Community hours request approved successfully!")
-        except ValueError as e:
-            messages.error(request, str(e))
-        return redirect("request_detail", pk=pk)
-
-
-class RejectCommunityTransactionView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def get(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-        if not service_transaction.can_be_rejected():
-            messages.error(request, "This request cannot be rejected.")
-            return redirect("request_detail", pk=pk)
-        return render(
-            request,
-            "requests/community_request_review.html",
-            {"request": service_transaction},
-        )
-
-    def post(self, request, pk):
-        service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
-        if not service_transaction.can_be_rejected():
-            messages.error(request, "This request cannot be rejected.")
-            return redirect("request_detail", pk=pk)
-
-        notes = request.POST.get("notes", "")
-        service_transaction.reject_community_request(request.user, notes)
-        messages.success(request, "Community hours request rejected.")
-        return redirect("request_detail", pk=pk)
+    def get_success_url(self):
+        return reverse_lazy("request_detail", kwargs={"pk": self.object.pk})
 
 
 class RequestListView(LoginRequiredMixin, ListView):
@@ -380,6 +115,11 @@ class RequestListView(LoginRequiredMixin, ListView):
         category = self.request.GET.get("category")
         if category:
             queryset = queryset.filter(category__name=category)
+
+        # Apply priority filter if provided
+        priority = self.request.GET.get("priority")
+        if priority:
+            queryset = queryset.filter(urgency=priority)
 
         # Apply search filter if provided
         search = self.request.GET.get("search")
@@ -399,6 +139,80 @@ class RequestListView(LoginRequiredMixin, ListView):
 
         # Add search and filter parameters
         context["current_category"] = self.request.GET.get("category")
+        context["current_priority"] = self.request.GET.get("priority")
         context["current_search"] = self.request.GET.get("search")
 
         return context
+
+
+class RequestEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Request
+    template_name = "requests/request_form.html"
+    fields = [
+        "title",
+        "description",
+        "category",
+        "preferred_date",
+        "estimated_hours",
+        "num_users_needed",
+        "urgency",
+    ]
+
+    def test_func(self):
+        request_obj = self.get_object()
+        return self.request.user == request_obj.requester
+
+    def get_success_url(self):
+        return reverse_lazy("request_detail", kwargs={"pk": self.object.pk})
+
+
+class RequestToggleActiveView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        request_obj = get_object_or_404(Request, pk=self.kwargs["pk"])
+        return self.request.user == request_obj.requester
+
+    def post(self, request, pk):
+        request_obj = get_object_or_404(Request, pk=pk)
+        request_obj.is_active = not request_obj.is_active
+        request_obj.save()
+
+        status = "activated" if request_obj.is_active else "deactivated"
+        messages.success(request, f"Request {status} successfully!")
+
+        return redirect("request_detail", pk=pk)
+
+
+class RequestDeleteView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        request_obj = get_object_or_404(Request, pk=self.kwargs["pk"])
+        return self.request.user == request_obj.requester
+
+    def post(self, request, pk):
+        request_obj = get_object_or_404(Request, pk=pk)
+        request_obj.delete()
+        messages.success(request, "Request deleted successfully!")
+        return redirect("request_list")
+
+
+class RequestTransactionView(LoginRequiredMixin, CreateView):
+    form_class = RequestTransactionForm
+    template_name = "requests/request_transaction_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["request"] = get_object_or_404(Request, pk=self.kwargs["pk"])
+        return context
+
+    def form_valid(self, form):
+        form.instance.request = get_object_or_404(Request, pk=self.kwargs["pk"])
+        form.instance.provider = self.request.user
+        messages.success(self.request, "Offer submitted successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print(form.errors)
+        messages.error(self.request, "There was an error submitting the offer.")
+        return super().form_invalid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("request_detail", kwargs={"pk": self.kwargs["pk"]})

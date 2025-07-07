@@ -7,7 +7,7 @@
     <!-- Back Button -->
     <div class="mb-6">
       <a
-        href="{% url 'request_detail' request.pk %}"
+        href="{% url 'service_transaction_detail' request.pk %}"
         class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200"
       >
         <i class="fas fa-arrow-left mr-2"></i>
@@ -30,7 +30,7 @@
     </div>
 
     <!-- Form -->
-    <form method="post" action="{% url 'request_complete' request.pk %}" class="space-y-6">
+    <form method="post" action="{% url 'service_transaction_complete' request.pk %}" class="space-y-6">
       {% csrf_token %}
 
       <!-- Service Information -->

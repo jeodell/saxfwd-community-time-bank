@@ -1,59 +1,45 @@
 from django.urls import path
 
 from core.views.request import (
-    ApproveCommunityTransactionView,
-    RejectCommunityTransactionView,
-    RequestAcceptView,
-    RequestCancelView,
-    RequestCommunityHoursView,
-    RequestCompleteFormView,
-    RequestCompleteView,
+    RequestCreateView,
+    RequestDeleteView,
     RequestDetailView,
+    RequestEditView,
     RequestListView,
-    RequestRejectView,
+    RequestToggleActiveView,
+    RequestTransactionView,
 )
 
 urlpatterns = [
     path("", RequestListView.as_view(), name="request_list"),
-    path("<uuid:pk>/", RequestDetailView.as_view(), name="request_detail"),
     path(
-        "<uuid:pk>/accept/",
-        RequestAcceptView.as_view(),
-        name="request_accept",
+        "create/",
+        RequestCreateView.as_view(),
+        name="request_create",
     ),
     path(
-        "<uuid:pk>/reject/",
-        RequestRejectView.as_view(),
-        name="request_reject",
+        "<uuid:pk>/",
+        RequestDetailView.as_view(),
+        name="request_detail",
     ),
     path(
-        "<uuid:pk>/cancel/",
-        RequestCancelView.as_view(),
-        name="request_cancel",
+        "<uuid:pk>/edit/",
+        RequestEditView.as_view(),
+        name="request_edit",
     ),
     path(
-        "<uuid:pk>/complete/",
-        RequestCompleteFormView.as_view(),
-        name="request_complete_form",
+        "<uuid:pk>/offer/",
+        RequestTransactionView.as_view(),
+        name="request_offer",
     ),
     path(
-        "<uuid:pk>/complete-action/",
-        RequestCompleteView.as_view(),
-        name="request_complete",
+        "<uuid:pk>/toggle-active/",
+        RequestToggleActiveView.as_view(),
+        name="request_toggle_active",
     ),
     path(
-        "<uuid:pk>/community/",
-        RequestCommunityHoursView.as_view(),
-        name="request_community_hours",
-    ),
-    path(
-        "<uuid:pk>/community/approve/",
-        ApproveCommunityTransactionView.as_view(),
-        name="approve_community_request",
-    ),
-    path(
-        "<uuid:pk>/community/reject/",
-        RejectCommunityTransactionView.as_view(),
-        name="reject_community_request",
+        "<uuid:pk>/delete/",
+        RequestDeleteView.as_view(),
+        name="request_delete",
     ),
 ]

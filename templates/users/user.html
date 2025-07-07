@@ -76,7 +76,7 @@
           <ul class="py-2 space-y-4 flex flex-col items-center">
             {% for request in requests %}
             <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold">
-              <a href="{% url 'request_detail' request.id %}">{{ request.title }}</a>
+              <a href="{% url 'request_transaction_detail' request.id %}">{{ request.title }}</a>
             </li>
             {% empty %}
             <li class="text-primary">No services requested</li>

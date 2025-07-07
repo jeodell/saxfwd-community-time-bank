@@ -7,6 +7,15 @@ from core.views.service import (
     ServiceEditView,
     ServiceListView,
     ServiceToggleActiveView,
+    ServiceTransactionAcceptView,
+    ServiceTransactionCancelView,
+    ServiceTransactionCommunityHoursApproveView,
+    ServiceTransactionCommunityHoursRejectView,
+    ServiceTransactionCommunityHoursView,
+    ServiceTransactionCompleteFormView,
+    ServiceTransactionCompleteView,
+    ServiceTransactionDetailView,
+    ServiceTransactionRejectView,
     ServiceTransactionView,
 )
 
@@ -29,13 +38,58 @@ urlpatterns = [
         name="service_delete",
     ),
     path(
+        "<uuid:pk>/toggle-active/",
+        ServiceToggleActiveView.as_view(),
+        name="service_toggle_active",
+    ),
+    path(
         "<uuid:pk>/transaction/",
         ServiceTransactionView.as_view(),
         name="service_transaction",
     ),
     path(
-        "<uuid:pk>/toggle-active/",
-        ServiceToggleActiveView.as_view(),
-        name="service_toggle_active",
+        "<uuid:pk>/",
+        ServiceTransactionDetailView.as_view(),
+        name="service_transaction_detail",
+    ),
+    path(
+        "<uuid:pk>/accept/",
+        ServiceTransactionAcceptView.as_view(),
+        name="service_transaction_accept",
+    ),
+    path(
+        "<uuid:pk>/reject/",
+        ServiceTransactionRejectView.as_view(),
+        name="service_transaction_reject",
+    ),
+    path(
+        "<uuid:pk>/cancel/",
+        ServiceTransactionCancelView.as_view(),
+        name="service_transaction_cancel",
+    ),
+    path(
+        "<uuid:pk>/complete/",
+        ServiceTransactionCompleteFormView.as_view(),
+        name="service_transaction_complete_form",
+    ),
+    path(
+        "<uuid:pk>/complete-action/",
+        ServiceTransactionCompleteView.as_view(),
+        name="service_transaction_complete",
+    ),
+    path(
+        "<uuid:pk>/community/",
+        ServiceTransactionCommunityHoursView.as_view(),
+        name="community_service_transaction",
+    ),
+    path(
+        "<uuid:pk>/community/approve/",
+        ServiceTransactionCommunityHoursApproveView.as_view(),
+        name="community_service_transaction_approve",
+    ),
+    path(
+        "<uuid:pk>/community/reject/",
+        ServiceTransactionCommunityHoursRejectView.as_view(),
+        name="community_service_transaction_reject",
     ),
 ]

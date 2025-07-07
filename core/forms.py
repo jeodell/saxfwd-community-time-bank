@@ -7,7 +7,7 @@ from django.utils.http import urlsafe_base64_decode
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV3
 
-from .models import Service, ServiceTransaction
+from .models import RequestTransaction, Service, ServiceTransaction
 
 User = get_user_model()
 
@@ -149,6 +149,12 @@ class ServiceTransactionForm(forms.ModelForm):
     class Meta:
         model = ServiceTransaction
         fields = ["requested_date", "hours_requested", "description"]
+
+
+class RequestTransactionForm(forms.ModelForm):
+    class Meta:
+        model = RequestTransaction
+        fields = ["proposed_hours", "message"]
 
 
 class UserForm(forms.ModelForm):

@@ -53,7 +53,7 @@
         </div>
         {% if request.status == 'pending' and user == request.service.provider %}
         <div class="mt-4 md:mt-0 space-x-4">
-          <form method="post" action="{% url 'request_accept' request.pk %}" class="inline">
+          <form method="post" action="{% url 'service_transaction_accept' request.pk %}" class="inline">
             {% csrf_token %}
             <button
               type="submit"
@@ -85,7 +85,7 @@
         <div class="mt-4 md:mt-0 space-y-2">
           {% if user == request.service.provider and not request.provider_completed %}
           <a
-            href="{% url 'request_complete_form' request.pk %}"
+            href="{% url 'service_transaction_complete_form' request.pk %}"
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
           >
             <i class="fas fa-flag-checkered mr-2"></i>
@@ -93,7 +93,7 @@
           </a>
           {% elif user == request.requester and not request.requester_completed %}
           <a
-            href="{% url 'request_complete_form' request.pk %}"
+            href="{% url 'service_transaction_complete_form' request.pk %}"
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
           >
             <i class="fas fa-flag-checkered mr-2"></i>
@@ -237,7 +237,7 @@
           <i class="fas fa-times"></i>
         </button>
       </div>
-      <form method="post" action="{% url 'request_cancel' request.pk %}" class="space-y-4">
+      <form method="post" action="{% url 'service_transaction_cancel' request.pk %}" class="space-y-4">
         {% csrf_token %}
         <div>
           <label for="cancellation_reason" class="block text-sm font-medium text-gray-700">
@@ -295,7 +295,7 @@
           </div>
         </div>
       </div>
-      <form method="post" action="{% url 'request_reject' request.pk %}" class="space-y-4">
+      <form method="post" action="{% url 'service_transaction_reject' request.pk %}" class="space-y-4">
         {% csrf_token %}
         <div>
           <label for="rejection_reason" class="block text-sm font-medium text-gray-700">Reason for Rejection</label>
