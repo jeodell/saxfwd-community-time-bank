@@ -16,6 +16,7 @@ from core.models import (
     ServiceCategory,
     ServiceTransaction,
     TimeBankLedger,
+    User,
 )
 
 User = get_user_model()
@@ -44,15 +45,15 @@ CATEGORIES = [
 
 USERS = [
     {
-        "first_name": "Jadmin",
-        "last_name": "O'Admin",
-        "email": "jason@jason.jason",
+        "first_name": "Jason",
+        "last_name": "O'Dell",
+        "email": "jason.odell@example.com",
         "password": "password",
         "phone_number": "555-5555",
         "address": "123 Main St, Saxapahaw, NC 27340",
         "bio": "I'm the admin of the community time bank. I'm here to help you get started and answer any questions you have.",
-        "is_staff": True,
-        "is_superuser": True,
+        "is_staff": False,
+        "is_superuser": False,
     },
     {
         "first_name": "Gary",
@@ -206,7 +207,7 @@ class Command(BaseCommand):
             Request.objects.all().delete()
             Service.objects.all().delete()
             Application.objects.all().delete()
-            User.objects.filter(is_superuser=False).delete()
+            User.objects.all().delete()
             ServiceCategory.objects.all().delete()
             CommunityHours.objects.all().delete()
 
@@ -259,7 +260,7 @@ class Command(BaseCommand):
 
         # Create applications for non-admin users
         self.stdout.write("Creating user applications...")
-        admin_user = users["jason@jason.jason"]
+        admin_user = users["jason.odell@example.com"]
         for email, user in users.items():
             if not user.is_superuser:
                 application, created = Application.objects.get_or_create(
@@ -280,6 +281,17 @@ class Command(BaseCommand):
                 if created:
                     self.stdout.write(
                         self.style.SUCCESS(f"Created application for: {user.full_name}")
+                    )
+
+                    # Add application approval credits
+                    TimeBankLedger.objects.create(
+                        user=user,
+                        transaction_type="application_credit",
+                        hours=Decimal("5.00"),
+                        description="Welcome bonus for approved application",
+                    )
+                    self.stdout.write(
+                        self.style.SUCCESS(f"Added 5 hours welcome bonus for: {user.full_name}")
                     )
 
         # Create services
@@ -555,7 +567,5 @@ class Command(BaseCommand):
                 f"   • {len(requests)} requests\n"
                 f"   • Multiple transactions and ledger entries\n"
                 f"   • Community hours pool\n\n"
-                f"🔑 Admin login: jason@jason.jason / password\n"
-                f"👥 Regular user login: larry.odell@example.com / password"
             )
         )

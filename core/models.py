@@ -85,6 +85,10 @@ class User(AbstractUser):
             user=self, transaction_type="request_credit"
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
 
+        application_credits = TimeBankLedger.objects.filter(
+            user=self, transaction_type="application_credit"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
         service_debits = TimeBankLedger.objects.filter(
             user=self, transaction_type="service_debit"
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
@@ -97,7 +101,7 @@ class User(AbstractUser):
             user=self, transaction_type="community_donation"
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
 
-        return (service_credits + request_credits) - (
+        return (service_credits + request_credits + application_credits) - (
             service_debits + request_debits + community_donations
         )
 
@@ -112,7 +116,11 @@ class User(AbstractUser):
             user=self, transaction_type="request_credit"
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
 
-        return service_credits + request_credits
+        application_credits = TimeBankLedger.objects.filter(
+            user=self, transaction_type="application_credit"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+        return service_credits + request_credits + application_credits
 
     @property
     def total_hours_spent(self):
@@ -893,6 +901,7 @@ class TimeBankLedger(models.Model):
         ("community_request", "Community Request"),
         ("request_credit", "Request Credit"),
         ("request_debit", "Request Debit"),
+        ("application_credit", "Application Approval Credit"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -1002,6 +1011,14 @@ class Application(models.Model):
         self.referral_approved_by = reviewer
         self.referral_approved_at = timezone.now()
         self.save()
+
+        # Add 5 hours of credits for application approval
+        TimeBankLedger.objects.create(
+            user=self.user,
+            transaction_type="application_credit",
+            hours=Decimal("5.00"),
+            description="Welcome bonus for approved application",
+        )
 
     def mark_onboarded(self):
         """Mark the user as having completed onboarding."""

@@ -262,7 +262,7 @@ class ApplicationReviewDetailView(LoginRequiredMixin, UserPassesTestMixin, Detai
         return context
 
     def post(self, request, *args, **kwargs):
-        application = self.get_object()
+        application: Application = self.get_object()
         action = request.POST.get("action")
         review_notes = request.POST.get("review_notes", "")
 

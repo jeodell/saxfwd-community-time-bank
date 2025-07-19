@@ -113,7 +113,7 @@ class ServiceDeleteView(LoginRequiredMixin, DeleteView):
         return Service.objects.filter(provider=self.request.user)
 
     def post(self, request, *args, **kwargs):
-        service = self.get_object()
+        service: Service = self.get_object()
 
         # Check for any pending or accepted requests
         outstanding_requests = service.ServiceTransaction_set.filter(

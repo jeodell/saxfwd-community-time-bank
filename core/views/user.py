@@ -20,17 +20,28 @@ class UserView(LoginRequiredMixin, View):
             return None
 
     def get(self, request, *args, **kwargs):
-        user = self.get_object()
+        user: User | None = self.get_object()
         if not user:
             return redirect("home")
 
-        # service_credit or request_credit
+        # service_credit and request_credit
         all_credits = TimeBankLedger.objects.filter(
             user=user, transaction_type__in=["service_credit", "request_credit"]
         ).order_by("-created_at")[:5]
 
+        # service_debit and request_debit
         all_debits = TimeBankLedger.objects.filter(
             user=user, transaction_type__in=["service_debit", "request_debit"]
+        ).order_by("-created_at")[:5]
+
+        # community_donation
+        community_donations = TimeBankLedger.objects.filter(
+            user=user, transaction_type="community_donation"
+        ).order_by("-created_at")[:5]
+
+        # community_request and application_credit
+        community_requests_and_credits = TimeBankLedger.objects.filter(
+            user=user, transaction_type__in=["community_request", "application_credit"]
         ).order_by("-created_at")[:5]
 
         context = {
@@ -43,14 +54,11 @@ class UserView(LoginRequiredMixin, View):
             ),
             "all_credits": all_credits,
             "all_debits": all_debits,
-            "community_donations": TimeBankLedger.objects.filter(
-                user=user, transaction_type="community_donation"
-            ).order_by("-created_at")[:5],
-            "community_requests": TimeBankLedger.objects.filter(
-                user=user, transaction_type="community_request"
-            ).order_by("-created_at")[:5],
+            "community_donations": community_donations,
+            "community_requests": community_requests_and_credits,
             "form": UserForm(instance=user) if request.user == user else None,
         }
+
         return render(request, self.template_name, context)
 
 
@@ -61,7 +69,10 @@ class UserEditView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("user_me")
 
     def get_object(self):
-        return User.objects.get(id=self.request.user.id)
+        try:
+            return User.objects.get(id=self.request.user.id)
+        except User.DoesNotExist:
+            return None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -70,7 +81,7 @@ class UserEditView(LoginRequiredMixin, UpdateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        user = self.get_object()
+        user: User | None = self.get_object()
         if not user:
             return redirect("home")
 

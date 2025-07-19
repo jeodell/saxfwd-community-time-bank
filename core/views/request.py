@@ -144,10 +144,10 @@ class RequestListView(LoginRequiredMixin, ListView):
         """Get requests based on view type (public_requests or my_requests)."""
         # Get search filter
         search = self.request.GET.get("search", "")
-        
+
         # Get view type filter
         view_type = self.request.GET.get("view", "public_requests")
-        
+
         # Show my requests if the user is authenticated and view is my_requests
         if view_type == "my_requests" and self.request.user.is_authenticated:
             # Show all requests created by the current user (both active and inactive)
@@ -160,13 +160,13 @@ class RequestListView(LoginRequiredMixin, ListView):
         else:
             # Show public requests (excluding user's own requests)
             queryset = Request.get_active_requests(exclude_user=self.request.user)
-            
+
             # Apply search filter
             if search:
                 queryset = queryset.filter(
                     Q(title__icontains=search) | Q(description__icontains=search)
                 )
-            
+
             # Exclude fully staffed requests for public view
             queryset = queryset.exclude(
                 id__in=Request.objects.filter(
@@ -218,7 +218,7 @@ class RequestEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = "requests/request_form.html"
 
     def test_func(self):
-        request_obj = self.get_object()
+        request_obj: Request = self.get_object()
         return self.request.user == request_obj.requester
 
     def get_context_data(self, **kwargs):

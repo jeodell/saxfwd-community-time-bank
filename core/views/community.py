@@ -56,6 +56,12 @@ class CommunityView(LoginRequiredMixin, ListView):
                     from_user = transaction.user
                     to_user = "Community"
 
+                # Application Credit
+                elif transaction.transaction_type == "application_credit":
+                    description = transaction.description
+                    from_user = "Community"
+                    to_user = transaction.user
+
                 grouped_transactions[key] = {
                     "created_at": transaction.created_at,
                     "service_transaction": service_transaction,
