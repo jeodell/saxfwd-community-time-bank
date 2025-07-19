@@ -33,9 +33,16 @@
               {{ request.category.name }}
             </span>
             {% endif %}
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if is_fully_staffed %}bg-green-100 text-green-800 border border-green-800{% else %}bg-blue-100 text-blue-800 border border-blue-800{% endif %}"
+            >
+              <i class="fas {% if is_fully_staffed %}fa-check-circle{% else %}fa-users{% endif %} mr-1"></i>
+              {% if is_fully_staffed %}Fully Staffed{% else %}{{ accepted_offers_count }}/{{ request.num_users_needed }}
+              Staffed{% endif %}
+            </span>
           </div>
         </div>
-        {% if user.is_authenticated and user != request.requester %}
+        {% if user.is_authenticated and user != request.requester and not is_fully_staffed %}
         <div class="mt-4 md:mt-0">
           <a
             href="{% url 'request_offer' request.pk %}"
@@ -44,6 +51,15 @@
             <i class="fas fa-handshake mr-2"></i>
             Offer Help
           </a>
+        </div>
+        {% elif user.is_authenticated and user != request.requester and is_fully_staffed %}
+        <div class="mt-4 md:mt-0">
+          <span
+            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-500 bg-gray-100 cursor-not-allowed"
+          >
+            <i class="fas fa-check-circle mr-2"></i>
+            Fully Staffed ({{ accepted_offers_count }}/{{ request.num_users_needed }})
+          </span>
         </div>
         {% elif user == request.requester %}
         <div class="mt-4 md:mt-0">
@@ -77,12 +93,21 @@
         </div>
         {% else %}
         <div class="mt-4 md:mt-0">
+          {% if is_fully_staffed %}
+          <span
+            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-500 bg-gray-100 cursor-not-allowed"
+          >
+            <i class="fas fa-check-circle mr-2"></i>
+            Fully Staffed ({{ accepted_offers_count }}/{{ request.num_users_needed }})
+          </span>
+          {% else %}
           <a
             href="{% url 'login' %}"
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
           >
             Login to Offer Help
           </a>
+          {% endif %}
         </div>
         {% endif %}
       </div>
@@ -160,6 +185,113 @@
         </div>
       </div>
     </div>
+
+    <!-- Offers Section -->
+    {% if offers %}
+    <div class="border-t border-gray-200 pt-8 mt-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Offers to Help</h2>
+      <div class="space-y-4">
+        {% for offer in offers %}
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div class="flex-1">
+              <div class="flex items-center space-x-4 mb-3">
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if offer.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif offer.status == 'accepted' %}bg-blue-100 text-blue-800{% elif offer.status == 'completed' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}"
+                >
+                  {{ offer.get_status_display }}
+                </span>
+                <span class="text-sm text-gray-500">
+                  <i class="fas fa-clock mr-1"></i>
+                  {% if offer.status == 'completed' %} {{ offer.hours_completed|default:offer.proposed_hours }} hours {%
+                  else %} {{ offer.proposed_hours }} hours {% endif %}
+                </span>
+                <span class="text-sm text-gray-500">
+                  <i class="fas fa-calendar-alt mr-1"></i>
+                  {{ offer.created_at|date:"F j, Y, g:i a" }}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p class="text-gray-500">Offered by</p>
+                  <p class="font-medium text-gray-900">
+                    {{ offer.provider.first_name }} {{ offer.provider.last_name }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-500">Message</p>
+                  <p class="text-gray-700">{{ offer.message|truncatewords:15 }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 md:mt-0 md:ml-6 flex space-x-2">
+              {% if user == request.requester and offer.status == 'pending' %}
+              <!-- Accept/Reject buttons for pending offers -->
+              <form method="post" action="{% url 'request_transaction_accept' offer.pk %}" class="inline">
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                >
+                  <i class="fas fa-check mr-1"></i>
+                  Accept
+                </button>
+              </form>
+              <button
+                data-offer-id="{{ offer.pk }}"
+                class="reject-offer-btn inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+              >
+                <i class="fas fa-times mr-1"></i>
+                Reject
+              </button>
+              {% elif user == request.requester and offer.status == 'accepted' and not offer.requester_completed %}
+              <!-- Complete button for accepted offers -->
+              <a
+                href="{% url 'request_transaction_complete_form' offer.pk %}"
+                class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+              >
+                <i class="fas fa-flag-checkered mr-1"></i>
+                Mark Complete
+              </a>
+              {% elif user == offer.provider and offer.status == 'accepted' and not offer.provider_completed %}
+              <!-- Complete button for providers -->
+              <a
+                href="{% url 'request_transaction_complete_form' offer.pk %}"
+                class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+              >
+                <i class="fas fa-flag-checkered mr-1"></i>
+                Mark Complete
+              </a>
+              {% elif user == offer.provider and offer.status == 'pending' %}
+              <!-- Cancel button for providers -->
+              <button
+                data-offer-id="{{ offer.pk }}"
+                class="cancel-offer-btn inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+              >
+                <i class="fas fa-ban mr-1"></i>
+                Cancel Offer
+              </button>
+              {% endif %}
+
+              <!-- Show completion status for accepted offers -->
+              {% if offer.status == 'accepted' and offer.provider_completed or offer.requester_completed %}
+              <div class="text-xs text-gray-600 mt-2">
+                <p>Completion Status:</p>
+                <ul class="list-disc list-inside text-xs">
+                  <li>Provider: {% if offer.provider_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
+                  <li>Requester: {% if offer.requester_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
+                </ul>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
   </div>
 </div>
 
@@ -219,6 +351,106 @@
     </div>
   </div>
 </div>
+
+<!-- Reject Offer Modal -->
+<div id="rejectOfferModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Reject Offer</h3>
+        <button onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-500">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm text-yellow-700">
+              Are you sure you want to reject this offer? Please provide a reason for rejection.
+            </p>
+          </div>
+        </div>
+      </div>
+      <form id="rejectOfferForm" method="post" action="" class="space-y-4">
+        {% csrf_token %}
+        <input type="hidden" id="rejectOfferId" name="offer_id" value="" />
+        <div>
+          <label for="rejection_reason" class="block text-sm font-medium text-gray-700">Reason for Rejection</label>
+          <textarea
+            name="rejection_reason"
+            id="rejection_reason"
+            rows="4"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+            required
+          ></textarea>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            type="button"
+            onclick="closeRejectModal()"
+            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            <i class="fas fa-times mr-2"></i>
+            Reject Offer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Cancel Offer Modal -->
+<div id="cancelOfferModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Cancel Offer</h3>
+        <button onclick="closeCancelModal()" class="text-gray-400 hover:text-gray-500">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="cancelOfferForm" method="post" action="" class="space-y-4">
+        {% csrf_token %}
+        <input type="hidden" id="cancelOfferId" name="offer_id" value="" />
+        <div>
+          <label for="cancellation_reason" class="block text-sm font-medium text-gray-700">
+            Reason for Cancellation (Optional)
+          </label>
+          <textarea
+            name="cancellation_reason"
+            id="cancellation_reason"
+            rows="3"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+          ></textarea>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button
+            type="button"
+            onclick="closeCancelModal()"
+            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          >
+            Back
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            Cancel Offer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 <!-- prettier-ignore -->
@@ -228,6 +460,10 @@
     const deleteModal = document.getElementById('deleteModal');
     const deleteButton = document.getElementById('deleteButton');
     const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+    const rejectOfferModal = document.getElementById('rejectOfferModal');
+    const cancelOfferModal = document.getElementById('cancelOfferModal');
+    const rejectOfferForm = document.getElementById('rejectOfferForm');
+    const cancelOfferForm = document.getElementById('cancelOfferForm');
 
     function openDeleteModal() {
       deleteModal.classList.remove('hidden');
@@ -238,6 +474,34 @@
       deleteModal.classList.add('hidden');
       deleteModal.classList.remove('flex');
     }
+
+    function openRejectModal(offerId) {
+      rejectOfferForm.action = '/requests/transaction/' + offerId + '/reject/';
+      document.getElementById('rejectOfferId').value = offerId;
+      rejectOfferModal.classList.remove('hidden');
+      rejectOfferModal.classList.add('flex');
+    }
+
+    function closeRejectModal() {
+      rejectOfferModal.classList.add('hidden');
+      rejectOfferModal.classList.remove('flex');
+    }
+
+    function openCancelModal(offerId) {
+      cancelOfferForm.action = '/requests/transaction/' + offerId + '/cancel/';
+      document.getElementById('cancelOfferId').value = offerId;
+      cancelOfferModal.classList.remove('hidden');
+      cancelOfferModal.classList.add('flex');
+    }
+
+    function closeCancelModal() {
+      cancelOfferModal.classList.add('hidden');
+      cancelOfferModal.classList.remove('flex');
+    }
+
+    // Make functions globally available for onclick handlers
+    window.closeRejectModal = closeRejectModal;
+    window.closeCancelModal = closeCancelModal;
 
     if (cancelDeleteButton) {
       cancelDeleteButton.addEventListener('click', function () {
@@ -251,15 +515,45 @@
       });
     }
 
+    // Handle reject offer buttons
+    document.querySelectorAll('.reject-offer-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const offerId = this.getAttribute('data-offer-id');
+        openRejectModal(offerId);
+      });
+    });
+
+    // Handle cancel offer buttons
+    document.querySelectorAll('.cancel-offer-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const offerId = this.getAttribute('data-offer-id');
+        openCancelModal(offerId);
+      });
+    });
+
     document.getElementById('deleteModal').addEventListener('click', function (e) {
       if (e.target === this) {
         closeDeleteModal();
       }
     });
 
+    rejectOfferModal.addEventListener('click', function (e) {
+      if (e.target === this) {
+        closeRejectModal();
+      }
+    });
+
+    cancelOfferModal.addEventListener('click', function (e) {
+      if (e.target === this) {
+        closeCancelModal();
+      }
+    });
+
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         closeDeleteModal();
+        closeRejectModal();
+        closeCancelModal();
       }
     });
   });

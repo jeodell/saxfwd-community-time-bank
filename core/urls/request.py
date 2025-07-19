@@ -8,6 +8,10 @@ from core.views.request import (
     RequestListView,
     RequestToggleActiveView,
     RequestTransactionView,
+    RequestTransactionAcceptView,
+    RequestTransactionRejectView,
+    RequestTransactionCancelView,
+    RequestTransactionCompleteFormView,
 )
 
 urlpatterns = [
@@ -41,5 +45,26 @@ urlpatterns = [
         "<uuid:pk>/delete/",
         RequestDeleteView.as_view(),
         name="request_delete",
+    ),
+    # RequestTransaction URLs
+    path(
+        "transaction/<uuid:pk>/accept/",
+        RequestTransactionAcceptView.as_view(),
+        name="request_transaction_accept",
+    ),
+    path(
+        "transaction/<uuid:pk>/reject/",
+        RequestTransactionRejectView.as_view(),
+        name="request_transaction_reject",
+    ),
+    path(
+        "transaction/<uuid:pk>/cancel/",
+        RequestTransactionCancelView.as_view(),
+        name="request_transaction_cancel",
+    ),
+    path(
+        "transaction/<uuid:pk>/complete/",
+        RequestTransactionCompleteFormView.as_view(),
+        name="request_transaction_complete_form",
     ),
 ]

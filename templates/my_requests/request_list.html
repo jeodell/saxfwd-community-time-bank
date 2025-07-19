@@ -18,7 +18,7 @@
     </div>
 
     <!-- Request Tabs -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Requests to Me Column -->
       <div class="bg-white rounded-lg shadow-sm p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Requests to Me</h2>
@@ -194,6 +194,95 @@
           <div class="text-center py-8">
             <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
             <p class="text-gray-500">No requests found</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      
+      <!-- My Offers Column -->
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">My Offers</h2>
+        <div class="border-b border-gray-200 mb-4">
+          <nav class="flex flex-wrap space-x-4 lg:space-x-8">
+            <a
+              href="?my_offers_status=active{% if request.GET.to_me_status %}&to_me_status={{ request.GET.to_me_status }}{% endif %}{% if request.GET.by_me_status %}&by_me_status={{ request.GET.by_me_status }}{% endif %}"
+              class="{% if request.GET.my_offers_status == 'active' or not request.GET.my_offers_status %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+            >
+              <i class="fas fa-clock mr-2"></i>
+              Active
+            </a>
+            <a
+              href="?my_offers_status=completed{% if request.GET.to_me_status %}&to_me_status={{ request.GET.to_me_status }}{% endif %}{% if request.GET.by_me_status %}&by_me_status={{ request.GET.by_me_status }}{% endif %}"
+              class="{% if request.GET.my_offers_status == 'completed' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+            >
+              <i class="fas fa-flag-checkered mr-2"></i>
+              Completed
+            </a>
+            <a
+              href="?my_offers_status=closed{% if request.GET.to_me_status %}&to_me_status={{ request.GET.to_me_status }}{% endif %}{% if request.GET.by_me_status %}&by_me_status={{ request.GET.by_me_status }}{% endif %}"
+              class="{% if request.GET.my_offers_status == 'closed' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+            >
+              <i class="fas fa-ban mr-2"></i>
+              Closed
+            </a>
+          </nav>
+        </div>
+
+        <!-- My Offers List -->
+        <div class="space-y-4">
+          {% for offer in my_offers %}
+          <div
+            class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
+          >
+            <div class="p-4">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ offer.request.title }}</h3>
+                  <div class="flex items-center space-x-4">
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if offer.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif offer.status == 'accepted' %}bg-blue-100 text-blue-800{% elif offer.status == 'completed' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}"
+                    >
+                      {{ offer.get_status_display }}
+                    </span>
+                    <span class="text-sm text-gray-500">
+                      <i class="fas fa-clock mr-1"></i>
+                      {% if offer.status == 'completed' %}
+                      {{ offer.hours_completed|default:offer.proposed_hours }} hours
+                      {% else %}
+                      {{ offer.proposed_hours }} hours
+                      {% endif %}
+                    </span>
+                  </div>
+                </div>
+                <div class="mt-4 md:mt-0">
+                  <a
+                    href="{% url 'request_detail' offer.request.pk %}"
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                  >
+                    <i class="fas fa-eye mr-2"></i>
+                    View Request
+                  </a>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p class="text-gray-500">Requested by</p>
+                  <p class="font-medium text-gray-900">
+                    {{ offer.request.requester.first_name }} {{ offer.request.requester.last_name }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-500">Offer Made</p>
+                  <p class="font-medium text-gray-900">{{ offer.created_at|date:"F j, Y, g:i a" }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="text-center py-8">
+            <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-500">No offers found</p>
           </div>
           {% endfor %}
         </div>

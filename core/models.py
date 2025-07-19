@@ -591,6 +591,16 @@ class Request(models.Model):
         """Check if the request can be edited by the requester."""
         return user == self.requester
 
+    @property
+    def accepted_offers_count(self):
+        """Count the number of accepted offers for this request."""
+        return RequestTransaction.objects.filter(request=self, status="accepted").count()
+
+    @property
+    def is_fully_staffed(self):
+        """Check if the request has enough accepted offers to meet the required number of users."""
+        return self.accepted_offers_count >= self.num_users_needed
+
     @classmethod
     def get_active_requests(cls, exclude_user=None, category=None, search=None):
         """
