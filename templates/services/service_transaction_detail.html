@@ -39,8 +39,7 @@
               <i class="fas fa-clock mr-1"></i>
               <!-- prettier-ignore -->
               {% if request.status == 'completed' %}
-              {% comment %} TODO fix this {% endcomment %}
-              {{ request.hours_completed|default:request.hours_requested }} hours
+              {{ request.hours_completed_calculated }} hours
               {% else %}
               {{ request.hours_requested }} hours
               {% endif %}
@@ -163,7 +162,7 @@
                 <!-- prettier-ignore -->
                 {% if request.status == 'completed' %}
                 {% comment %} TODO fix this {% endcomment %}
-                {{ request.hours_completed|default:request.hours_requested }} hours
+                {{ request.hours_completed_calculated }} hours
                 {% else %}
                 {{ request.hours_requested }} hours
                 {% endif %}

@@ -83,7 +83,7 @@ class CommunityView(LoginRequiredMixin, ListView):
         context["total_hours_exchanged"] = sum(t["hours"] for t in self.get_queryset())
 
         # Get community hours balance
-        community_hours, _ = CommunityHours.objects.get_or_create()
+        community_hours = CommunityHours.get_instance()
         context["community_hours_balance"] = community_hours.total_hours
 
         # Add user's time balance if authenticated
@@ -123,11 +123,6 @@ class DonateCommunityHoursView(LoginRequiredMixin, View):
                 hours=hours,
                 description=description,
             )
-
-            # Update community hours balance
-            community_hours, _ = CommunityHours.objects.get_or_create()
-            community_hours.total_hours += hours
-            community_hours.save()
 
             messages.success(
                 request, f"Successfully donated {hours} hours to the community!"

@@ -158,7 +158,7 @@
                       <i class="fas fa-clock mr-1"></i>
                       <!-- prettier-ignore -->
                       {% if request.status == 'completed' %}
-                      {{ request.hours_completed|default:request.hours_requested }} hours
+                      {{ request.hours_completed_calculated }} hours
                       {% else %}
                       {{ request.hours_requested }} hours
                       {% endif %}
@@ -198,7 +198,7 @@
           {% endfor %}
         </div>
       </div>
-      
+
       <!-- My Offers Column -->
       <div class="bg-white rounded-lg shadow-sm p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">My Offers</h2>
@@ -246,8 +246,9 @@
                     </span>
                     <span class="text-sm text-gray-500">
                       <i class="fas fa-clock mr-1"></i>
+                      <!-- prettier-ignore -->
                       {% if offer.status == 'completed' %}
-                      {{ offer.hours_completed|default:offer.proposed_hours }} hours
+                      {{ offer.hours_completed_calculated }} hours
                       {% else %}
                       {{ offer.proposed_hours }} hours
                       {% endif %}

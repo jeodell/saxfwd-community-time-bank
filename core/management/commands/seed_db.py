@@ -531,9 +531,7 @@ class Command(BaseCommand):
 
         # Create community donations
         self.stdout.write("Creating community donations...")
-        community_hours, created = CommunityHours.objects.get_or_create(
-            defaults={"total_hours": Decimal("0.00")}
-        )
+        community_hours = CommunityHours.get_instance()
 
         for i in range(3):
             donor = random.choice(list(users.values()))
@@ -547,9 +545,6 @@ class Command(BaseCommand):
                 hours=hours,
                 description="Donation to community time bank",
             )
-
-            # Add hours to the community pool
-            community_hours.add_hours(hours)
 
             self.stdout.write(
                 self.style.SUCCESS(

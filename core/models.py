@@ -560,6 +560,23 @@ class ServiceTransaction(models.Model):
             raise ValueError("This is not a community request")
         return self.reject(reviewer, notes)
 
+    @property
+    def hours_completed_calculated(self):
+        """
+        Calculate actual hours completed from ledger entries.
+        Returns the hours from the service_credit ledger entry if it exists,
+        otherwise returns hours_requested.
+        """
+        try:
+            # Get the service_credit ledger entry for this transaction
+            ledger_entry = TimeBankLedger.objects.get(
+                service_transaction=self,
+                transaction_type="service_credit"
+            )
+            return ledger_entry.hours
+        except TimeBankLedger.DoesNotExist:
+            # If no ledger entry exists, return the requested hours
+            return self.hours_requested
 
 class Request(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -770,6 +787,23 @@ class RequestTransaction(models.Model):
         self.save()
         return self.provider_completed and self.requester_completed
 
+    @property
+    def hours_completed_calculated(self):
+        """
+        Calculate actual hours completed from ledger entries.
+        Returns the hours from the request_credit ledger entry if it exists,
+        otherwise returns proposed_hours.
+        """
+        try:
+            # Get the request_credit ledger entry for this transaction
+            ledger_entry = TimeBankLedger.objects.get(
+                request_transaction=self,
+                transaction_type="request_credit"
+            )
+            return ledger_entry.hours
+        except TimeBankLedger.DoesNotExist:
+            # If no ledger entry exists, return the proposed hours
+            return self.proposed_hours
 
 class CommunityTransaction(ServiceTransaction):
     STATUS_CHOICES = [
@@ -803,14 +837,15 @@ class CommunityTransaction(ServiceTransaction):
             raise ValueError("This request is not pending approval")
 
         # Get the community timebank
-        community_bank, _ = CommunityHours.objects.get_or_create()
+        community_bank = CommunityHours.get_instance()
 
         # Check if we have enough hours
         hours_to_deduct = self.hours_completed
         if hours_to_deduct == 0:
             hours_to_deduct = self.hours_requested
 
-        if not community_bank.deduct_hours(hours_to_deduct):
+        # Check if we have enough community hours available
+        if community_bank.total_hours < hours_to_deduct:
             raise ValueError("Insufficient community hours available")
 
         # Update the request
@@ -864,7 +899,6 @@ class CommunityTransaction(ServiceTransaction):
 
 
 class CommunityHours(models.Model):
-    total_hours = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -874,23 +908,30 @@ class CommunityHours(models.Model):
     class Meta:
         verbose_name_plural = "Community Time Bank"
 
-    def deduct_hours(self, hours):
+    @property
+    def total_hours(self):
         """
-        Safely deduct hours from the community timebank.
-        Returns True if successful, False if insufficient hours.
+        Calculate total community hours from ledger entries.
+        Community hours = donations - requests
         """
-        if self.total_hours >= hours:
-            self.total_hours -= hours
-            self.save()
-            return True
-        return False
+        donations = TimeBankLedger.objects.filter(
+            transaction_type="community_donation"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
 
-    def add_hours(self, hours):
+        requests = TimeBankLedger.objects.filter(
+            transaction_type="community_request"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+        return donations - requests
+
+    @classmethod
+    def get_instance(cls):
         """
-        Add hours to the community timebank.
+        Get or create the single CommunityHours instance.
+        This ensures we always have exactly one instance.
         """
-        self.total_hours += hours
-        self.save()
+        instance, _ = cls.objects.get_or_create()
+        return instance
 
 
 class TimeBankLedger(models.Model):
