@@ -386,7 +386,7 @@ class ServiceTransaction(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="service_transactions")
     requester = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="service_requests"
     )

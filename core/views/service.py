@@ -113,7 +113,7 @@ class ServiceDeleteView(LoginRequiredMixin, DeleteView):
         service: Service = self.get_object()
 
         # Check for any pending or accepted requests
-        outstanding_requests = service.ServiceTransaction_set.filter(
+        outstanding_requests = service.service_transactions.filter(
             status__in=["pending", "accepted"]
         ).exists()
 
@@ -202,7 +202,7 @@ class ServiceToggleActiveView(LoginRequiredMixin, View):
         service = get_object_or_404(Service, pk=pk, provider=request.user)
 
         # Check for any outstanding requests (pending or accepted)
-        outstanding_requests = service.ServiceTransaction_set.filter(
+        outstanding_requests = service.service_transactions.filter(
             status__in=["pending", "accepted"]
         ).exists()
 
