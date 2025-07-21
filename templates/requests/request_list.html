@@ -25,7 +25,7 @@
           class="{% if request.GET.view == 'public_requests' or not request.GET.view %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
         >
           <i class="fas fa-globe mr-2"></i>
-          Public Requests
+          All Requests
         </a>
         <a
           href="{% url 'request_list' %}?view=my_requests{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}"
@@ -70,9 +70,9 @@
               class="block w-full pl-4 pr-10 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm rounded-md bg-white shadow-sm transition duration-150 ease-in-out appearance-none"
             >
               <option value="">All</option>
-              <option value="high" {% if current_priority == 'high' %}selected{% endif %}>High</option>
-              <option value="medium" {% if current_priority == 'medium' %}selected{% endif %}>Medium</option>
               <option value="low" {% if current_priority == 'low' %}selected{% endif %}>Low</option>
+              <option value="medium" {% if current_priority == 'medium' %}selected{% endif %}>Medium</option>
+              <option value="high" {% if current_priority == 'high' %}selected{% endif %}>High</option>
             </select>
             <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
               <i class="fas fa-chevron-down text-gray-400 text-sm"></i>
@@ -118,71 +118,73 @@
     <!-- Requests List -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {% for request in requests %}
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="p-6">
-          <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-            <div class="flex-1">
-              <div class="flex items-center space-x-3 mb-2">
-                <h3 class="text-xl font-semibold text-gray-900">{{ request.title }}</h3>
-              </div>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {% if request.urgency == 'high' %}bg-red-100 text-red-800 border-red-800{% elif request.urgency == 'medium' %}bg-yellow-100 text-yellow-800 border-yellow-800{% else %}bg-green-100 text-green-800 border-green-800{% endif %}"
-                >
-                  {{ request.get_urgency_display }} Priority
-                </span>
-                {% if request.category %}
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[{{ request.category.color }}] text-white">
-                  {{ request.category.name }}
-                </span>
-                {% endif %}
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if request.is_fully_staffed %}bg-green-100 text-green-800 border border-green-800{% else %}bg-blue-100 text-blue-800 border border-blue-800{% endif %}"
-                >
-                  <i class="fas {% if request.is_fully_staffed %}fa-check-circle{% else %}fa-users{% endif %} mr-1"></i>
-                  {% if request.is_fully_staffed %}Fully Staffed{% else %}{{ request.accepted_offers_count }}/{{ request.num_users_needed }} Staffed{% endif %}
-                </span>
-              </div>
-              <p class="text-gray-600 mb-4">{{ request.description }}</p>
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col">
+        <div class="p-6 flex flex-col h-full">
+          <div class="flex-1">
+            <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
+              <div class="flex-1">
+                <div class="flex items-center space-x-3 mb-2">
+                  <h3 class="text-xl font-semibold text-gray-900">{{ request.title }}</h3>
+                </div>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {% if request.priority == 'high' %}bg-red-100 text-red-800 border-red-800{% elif request.priority == 'medium' %}bg-yellow-100 text-yellow-800 border-yellow-800{% else %}bg-green-100 text-green-800 border-green-800{% endif %}"
+                  >
+                    {{ request.get_priority_display }} Priority
+                  </span>
+                  {% if request.category %}
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[{{ request.category.color }}] text-white">
+                    {{ request.category.name }}
+                  </span>
+                  {% endif %}
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if request.is_fully_staffed %}bg-green-100 text-green-800 border border-green-800{% else %}bg-blue-100 text-blue-800 border border-blue-800{% endif %}"
+                  >
+                    <i class="fas {% if request.is_fully_staffed %}fa-check-circle{% else %}fa-users{% endif %} mr-1"></i>
+                    {% if request.is_fully_staffed %}Fully Staffed{% else %}{{ request.accepted_offers_count }}/{{ request.num_users_needed }} Staffed{% endif %}
+                  </span>
+                </div>
+                <p class="text-gray-600 mb-4">{{ request.description }}</p>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p class="text-gray-500">Requested by</p>
-                  <p class="font-medium text-gray-900">
-                    {{ request.requester.first_name }} {{ request.requester.last_name }}
-                  </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p class="text-gray-500">Requested by</p>
+                    <p class="font-medium text-gray-900">
+                      {{ request.requester.first_name }} {{ request.requester.last_name }}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Estimated Hours</p>
+                    <p class="font-medium text-gray-900">
+                      {% if request.estimated_hours %}
+                      {{ request.estimated_hours }} hours
+                      {% else %}
+                      Not specified
+                      {% endif %}
+                    </p>
+                  </div>
+                  <div>
+                    <p class="text-gray-500">Preferred Date</p>
+                    <p class="font-medium text-gray-900">
+                      {% if request.preferred_date %}
+                      {{ request.preferred_date|date:"F j, Y" }}
+                      {% else %}
+                      Not specified
+                      {% endif %}
+                    </p>
+                  </div>
+                  {% if request.num_users_needed and request.num_users_needed > 1 %}
+                  <div>
+                    <p class="text-gray-500">People Needed</p>
+                    <p class="font-medium text-gray-900">{{ request.num_users_needed }} person{{ request.num_users_needed|pluralize }}</p>
+                  </div>
+                  {% endif %}
                 </div>
-                <div>
-                  <p class="text-gray-500">Estimated Hours</p>
-                  <p class="font-medium text-gray-900">
-                    {% if request.estimated_hours %}
-                    {{ request.estimated_hours }} hours
-                    {% else %}
-                    Not specified
-                    {% endif %}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-gray-500">Preferred Date</p>
-                  <p class="font-medium text-gray-900">
-                    {% if request.preferred_date %}
-                    {{ request.preferred_date|date:"F j, Y" }}
-                    {% else %}
-                    Not specified
-                    {% endif %}
-                  </p>
-                </div>
-                {% if request.num_users_needed and request.num_users_needed > 1 %}
-                <div>
-                  <p class="text-gray-500">People Needed</p>
-                  <p class="font-medium text-gray-900">{{ request.num_users_needed }} person{{ request.num_users_needed|pluralize }}</p>
-                </div>
-                {% endif %}
               </div>
             </div>
           </div>
 
-          <div class="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4">
+          <div class="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-4 mt-auto">
             <span>Posted {{ request.created_at|timesince }} ago</span>
             <a
               href="{% url 'request_detail' request.pk %}"

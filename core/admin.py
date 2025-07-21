@@ -370,13 +370,13 @@ class RequestAdmin(admin.ModelAdmin):
         "title",
         "requester",
         "category",
-        "urgency",
+        "priority",
         "estimated_hours",
         "num_users_needed",
         "is_active",
         "created_at",
     )
-    list_filter = ("category", "urgency", "is_active", "created_at")
+    list_filter = ("category", "priority", "is_active", "created_at")
     search_fields = (
         "id",
         "title",

@@ -151,7 +151,7 @@ REQUESTS = [
         "requester_email": "larry.odell@example.com",
         "estimated_hours": Decimal("2.00"),
         "num_users_needed": 2,
-        "urgency": "medium",
+        "priority": "medium",
         "preferred_date": timezone.now().date() + timedelta(days=7),
     },
     {
@@ -161,7 +161,7 @@ REQUESTS = [
         "requester_email": "gary.odell@example.com",
         "estimated_hours": Decimal("1.50"),
         "num_users_needed": 1,
-        "urgency": "low",
+        "priority": "low",
         "preferred_date": timezone.now().date() + timedelta(days=14),
     },
     {
@@ -171,7 +171,7 @@ REQUESTS = [
         "requester_email": "jerry.odell@example.com",
         "estimated_hours": Decimal("2.00"),
         "num_users_needed": 1,
-        "urgency": "medium",
+        "priority": "medium",
         "preferred_date": timezone.now().date() + timedelta(days=3),
     },
     {
@@ -181,7 +181,7 @@ REQUESTS = [
         "requester_email": "larry.odell@example.com",
         "estimated_hours": Decimal("1.50"),
         "num_users_needed": 1,
-        "urgency": "high",
+        "priority": "high",
         "preferred_date": timezone.now().date() + timedelta(days=2),
     },
 ]
@@ -339,7 +339,7 @@ class Command(BaseCommand):
                         "category": category,
                         "estimated_hours": request_data["estimated_hours"],
                         "num_users_needed": request_data["num_users_needed"],
-                        "urgency": request_data["urgency"],
+                        "priority": request_data["priority"],
                         "preferred_date": request_data["preferred_date"],
                         "is_active": True,
                     },

@@ -155,7 +155,7 @@ class RequestForm(forms.ModelForm):
             "preferred_date",
             "estimated_hours",
             "num_users_needed",
-            "urgency",
+            "priority",
         ]
 
 

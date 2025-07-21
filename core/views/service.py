@@ -56,11 +56,8 @@ class ServiceListView(ListView):
                 services = services.filter(category=category)
             return services
         else:
-            # Show public services (excluding user's own services)
+            # Show public services (including user's own services)
             return Service.get_active_services(
-                exclude_user=self.request.user
-                if self.request.user.is_authenticated
-                else None,
                 category=category,
                 search=search,
             )
@@ -149,6 +146,10 @@ class ServiceEditView(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context["categories"] = ServiceCategory.get_all_categories()
         return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "Service updated successfully!")
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy("service_detail", kwargs={"pk": self.object.pk})

@@ -355,19 +355,15 @@ class Service(models.Model):
         return min(percentage, 100)  # Cap at 100%
 
     @classmethod
-    def get_active_services(cls, exclude_user=None, category=None, search=None):
+    def get_active_services(cls, category=None, search=None):
         """
         Get active services with optional filtering.
 
         Args:
-            exclude_user: User whose services should be excluded
             category: Category name to filter by
             search: Search term to filter by title or description
         """
         queryset = cls.objects.filter(is_active=True, is_deleted=False)
-
-        if exclude_user:
-            queryset = queryset.exclude(provider=exclude_user)
 
         if category:
             queryset = queryset.filter(category__name=category)
@@ -596,7 +592,7 @@ class Request(models.Model):
         blank=True,
     )
     num_users_needed = models.IntegerField(default=1)
-    urgency = models.CharField(
+    priority = models.CharField(
         max_length=20,
         choices=[("low", "Low"), ("medium", "Medium"), ("high", "High")],
         default="medium",
@@ -627,19 +623,15 @@ class Request(models.Model):
         return self.accepted_offers_count >= self.num_users_needed
 
     @classmethod
-    def get_active_requests(cls, exclude_user=None, category=None, search=None):
+    def get_active_requests(cls, category=None, search=None):
         """
         Get active requests with optional filtering.
 
         Args:
-            exclude_user: User whose requests should be excluded
             category: Category name to filter by
             search: Search term to filter by title or description
         """
         queryset = cls.objects.filter(is_active=True, is_deleted=False)
-
-        if exclude_user:
-            queryset = queryset.exclude(requester=exclude_user)
 
         if category:
             queryset = queryset.filter(category__name=category)

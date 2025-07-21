@@ -158,8 +158,8 @@ class RequestListView(LoginRequiredMixin, ListView):
                 is_deleted=False,
             )
         else:
-            # Show public requests (excluding user's own requests)
-            queryset = Request.get_active_requests(exclude_user=self.request.user)
+            # Show public requests (including user's own requests)
+            queryset = Request.get_active_requests()
 
             # Apply search filter
             if search:
@@ -187,7 +187,7 @@ class RequestListView(LoginRequiredMixin, ListView):
         # Apply priority filter if provided
         priority = self.request.GET.get("priority")
         if priority:
-            queryset = queryset.filter(urgency=priority)
+            queryset = queryset.filter(priority=priority)
 
         # Annotate with staffing information
         queryset = queryset.annotate(
@@ -226,6 +226,10 @@ class RequestEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         context["categories"] = ServiceCategory.objects.all().order_by("name")
         context["request_obj"] = self.object  # Pass the request object for edit mode
         return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "Request updated successfully!")
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy("request_detail", kwargs={"pk": self.object.pk})

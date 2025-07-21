@@ -26,7 +26,7 @@
           class="{% if request.GET.view == 'public_services' or not request.GET.view %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
         >
           <i class="fas fa-globe mr-2"></i>
-          Public Services
+          All Services
         </a>
         <a
           href="{% url 'service_list' %}?view=my_services{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
@@ -84,17 +84,19 @@
     <!-- Services Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {% for service in services %}
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-2">{{ service.title }}</h2>
-          <p class="text-gray-600 mb-4">{{ service.description|truncatewords:20 }}</p>
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center text-sm text-gray-500">
-              <i class="fas fa-user-circle mr-2"></i>
-              {{ service.provider.first_name }} {{ service.provider.last_name }}
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col">
+        <div class="p-6 flex flex-col h-full">
+          <div class="flex-1">
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">{{ service.title }}</h2>
+            <p class="text-gray-600 mb-4">{{ service.description|truncatewords:20 }}</p>
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center text-sm text-gray-500">
+                <i class="fas fa-user-circle mr-2"></i>
+                {{ service.provider.first_name }} {{ service.provider.last_name }}
+              </div>
             </div>
           </div>
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between mt-auto">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[{{ service.category.color }}] text-white">
               {{ service.category.name }}
             </span>
