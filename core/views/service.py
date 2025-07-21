@@ -41,7 +41,7 @@ class ServiceListView(ListView):
         search = self.request.GET.get("search", "")
 
         # Get view type filter
-        view_type = self.request.GET.get("view", "public_services")
+        view_type = self.request.GET.get("view", "all_services")
 
         # Show my services if the user is authenticated
         if view_type == "my_services" and self.request.user.is_authenticated:
@@ -56,7 +56,7 @@ class ServiceListView(ListView):
                 services = services.filter(category=category)
             return services
         else:
-            # Show public services (including user's own services)
+            # Show all services (including user's own services)
             return Service.get_active_services(
                 category=category,
                 search=search,

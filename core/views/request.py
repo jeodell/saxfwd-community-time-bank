@@ -141,12 +141,12 @@ class RequestListView(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        """Get requests based on view type (public_requests or my_requests)."""
+        """Get requests based on view type (all_requests or my_requests)."""
         # Get search filter
         search = self.request.GET.get("search", "")
 
         # Get view type filter
-        view_type = self.request.GET.get("view", "public_requests")
+        view_type = self.request.GET.get("view", "all_requests")
 
         # Show my requests if the user is authenticated and view is my_requests
         if view_type == "my_requests" and self.request.user.is_authenticated:
@@ -158,7 +158,7 @@ class RequestListView(LoginRequiredMixin, ListView):
                 is_deleted=False,
             )
         else:
-            # Show public requests (including user's own requests)
+            # Show all requests (including user's own requests)
             queryset = Request.get_active_requests()
 
             # Apply search filter
@@ -207,7 +207,7 @@ class RequestListView(LoginRequiredMixin, ListView):
         context["current_category"] = self.request.GET.get("category")
         context["current_priority"] = self.request.GET.get("priority")
         context["current_search"] = self.request.GET.get("search")
-        context["current_view"] = self.request.GET.get("view", "public_requests")
+        context["current_view"] = self.request.GET.get("view", "all_requests")
 
         return context
 

@@ -21,8 +21,8 @@
     <div class="border-b border-gray-200 mb-6">
       <nav class="-mb-px flex space-x-8">
         <a
-          href="{% url 'request_list' %}?view=public_requests{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}"
-          class="{% if request.GET.view == 'public_requests' or not request.GET.view %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+          href="{% url 'request_list' %}?view=all_requests{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}"
+          class="{% if request.GET.view == 'all_requests' or not request.GET.view %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
         >
           <i class="fas fa-globe mr-2"></i>
           All Requests
@@ -96,7 +96,7 @@
           </div>
         </div>
         {% if user.is_authenticated %}
-        <input type="hidden" name="view" value="{{ request.GET.view|default:'public_requests' }}">
+        <input type="hidden" name="view" value="{{ request.GET.view|default:'all_requests' }}">
         {% endif %}
         <div class="flex items-end space-x-4">
           <button
