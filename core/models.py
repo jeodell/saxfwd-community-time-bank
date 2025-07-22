@@ -333,7 +333,7 @@ class Service(models.Model):
         first_day = datetime(now.year, now.month, 1, tzinfo=now.tzinfo)
 
         # Get all completed service requests for this service in the current month
-        completed_requests = self.servicetransaction_set.filter(
+        completed_requests = self.service_transactions.filter(
             status="completed", completed_at__gte=first_day, completed_at__lte=now
         )
 
