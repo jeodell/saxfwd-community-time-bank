@@ -287,12 +287,12 @@ class Command(BaseCommand):
                     TimeBankLedger.objects.create(
                         user=user,
                         transaction_type="application_credit",
-                        hours=Decimal("5.00"),
+                        hours=Decimal("3.00"),
                         description="Welcome bonus for approved application",
                     )
                     self.stdout.write(
                         self.style.SUCCESS(
-                            f"Added 5 hours welcome bonus for: {user.full_name}"
+                            f"Added 3 hours welcome bonus for: {user.full_name}"
                         )
                     )
 

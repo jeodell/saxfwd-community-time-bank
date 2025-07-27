@@ -1049,11 +1049,11 @@ class Application(models.Model):
         self.referral_approved_at = timezone.now()
         self.save()
 
-        # Add 5 hours of credits for application approval
+        # Add 3 hours of credits for application approval
         TimeBankLedger.objects.create(
             user=self.user,
             transaction_type="application_credit",
-            hours=Decimal("5.00"),
+            hours=Decimal("3.00"),
             description="Welcome bonus for approved application",
         )
 
