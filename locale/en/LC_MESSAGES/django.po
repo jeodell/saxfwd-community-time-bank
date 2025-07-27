@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-27 20:18+0000\n"
+"POT-Creation-Date: 2025-07-27 20:44+0000\n"
 "PO-Revision-Date: 2025-07-27 16:39+0000\n"
 "Last-Translator: Jason O'Dell <jasoneodell@gmail.com>\n"
 "Language-Team: English <en@li.org>\n"
@@ -23,6 +23,7 @@ msgid "email address"
 msgstr "email address"
 
 #: templates/base.html:15 templates/core/home.html:4
+#: templates/navigation/footer.html:5
 msgid "Saxapahaw Timebank"
 msgstr "Saxapahaw Timebank"
 

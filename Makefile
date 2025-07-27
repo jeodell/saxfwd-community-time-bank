@@ -65,6 +65,12 @@ format:
 # Translations
 translations: makemessages compilemessages
 
+makemessages:
+	python manage.py makemessages -a --ignore=venv/* --ignore=staticfiles/* --ignore=static/*
+
+compilemessages:
+	python manage.py compilemessages
+
 # Build and deployment
 build:
 	set -o errexit
