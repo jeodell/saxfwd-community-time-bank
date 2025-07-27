@@ -96,8 +96,8 @@ SERVICES = [
         "description": "Thorough house cleaning including dusting, vacuuming, mopping, and bathroom cleaning.",
         "category": "Home",
         "provider_email": "gary.odell@example.com",
-        "max_hours": Decimal("4.00"),
-        "max_hours_per_month": Decimal("16.00"),
+        "max_hours": Decimal("2.00"),
+        "max_hours_per_month": Decimal("8.00"),
         "availability": "Tuesdays and Thursdays",
         "experience": "I've been cleaning houses for 10 years and have a lot of experience with different cleaning products and techniques.",
     },
@@ -106,8 +106,8 @@ SERVICES = [
         "description": "Basic home repairs, plumbing fixes, electrical work, and general maintenance tasks.",
         "category": "General Labor",
         "provider_email": "jerry.odell@example.com",
-        "max_hours": Decimal("4.00"),
-        "max_hours_per_month": Decimal("20.00"),
+        "max_hours": Decimal("2.00"),
+        "max_hours_per_month": Decimal("10.00"),
         "availability": "Weekends",
         "experience": "I've been a handyman for 10 years and have a lot of experience with different tools and techniques.",
     },
@@ -117,7 +117,7 @@ SERVICES = [
         "category": "Financial",
         "provider_email": "larry.odell@example.com",
         "max_hours": Decimal("2.00"),
-        "max_hours_per_month": Decimal("10.00"),
+        "max_hours_per_month": Decimal("5.00"),
         "availability": "Weekday evenings",
         "experience": "I've been a financial advisor for 10 years and have a lot of experience with different financial products and techniques.",
     },
@@ -127,7 +127,7 @@ SERVICES = [
         "category": "Wellness",
         "provider_email": "gary.odell@example.com",
         "max_hours": Decimal("1.50"),
-        "max_hours_per_month": Decimal("8.00"),
+        "max_hours_per_month": Decimal("4.00"),
         "availability": "Mornings and evenings",
         "experience": "I've been a yoga instructor for 10 years and have a lot of experience with different yoga techniques and styles.",
     },
@@ -137,7 +137,7 @@ SERVICES = [
         "category": "Arts and Crafts",
         "provider_email": "jerry.odell@example.com",
         "max_hours": Decimal("2.00"),
-        "max_hours_per_month": Decimal("10.00"),
+        "max_hours_per_month": Decimal("5.00"),
         "availability": "Weekend afternoons",
         "experience": "I've been an artist for 10 years and have a lot of experience with different art techniques and styles.",
     },
@@ -149,7 +149,7 @@ REQUESTS = [
         "description": "Need help moving a couch and dining table from the garage to the living room. The furniture is heavy and I can't do it alone.",
         "category": "General Labor",
         "requester_email": "larry.odell@example.com",
-        "estimated_hours": Decimal("2.00"),
+        "estimated_hours": Decimal("1.00"),
         "num_users_needed": 2,
         "priority": "medium",
         "preferred_date": timezone.now().date() + timedelta(days=7),
@@ -159,7 +159,7 @@ REQUESTS = [
         "description": "Looking for advice on redesigning my backyard garden. I want to create a more sustainable and beautiful space.",
         "category": "Landscaping",
         "requester_email": "gary.odell@example.com",
-        "estimated_hours": Decimal("1.50"),
+        "estimated_hours": Decimal("1.00"),
         "num_users_needed": 1,
         "priority": "low",
         "preferred_date": timezone.now().date() + timedelta(days=14),
@@ -169,7 +169,7 @@ REQUESTS = [
         "description": "My mother needs help setting up her new laptop and learning basic computer skills. She's a complete beginner.",
         "category": "Tech",
         "requester_email": "jerry.odell@example.com",
-        "estimated_hours": Decimal("2.00"),
+        "estimated_hours": Decimal("1.50"),
         "num_users_needed": 1,
         "priority": "medium",
         "preferred_date": timezone.now().date() + timedelta(days=3),
@@ -371,9 +371,9 @@ class Command(BaseCommand):
             status = random.choices(status_choices, weights=weights)[0]
 
             # Generate hours that don't exceed the service's max_hours and are in 0.25 increments
-            max_service_hours = service.max_hours or Decimal("4.00")
+            max_service_hours = service.max_hours or Decimal("2.00")
             # Generate random hours in 0.25 increments (0.25, 0.50, 0.75, 1.00, etc.)
-            random_hours = random.randint(1, int(max_service_hours * 4)) / 4
+            random_hours = random.randint(1, int(max_service_hours * 2)) / 2
             hours_requested = min(Decimal(str(random_hours)), max_service_hours)
 
             transaction, created = ServiceTransaction.objects.get_or_create(
@@ -538,7 +538,7 @@ class Command(BaseCommand):
         for i in range(3):
             donor = random.choice(list(users.values()))
             # Generate hours in 0.25 increments
-            hours = Decimal(str(random.randint(1, 20) / 4))
+            hours = Decimal(str(random.randint(1, 5) / 2))
 
             # Create ledger entry for the donation
             TimeBankLedger.objects.create(
