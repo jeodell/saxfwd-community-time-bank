@@ -40,7 +40,7 @@
           <div class="text-yellow-500 mb-4 mt-2">
             <i class="fas fa-clock text-4xl"></i>
           </div>
-          {% if profile_user.id == request.user.id %}
+          {% if profile_user.id == request.user.id or request.user.is_staff %}
           <div class="text-3xl font-semibold text-yellow-500">{{ profile_user.time_balance | default:0 }} HOURS</div>
           {% else %}
           <div class="text-3xl font-semibold text-yellow-500">Private</div>
