@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
       {% block title %}
-      {% trans "Saxapahaw Timebank" %}
+        {% trans "Saxapahaw Timebank" %}
       {% endblock %}
     </title>
     <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}" />
@@ -49,35 +49,35 @@
 
     <main class="min-h-[calc(100vh-76px-140px)]">
       {% if messages %}
-      <div id="django-messages" class="mb-4 space-y-4">
-        {% for message in messages %}
-        <div
-          class="rounded-lg p-4 shadow-sm {% if message.tags == 'success' %}bg-green-50 text-green-800 border border-green-200{% elif message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200{% elif message.tags == 'warning' %}bg-yellow-50 text-yellow-700 border border-yellow-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}"
-        >
-          <div class="flex items-center">
-            <div class="flex-shrink-0">
-              {% if message.tags == 'success' %}
-              <i class="fas fa-check-circle"></i>
-              {% elif message.tags == 'error' %}
-              <i class="fas fa-exclamation-circle"></i>
-              {% elif message.tags == 'warning' %}
-              <i class="fas fa-exclamation-triangle"></i>
-              {% else %}
-              <i class="fas fa-info-circle"></i>
-              {% endif %}
-            </div>
-            <div class="ml-3 flex-1">{{ message }}</div>
-            <button
-              type="button"
-              class="ml-auto flex-shrink-0 text-gray-400 hover:text-gray-500 focus:outline-none"
-              onclick="this.parentElement.parentElement.parentElement.remove()"
+        <div id="django-messages" class="mb-4 space-y-4">
+          {% for message in messages %}
+            <div
+              class="rounded-lg p-4 shadow-sm {% if message.tags == 'success' %}bg-green-50 text-green-800 border border-green-200{% elif message.tags == 'error' %}bg-red-50 text-red-700 border border-red-200{% elif message.tags == 'warning' %}bg-yellow-50 text-yellow-700 border border-yellow-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}"
             >
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
+              <div class="flex items-center">
+                <div class="flex-shrink-0">
+                  {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle"></i>
+                  {% elif message.tags == 'error' %}
+                    <i class="fas fa-exclamation-circle"></i>
+                  {% elif message.tags == 'warning' %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                  {% else %}
+                    <i class="fas fa-info-circle"></i>
+                  {% endif %}
+                </div>
+                <div class="ml-3 flex-1">{{ message }}</div>
+                <button
+                  type="button"
+                  class="ml-auto flex-shrink-0 text-gray-400 hover:text-gray-500 focus:outline-none"
+                  onclick="this.parentElement.parentElement.parentElement.remove()"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          {% endfor %}
         </div>
-        {% endfor %}
-      </div>
       {% endif %}
       {% block content %}
       {% endblock %}
