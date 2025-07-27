@@ -124,12 +124,13 @@
           required
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
         >
-          <option value="">Select a referral member</option>
+          <option value="" disabled selected>Select a referral member</option>
           {% for choice in form.referral_member.field.queryset %}
           <option value="{{ choice.id }}" {% if form.referral_member.value == choice.id %}selected{% endif %}>
             {{ choice.first_name }} {{ choice.last_name }}
           </option>
           {% endfor %}
+          <option value="none">No referral member</option>
         </select>
         {% if form.referral_member.errors %}
         <p class="mt-2 text-sm text-red-600">{{ form.referral_member.errors.0 }}</p>

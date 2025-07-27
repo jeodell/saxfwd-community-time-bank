@@ -25,7 +25,7 @@ class UserApplicationForm(forms.ModelForm):
             application__is_orientation_completed=True,
         ),
         required=True,
-        help_text="Please select the existing member who referred you to the timebank",
+        help_text="Please select the existing member who referred you to the timebank. If you have no referral member, please select 'No referral member'.",
         empty_label="Select a referral member",
     )
     writeup = forms.CharField(
@@ -56,6 +56,16 @@ class UserApplicationForm(forms.ModelForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("This email address is already in use.")
         return email
+
+    def clean_referral_member(self):
+        referral_member = self.cleaned_data.get("referral_member")
+        # If the value is "none" (from the "No referral member" option), return None
+        if referral_member == "none":
+            return None
+        # If the field is empty (from the disabled placeholder), raise validation error
+        if not referral_member:
+            return None
+        return referral_member
 
     def save(self, commit=True):
         user = super().save(commit=False)

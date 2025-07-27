@@ -67,7 +67,12 @@
             <div class="flex items-center text-sm text-gray-600">
               <i class="fas fa-user-friends mr-2 text-gray-400"></i>
               <span>
+                <!-- prettier-ignore -->
+                {% if application.referral_member %}
                 Referred by: {{ application.referral_member.first_name }} {{ application.referral_member.last_name }}
+                {% elif application.referral_member == None %}
+                <span class="text-gray-500 italic">No referral member</span>
+                {% endif %}
               </span>
             </div>
             <div class="flex items-center text-sm text-gray-600">
