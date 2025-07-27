@@ -1,62 +1,92 @@
-{% load static %}
+{% load static i18n %}
 <nav class="bg-white shadow-sm border-b border-gray-100 h-32">
   <!-- Desktop menu -->
   <div class="h-8">
     <!-- Login/Welcome-->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-7 h-full">
       {% if user.is_authenticated %}
-      <div class="hidden sm:flex col-span-1 md:col-span-4 lg:col-span-5 items-center justify-start bg-primary"></div>
-      <div
-        class="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12 space-x-4"
-      >
-        <div class="relative">
-          <button
-            onclick="toggleProfileMenu()"
-            class="text-white flex items-center space-x-2 hover:text-white/80 focus:outline-none"
-          >
-            <span>Welcome, {{ user.first_name }}</span>
-            {% if user.image %}
-            <img src="{{ user.image.url }}" alt="User Image" class="h-6 w-6 rounded-full object-cover" />
-            {% else %}
-            <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
-              <i class="fas fa-user text-gray-500"></i>
-            </div>
-            {% endif %}
-            <i class="fas fa-chevron-down text-xs"></i>
-          </button>
-          <div
-            id="profile-menu"
-            class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
-          >
-            <div class="py-1" role="menu" aria-orientation="vertical">
-              <a
-                href="{% url 'user_me' %}"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary"
-                role="menuitem"
-              >
-                My Account
-              </a>
-              <form method="post" action="{% url 'logout' %}" class="block" id="logout-form">
-                {% csrf_token %}
+        <div class="hidden sm:flex col-span-1 md:col-span-4 lg:col-span-5 items-center justify-start bg-primary"></div>
+        <div
+          class="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12 space-x-4"
+        >
+        <!-- Language Switcher -->
+          <form action="{% url 'set_language' %}" method="post" class="inline">
+            {% csrf_token %}
+            {% get_current_language as LANGUAGE_CODE %}
+            <input name="next" type="hidden" value="{{ request.path_info }}">
+            <select name="language" onchange="submitLanguageForm()" class="bg-secondary text-white text-sm border-0 focus:ring-0 focus:outline-none">
+              {% get_available_languages as LANGUAGES %}
+              {% for code, name in LANGUAGES %}
+                <option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %} class="bg-white text-gray-900">
+                  {{ name }}
+                </option>
+              {% endfor %}
+            </select>
+          </form>
+
+          <div class="relative">
+            <button
+              onclick="toggleProfileMenu()"
+              class="text-white flex items-center space-x-2 hover:text-white/80 focus:outline-none"
+            >
+              <span>{% trans "Welcome" %}, {{ user.first_name }}</span>
+              {% if user.image %}
+                <img src="{{ user.image.url }}" alt="User Image" class="h-6 w-6 rounded-full object-cover" />
+              {% else %}
+                <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
+                  <i class="fas fa-user text-gray-500"></i>
+                </div>
+              {% endif %}
+              <i class="fas fa-chevron-down text-xs"></i>
+            </button>
+            <div
+              id="profile-menu"
+              class="hidden absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50"
+            >
+              <div class="py-1" role="menu" aria-orientation="vertical">
                 <a
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary cursor-pointer"
+                  href="{% url 'user_me' %}"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary"
                   role="menuitem"
-                  onclick="logout(); return false;"
                 >
-                  Logout
+                  {% trans "My Account" %}
                 </a>
-              </form>
+                <form method="post" action="{% url 'logout' %}" class="block" id="logout-form">
+                  {% csrf_token %}
+                  <a
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary cursor-pointer"
+                    role="menuitem"
+                    onclick="logout(); return false;"
+                  >
+                    {% trans "Logout" %}
+                  </a>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       {% else %}
-      <div class="hidden sm:flex col-span-1 md:col-span-4 lg:col-span-5 items-center justify-start bg-primary"></div>
-      <div class="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12">
-        <a href="{% url 'login' %}" class="text-white hover:text-white/80 uppercase">Login</a>
-        <span class="text-white px-1">or</span>
-        <a href="{% url 'apply' %}" class="text-white hover:text-white/80 uppercase">Apply</a>
-      </div>
+        <div class="hidden sm:flex col-span-1 md:col-span-4 lg:col-span-5 items-center justify-start bg-primary"></div>
+        <div class="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12 space-x-4">
+        <!-- Language Switcher -->
+          <form action="{% url 'set_language' %}" method="post" class="inline">
+            {% csrf_token %}
+            {% get_current_language as LANGUAGE_CODE %}
+            <input name="next" type="hidden" value="{{ request.path_info }}">
+            <select name="language" onchange="submitLanguageForm()" class="bg-secondary text-white text-sm border-0 focus:ring-0 focus:outline-none">
+              {% get_available_languages as LANGUAGES %}
+              {% for code, name in LANGUAGES %}
+                <option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %} class="bg-white text-gray-900">
+                  {{ name }}
+                </option>
+              {% endfor %}
+            </select>
+          </form>
+
+          <a href="{% url 'login' %}" class="text-white hover:text-white/80 uppercase">{% trans "Login" %}</a>
+          <span class="text-white px-1">{% trans "or" %}</span>
+          <a href="{% url 'apply' %}" class="text-white hover:text-white/80 uppercase">{% trans "Apply" %}</a>
+        </div>
       {% endif %}
     </div>
 
@@ -69,69 +99,69 @@
               href="{% url 'home' %}"
               class="text-xl font-bold text-primary hover:text-primary/80 transition-colors duration-200 uppercase flex flex-col items-start"
             >
-              <span>Saxapahaw</span>
-              <span>Timebank</span>
+              <span>{% trans "Saxapahaw" %}</span>
+              <span>{% trans "Timebank" %}</span>
             </a>
           </div>
         </div>
         <div class="hidden lg:ml-6 lg:flex lg:items-center space-x-4">
           {% if user.is_authenticated %}
-          <a
-            href="{% url 'about' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/about/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            About
-          </a>
-          <a
-            href="{% url 'service_list' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/services/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            Services
-          </a>
-          <a
-            href="{% url 'request_list' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/requests/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            Requests
-          </a>
-          <a
-            href="{% url 'community' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/community/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            Community
-          </a>
-          <a
-            href="{% url 'user_me_requests' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/users/me/requests/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            My Requests
-          </a>
-          <a
-            href="{% url 'user_me' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/users/me/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            My Account
-          </a>
-          {% if user.is_staff %}
-          <a
-            href="{% url 'application_review_list' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/admin/applications/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            Admin
-          </a>
-          {% endif %} {% else %}
-          <a
-            href="{% url 'about' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/about/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            About
-          </a>
-          <a
-            href="{% url 'service_list' %}"
-            class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/services/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
-          >
-            Services
-          </a>
+            <a
+              href="{% url 'about' %}"
+              class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/about/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+            >
+              {% trans "About" %}
+            </a>
+            <a
+              href="{% url 'service_list' %}"
+              class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/services/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+            >
+              {% trans "Services" %}
+            </a>
+            <a
+              href="{% url 'request_list' %}"
+              class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/requests/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+            >
+              {% trans "Requests" %}
+            </a>
+            <a
+              href="{% url 'community' %}"
+              class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/community/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+            >
+              {% trans "Community" %}
+            </a>
+            <a
+              href="{% url 'user_me_requests' %}"
+              class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/users/me/requests/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+            >
+              {% trans "My Requests" %}
+            </a>
+            <a
+              href="{% url 'user_me' %}"
+              class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/users/me/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+            >
+              {% trans "My Account" %}
+            </a>
+            {% if user.is_staff %}
+              <a
+                href="{% url 'application_review_list' %}"
+                class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/admin/applications/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+              >
+                {% trans "Admin" %}
+              </a>
+            {% endif %} {% else %}
+            <a
+              href="{% url 'about' %}"
+              class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/about/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+            >
+              {% trans "About" %}
+            </a>
+            <a
+              href="{% url 'service_list' %}"
+              class="inline-flex items-center px-4 py-2 font-medium {% if request.path == '/services/' %}text-secondary underline underline-offset-8 decoration-secondary decoration-2{% else %}text-primary hover:underline hover:underline-offset-8 hover:decoration-secondary hover:decoration-2{% endif %}"
+            >
+              {% trans "Services" %}
+            </a>
           {% endif %}
         </div>
         <div class="-mr-2 flex items-center lg:hidden">
@@ -142,7 +172,7 @@
             aria-expanded="false"
             onclick="toggleMobileMenu()"
           >
-            <span class="sr-only">Open main menu</span>
+            <span class="sr-only">{% trans "Open main menu" %}</span>
             <i class="fas fa-bars w-6 h-6 flex items-center justify-center" id="menu-icon"></i>
           </button>
         </div>
@@ -157,68 +187,86 @@
   >
     <div class="pt-2 pb-3 space-y-1">
       {% if user.is_authenticated %}
-      <a
-        href="{% url 'about' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        About
-      </a>
-      <a
-        href="{% url 'service_list' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        Services
-      </a>
-      <a
-        href="{% url 'request_list' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        Requests
-      </a>
-      <a
-        href="{% url 'community' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        Community
-      </a>
-      <a
-        href="{% url 'user_me_requests' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        My Requests
-      </a>
-      <a
-        href="{% url 'user_me' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        My Account
-      </a>
-      {% if user.is_staff %}
-      <a
-        href="{% url 'application_review_list' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        Admin
-      </a>
-      {% endif %} {% else %}
-      <a
-        href="{% url 'about' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        About
-      </a>
-      <a
-        href="{% url 'service_list' %}"
-        class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
-      >
-        Services
-      </a>
+        <a
+          href="{% url 'about' %}"
+          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+        >
+          {% trans "About" %}
+        </a>
+        <a
+          href="{% url 'service_list' %}"
+          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+        >
+          {% trans "Services" %}
+        </a>
+        <a
+          href="{% url 'request_list' %}"
+          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+        >
+          {% trans "Requests" %}
+        </a>
+        <a
+          href="{% url 'community' %}"
+          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+        >
+          {% trans "Community" %}
+        </a>
+        <a
+          href="{% url 'user_me_requests' %}"
+          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+        >
+          {% trans "My Requests" %}
+        </a>
+        <a
+          href="{% url 'user_me' %}"
+          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+        >
+          {% trans "My Account" %}
+        </a>
+        {% if user.is_staff %}
+          <a
+            href="{% url 'application_review_list' %}"
+            class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+          >
+            {% trans "Admin" %}
+          </a>
+        {% endif %} {% else %}
+        <a
+          href="{% url 'about' %}"
+          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+        >
+          {% trans "About" %}
+        </a>
+        <a
+          href="{% url 'service_list' %}"
+          class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors duration-200"
+        >
+          {% trans "Services" %}
+        </a>
       {% endif %}
     </div>
   </div>
 </nav>
 
 <script>
+  function submitLanguageForm() {
+    const form = event.target.form;
+    const language = event.target.value;
+    const nextInput = form.querySelector('input[name="next"]');
+    let path = nextInput.value;
+
+    // Remove any existing language prefixes
+    path = path.replace(/^\/(es|en)\//, '/');
+
+    // Add Spanish prefix if switching to Spanish
+    if (language === 'es') {
+      path = '/es' + path;
+    }
+
+    nextInput.value = path;
+    form.submit();
+  }
+
   function logout() {
     document.getElementById('logout-form').submit();
   }
