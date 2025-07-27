@@ -1,207 +1,207 @@
-<!-- prettier-ignore -->
+
 {% extends "base.html" %}
 {% block title %}Apply - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="max-w-2xl mx-auto flex items-center justify-center p-8">
-  <div class="bg-white p-8 shadow rounded-lg w-full">
-    <div class="text-center">
-      <h2 class="text-3xl font-extrabold text-gray-900">Apply to Join</h2>
-      <p class="mt-2 text-sm text-gray-600">Submit your application to join our community timebank</p>
-    </div>
-    <form class="mt-8 space-y-6" method="post" action="{% url 'apply' %}">
-      {% csrf_token %}
-      <!-- prettier-ignore -->
-      {% if form.non_field_errors %}
-      <div class="rounded-md bg-red-50 p-4 mb-4">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <i class="fas fa-exclamation-circle h-5 w-5 text-red-400"></i>
-          </div>
-          <div class="ml-3">
-            <p class="text-sm text-red-700">{{ form.non_field_errors.0 }}</p>
-          </div>
-        </div>
+  <div class="max-w-2xl mx-auto flex items-center justify-center p-8">
+    <div class="bg-white p-8 shadow rounded-lg w-full">
+      <div class="text-center">
+        <h2 class="text-3xl font-extrabold text-gray-900">Apply to Join</h2>
+        <p class="mt-2 text-sm text-gray-600">Submit your application to join our community timebank</p>
       </div>
-      {% endif %}
+      <form class="mt-8 space-y-6" method="post" action="{% url 'apply' %}">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="rounded-md bg-red-50 p-4 mb-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <i class="fas fa-exclamation-circle h-5 w-5 text-red-400"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-red-700">{{ form.non_field_errors.0 }}</p>
+              </div>
+            </div>
+          </div>
+        {% endif %}
 
       <!-- Name Fields -->
-      <div class="grid grid-cols-2 gap-6">
-        <div class="col-span-1 space-y-2">
-          <label for="id_first_name" class="text-sm font-semibold text-gray-700">
-            First name
-            <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="first_name"
-            id="id_first_name"
-            value="{{ form.first_name.value|default:'' }}"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-          />
-          {% if form.first_name.errors %}
-          <p class="mt-2 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
-          {% endif %}
-        </div>
-        <div class="col-span-1 space-y-2">
-          <label for="id_last_name" class="text-sm font-semibold text-gray-700">
-            Last name
-            <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="last_name"
-            id="id_last_name"
-            value="{{ form.last_name.value|default:'' }}"
-            required
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-          />
-          {% if form.last_name.errors %}
-          <p class="mt-2 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Email -->
-      <div class="space-y-2">
-        <label for="id_email" class="text-sm font-semibold text-gray-700">
-          Email
-          <span class="text-red-500">*</span>
-        </label>
-        <input
-          type="email"
-          name="email"
-          id="id_email"
-          value="{{ form.email.value|default:'' }}"
-          required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-        />
-        {% if form.email.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
-        {% endif %}
-      </div>
-
-      <!-- Contact Information -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="space-y-2">
-          <label for="id_phone_number" class="text-sm font-semibold text-gray-700">Phone Number (optional)</label>
-          <input
-            type="tel"
-            name="phone_number"
-            id="id_phone_number"
-            value="{{ form.phone_number.value|default:'' }}"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-          />
-          {% if form.phone_number.errors %}
-          <p class="mt-2 text-sm text-red-600">{{ form.phone_number.errors.0 }}</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Address -->
-      <div class="space-y-2">
-        <label for="id_address" class="text-sm font-semibold text-gray-700">Street Address (optional)</label>
-        <textarea
-          name="address"
-          id="id_address"
-          rows="3"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-        >{{ form.address.value|default:'' }}</textarea>
-        {% if form.address.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.address.errors.0 }}</p>
-        {% endif %}
-      </div>
-
-      <!-- Referral Member -->
-      <div class="space-y-2">
-        <label for="id_referral_member" class="text-sm font-semibold text-gray-700">
-          Referral Member
-          <span class="text-red-500">*</span>
-        </label>
-        <select
-          name="referral_member"
-          id="id_referral_member"
-          required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-        >
-          <option value="" disabled selected>Select a referral member</option>
-          {% for choice in form.referral_member.field.queryset %}
-          <option value="{{ choice.id }}" {% if form.referral_member.value == choice.id %}selected{% endif %}>
-            {{ choice.first_name }} {{ choice.last_name }}
-          </option>
-          {% endfor %}
-          <option value="none">No referral member</option>
-        </select>
-        {% if form.referral_member.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.referral_member.errors.0 }}</p>
-        {% endif %}
-        {% if form.referral_member.help_text %}
-        <p class="mt-1 text-sm text-gray-500">{{ form.referral_member.help_text }}</p>
-        {% endif %}
-      </div>
-
-      <!-- Writeup -->
-      <div class="space-y-2">
-        <label for="id_writeup" class="text-sm font-semibold text-gray-700">
-          Why do you want to join?
-          <span class="text-red-500">*</span>
-        </label>
-        <textarea
-          name="writeup"
-          id="id_writeup"
-          rows="6"
-          required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
-        >{{ form.writeup.value|default:'' }}</textarea>
-        {% if form.writeup.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.writeup.errors.0 }}</p>
-        {% endif %}
-        {% if form.writeup.help_text %}
-        <p class="mt-1 text-sm text-gray-500">{{ form.writeup.help_text }}</p>
-        {% endif %}
-      </div>
-
-      <!-- Terms -->
-      <div class="space-y-2">
-        <div class="flex items-center gap-3">
-          <div class="h-5">
-            <input
-              type="checkbox"
-              name="terms_accepted"
-              id="id_terms_accepted"
-              {% if form.terms_accepted.value %}checked{% endif %}
-              required
-              class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
-            />
-          </div>
-          <div class="text-sm">
-            <label for="id_terms_accepted" class="font-semibold text-gray-700">
-              I agree to the values of the Saxapahaw Timebank, I will use this platform responsibly, and I will not
-              engage in malicious activities or illegal behavior.
+        <div class="grid grid-cols-2 gap-6">
+          <div class="col-span-1 space-y-2">
+            <label for="id_first_name" class="text-sm font-semibold text-gray-700">
+              First name
               <span class="text-red-500">*</span>
             </label>
+            <input
+              type="text"
+              name="first_name"
+              id="id_first_name"
+              value="{{ form.first_name.value|default:'' }}"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+            />
+            {% if form.first_name.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div class="col-span-1 space-y-2">
+            <label for="id_last_name" class="text-sm font-semibold text-gray-700">
+              Last name
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="last_name"
+              id="id_last_name"
+              value="{{ form.last_name.value|default:'' }}"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+            />
+            {% if form.last_name.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+            {% endif %}
           </div>
         </div>
-        {% if form.terms_accepted.errors %}
-        <p class="mt-2 text-sm text-red-600">{{ form.terms_accepted.errors.0 }}</p>
-        {% endif %}
-      </div>
 
-      <div>
-        <button
-          type="submit"
-          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        >
-          Submit Application
-        </button>
-      </div>
-      <div class="text-center">
-        <p class="text-sm text-gray-600">
-          Already have an account?
-          <a href="{% url 'login' %}" class="font-medium text-primary hover:text-primary-light">Sign in</a>
-        </p>
-      </div>
-    </form>
+      <!-- Email -->
+        <div class="space-y-2">
+          <label for="id_email" class="text-sm font-semibold text-gray-700">
+            Email
+            <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="email"
+            name="email"
+            id="id_email"
+            value="{{ form.email.value|default:'' }}"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+          />
+          {% if form.email.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+      <!-- Contact Information -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label for="id_phone_number" class="text-sm font-semibold text-gray-700">Phone Number (optional)</label>
+            <input
+              type="tel"
+              name="phone_number"
+              id="id_phone_number"
+              value="{{ form.phone_number.value|default:'' }}"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+            />
+            {% if form.phone_number.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.phone_number.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+      <!-- Address -->
+        <div class="space-y-2">
+          <label for="id_address" class="text-sm font-semibold text-gray-700">Street Address (optional)</label>
+          <textarea
+            name="address"
+            id="id_address"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+          >{{ form.address.value|default:'' }}</textarea>
+          {% if form.address.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.address.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+      <!-- Referral Member -->
+        <div class="space-y-2">
+          <label for="id_referral_member" class="text-sm font-semibold text-gray-700">
+            Referral Member
+            <span class="text-red-500">*</span>
+          </label>
+          <select
+            name="referral_member"
+            id="id_referral_member"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+          >
+            <option value="" disabled selected>Select a referral member</option>
+            {% for choice in form.referral_member.field.queryset %}
+              <option value="{{ choice.id }}" {% if form.referral_member.value == choice.id %}selected{% endif %}>
+                {{ choice.first_name }} {{ choice.last_name }}
+              </option>
+            {% endfor %}
+            <option value="none">No referral member</option>
+          </select>
+          {% if form.referral_member.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.referral_member.errors.0 }}</p>
+          {% endif %}
+          {% if form.referral_member.help_text %}
+            <p class="mt-1 text-sm text-gray-500">{{ form.referral_member.help_text }}</p>
+          {% endif %}
+        </div>
+
+      <!-- Writeup -->
+        <div class="space-y-2">
+          <label for="id_writeup" class="text-sm font-semibold text-gray-700">
+            Why do you want to join?
+            <span class="text-red-500">*</span>
+          </label>
+          <textarea
+            name="writeup"
+            id="id_writeup"
+            rows="6"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm"
+          >{{ form.writeup.value|default:'' }}</textarea>
+          {% if form.writeup.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.writeup.errors.0 }}</p>
+          {% endif %}
+          {% if form.writeup.help_text %}
+            <p class="mt-1 text-sm text-gray-500">{{ form.writeup.help_text }}</p>
+          {% endif %}
+        </div>
+
+      <!-- Terms -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-3">
+            <div class="h-5">
+              <input
+                type="checkbox"
+                name="terms_accepted"
+                id="id_terms_accepted"
+                {% if form.terms_accepted.value %}checked{% endif %}
+                required
+                class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div class="text-sm">
+              <label for="id_terms_accepted" class="font-semibold text-gray-700">
+                I agree to the values of the Saxapahaw Timebank, I will use this platform responsibly, and I will not
+                engage in malicious activities or illegal behavior.
+                <span class="text-red-500">*</span>
+              </label>
+            </div>
+          </div>
+          {% if form.terms_accepted.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.terms_accepted.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          >
+            Submit Application
+          </button>
+        </div>
+        <div class="text-center">
+          <p class="text-sm text-gray-600">
+            Already have an account?
+            <a href="{% url 'login' %}" class="font-medium text-primary hover:text-primary-light">Sign in</a>
+          </p>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 {% endblock %}

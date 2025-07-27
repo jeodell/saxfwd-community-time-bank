@@ -15,7 +15,7 @@ help:
 	@echo "  superuser   - Create Django superuser"
 	@echo ""
 	@echo "Database:"
-	@echo "  migrate     - Run database migrations"
+	@echo "  migrate        - Run database migrations"
 	@echo "  makemigrations - Create new migrations"
 	@echo ""
 	@echo "Testing:"
@@ -24,7 +24,8 @@ help:
 	@echo ""
 	@echo "Static Files:"
 	@echo "  collectstatic - Collect static files"
-	@echo "  tailwind     - Build Tailwind CSS"
+	@echo "  tailwind      - Build Tailwind CSS"
+	@echo "  format        - Format HTML templates with djhtml"
 	@echo ""
 	@echo "Translations:"
 	@echo "  translations    - Generate and compile all translations"
@@ -79,6 +80,9 @@ collectstatic:
 
 tailwind:
 	python manage.py tailwind build
+
+format:
+	djhtml templates/
 
 # Translations
 translations: makemessages compilemessages

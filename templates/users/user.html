@@ -1,228 +1,229 @@
-<!-- prettier-ignore -->
+
 {% extends 'base.html' %}
 {% block title %}
-{{ profile_user.first_name }} {{ profile_user.last_name }}'s Account - Saxapahaw Timebank
+  {{ profile_user.first_name }} {{ profile_user.last_name }}'s Account - Saxapahaw Timebank
 {% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto p-8">
-  <div class="bg-white rounded-lg shadow-sm p-12">
+  <div class="max-w-7xl mx-auto p-8">
+    <div class="bg-white rounded-lg shadow-sm p-12">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-      <h1 class="text-3xl text-gray-800 font-semibold">
-        <!-- prettier-ignore -->
-        {% if profile_user.id == request.user.id %}
-        Welcome,
-        <span class="text-primary font-bold">{{ profile_user.first_name }}</span>
-        <!-- prettier-ignore -->
-        {% else %}
-        {{ profile_user.first_name }}'s Account
-        {% endif %}
-      </h1>
-      <div class="flex items-center space-x-3">
-        {% if profile_user.image %}
-        <img
-          src="{{ profile_user.image.url }}"
-          alt="User Image"
-          class="w-14 h-14 rounded-full object-cover border-2 border-primary"
-        />
-        {% else %}
-        <i class="fas fa-user-circle text-5xl text-gray-400"></i>
-        {% endif %}
-      </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Sidebar -->
-      <div class="space-y-8">
-        <!-- Balance Card -->
-        <div class="bg-card-light rounded-xl p-8 shadow-sm flex flex-col items-center text-center">
-          <div class="text-xl font-semibold text-center tracking-wide text-secondary uppercase">Balance</div>
-          <div class="border-t-2 border-secondary my-2 w-full max-w-[14ch] mx-auto"></div>
-          <div class="text-yellow-500 mb-4 mt-2">
-            <i class="fas fa-clock text-4xl"></i>
-          </div>
-          {% if profile_user.id == request.user.id or request.user.is_staff %}
-          <div class="text-3xl font-semibold text-yellow-500">{{ profile_user.time_balance | default:0 }} HOURS</div>
-          {% else %}
-          <div class="text-3xl font-semibold text-yellow-500">Private</div>
-          {% endif %}
-        </div>
-        <!-- Offered Services Card -->
-        <div class="bg-card rounded-xl p-8 shadow-sm flex flex-col items-stretch">
-          <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">Offered Services</div>
-          <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
-          <ul class="py-2 space-y-4 flex flex-col items-center">
-            {% for service in services %}
-            <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold">
-              <a href="{% url 'service_detail' service.id %}">{{ service.title }}</a>
-            </li>
-            {% empty %}
-            <li class="text-primary">No services offered yet</li>
-            {% endfor %}
-          </ul>
-          {% if profile_user.id == request.user.id %}
-          <a
-            href="{% url 'service_create' %}"
-            class="block w-full text-center mt-4 px-4 py-2 rounded-md bg-primary text-white font-semibold hover:bg-primary-light transition"
-          >
-            Offer New Service
-          </a>
-          {% endif %}
-        </div>
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-3xl text-gray-800 font-semibold">
 
-        <!-- Requested Services Card -->
-        <div class="bg-card rounded-xl p-8 shadow-sm flex flex-col items-stretch">
-          <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">Requested Services</div>
-          <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
-          <ul class="py-2 space-y-4 flex flex-col items-center">
-            {% for request in requests %}
-            <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold">
-              <a href="{% url 'request_detail' request.id %}">{{ request.title }}</a>
-            </li>
-            {% empty %}
-            <li class="text-primary">No services requested</li>
-            {% endfor %}
-          </ul>
           {% if profile_user.id == request.user.id %}
-          <a
-            href="{% url 'request_create' %}"
-            class="block w-full text-center mt-4 px-4 py-2 rounded-md bg-primary text-white font-semibold hover:bg-primary-light transition"
-          >
-            Request Service
-          </a>
+            Welcome,
+            <span class="text-primary font-bold">{{ profile_user.first_name }}</span>
+
+          {% else %}
+            {{ profile_user.first_name }}'s Account
+          {% endif %}
+        </h1>
+        <div class="flex items-center space-x-3">
+          {% if profile_user.image %}
+            <img
+              src="{{ profile_user.image.url }}"
+              alt="User Image"
+              class="w-14 h-14 rounded-full object-cover border-2 border-primary"
+            />
+          {% else %}
+            <i class="fas fa-user-circle text-5xl text-gray-400"></i>
           {% endif %}
         </div>
       </div>
-      <!-- Main Activity Section -->
-      <div class="md:col-span-2 flex flex-col space-y-8">
-        <!-- Activity Card -->
-        <div class="bg-card rounded-xl p-8 shadow-sm">
-          <div class="flex items-center">
-            <div class="text-xl font-semibold uppercase tracking-wide text-primary mr-4">Activity</div>
-          </div>
-          <div class="border-t-2 border-primary my-2"></div>
-          <div class="p-2 flex flex-col gap-8">
-            <!-- Provided -->
-            <div>
-              <div class="font-semibold text-gray-800 mb-2">Provided Services</div>
-              <ul class="space-y-2">
-                <!-- Service and Request Credits -->
-                {% for transaction in all_credits %}
-                <li class="flex items-center text-gray-800 text-sm">
-                  <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                  <span class="pl-2 font-medium">{{ transaction.description }}</span>
-                  <span class="flex-1 border-b border-primary py-1 mx-2"></span>
-                  <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
-                </li>
-                {% empty %}
-                <li class="text-gray-600 text-sm">No provided activity</li>
-                {% endfor %}
-              </ul>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Sidebar -->
+        <div class="space-y-8">
+        <!-- Balance Card -->
+          <div class="bg-card-light rounded-xl p-8 shadow-sm flex flex-col items-center text-center">
+            <div class="text-xl font-semibold text-center tracking-wide text-secondary uppercase">Balance</div>
+            <div class="border-t-2 border-secondary my-2 w-full max-w-[14ch] mx-auto"></div>
+            <div class="text-yellow-500 mb-4 mt-2">
+              <i class="fas fa-clock text-4xl"></i>
             </div>
-            <!-- Received -->
-            <div>
-              <div class="font-semibold text-gray-800 mb-2">Received Services</div>
-              <ul class="space-y-2">
-                <!-- Service and Request Debits -->
-                {% for transaction in all_debits %}
-                <li class="flex items-center text-gray-800 text-sm">
-                  <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                  <span class="pl-2 font-medium">{{ transaction.description }}</span>
-                  <span class="flex-1 border-b border-primary py-1 mx-2"></span>
-                  <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
-                </li>
-                {% empty %}
-                <li class="text-gray-600 text-sm">No received activity</li>
-                {% endfor %}
-              </ul>
-            </div>
-            <!-- Community Donations -->
-            <div>
-              <div class="font-semibold text-gray-800 mb-2">Community Donations</div>
-              <ul class="space-y-2">
-                {% for transaction in community_donations %}
-                <li class="flex items-center text-gray-800 text-sm">
-                  <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                  <span class="pl-2 font-medium">{{ transaction.description }}</span>
-                  <span class="flex-1 border-b border-primary py-1 mx-2"></span>
-                  <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
-                </li>
-                {% empty %}
-                <li class="text-gray-600 text-sm">No community donations</li>
-                {% endfor %}
-              </ul>
-            </div>
-            <!-- Community Requests -->
-            <div>
-              <div class="font-semibold text-gray-800 mb-2">Community Requests</div>
-              <ul class="space-y-2">
-                {% for transaction in community_requests %}
-                <li class="flex items-center text-gray-800 text-sm">
-                  <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                  <span class="pl-2 font-medium">{{ transaction.description }}</span>
-                  <span class="flex-1 border-b border-primary py-1 mx-2"></span>
-                  <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
-                </li>
-                {% empty %}
-                <li class="text-gray-600 text-sm">No community requests</li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-        </div>
-        <!-- Settings Card -->
-        <div class="bg-card rounded-lg p-8">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-xl font-semibold uppercase tracking-wide text-primary">Account Settings</div>
-            {% if profile_user.id == request.user.id %}
-            <a
-              href="{% url 'user_me_edit' %}"
-              class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-            >
-              <i class="fas fa-edit mr-2"></i>
-              Edit User
-            </a>
+            {% if profile_user.id == request.user.id or request.user.is_staff %}
+              <div class="text-3xl font-semibold text-yellow-500">{{ profile_user.time_balance | default:0 }} HOURS</div>
+            {% else %}
+              <div class="text-3xl font-semibold text-yellow-500">Private</div>
             {% endif %}
           </div>
-          <div class="border-t-2 border-primary my-2"></div>
+        <!-- Offered Services Card -->
+          <div class="bg-card rounded-xl p-8 shadow-sm flex flex-col items-stretch">
+            <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">Offered Services</div>
+            <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
+            <ul class="py-2 space-y-4 flex flex-col items-center">
+              {% for service in services %}
+                <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold">
+                  <a href="{% url 'service_detail' service.id %}">{{ service.title }}</a>
+                </li>
+              {% empty %}
+                <li class="text-primary">No services offered yet</li>
+              {% endfor %}
+            </ul>
+            {% if profile_user.id == request.user.id %}
+              <a
+                href="{% url 'service_create' %}"
+                class="block w-full text-center mt-4 px-4 py-2 rounded-md bg-primary text-white font-semibold hover:bg-primary-light transition"
+              >
+                Offer New Service
+              </a>
+            {% endif %}
+          </div>
 
-          <!-- User Information -->
-          <div class="rounded-lg p-2 mb-4">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">User Information</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Requested Services Card -->
+          <div class="bg-card rounded-xl p-8 shadow-sm flex flex-col items-stretch">
+            <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">Requested Services</div>
+            <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
+            <ul class="py-2 space-y-4 flex flex-col items-center">
+              {% for request in requests %}
+                <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold">
+                  <a href="{% url 'request_detail' request.id %}">{{ request.title }}</a>
+                </li>
+              {% empty %}
+                <li class="text-primary">No services requested</li>
+              {% endfor %}
+            </ul>
+            {% if profile_user.id == request.user.id %}
+              <a
+                href="{% url 'request_create' %}"
+                class="block w-full text-center mt-4 px-4 py-2 rounded-md bg-primary text-white font-semibold hover:bg-primary-light transition"
+              >
+                Request Service
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      <!-- Main Activity Section -->
+        <div class="md:col-span-2 flex flex-col space-y-8">
+        <!-- Activity Card -->
+          <div class="bg-card rounded-xl p-8 shadow-sm">
+            <div class="flex items-center">
+              <div class="text-xl font-semibold uppercase tracking-wide text-primary mr-4">Activity</div>
+            </div>
+            <div class="border-t-2 border-primary my-2"></div>
+            <div class="p-2 flex flex-col gap-8">
+            <!-- Provided -->
               <div>
-                <p class="text-sm text-gray-800 font-semibold">Name</p>
-                <p class="text-sm text-gray-600">{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+                <div class="font-semibold text-gray-800 mb-2">Provided Services</div>
+                <ul class="space-y-2">
+                <!-- Service and Request Credits -->
+                  {% for transaction in all_credits %}
+                    <li class="flex items-center text-gray-800 text-sm">
+                      <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
+                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="flex-1 border-b border-primary py-1 mx-2"></span>
+                      <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
+                    </li>
+                  {% empty %}
+                    <li class="text-gray-600 text-sm">No provided activity</li>
+                  {% endfor %}
+                </ul>
               </div>
+            <!-- Received -->
               <div>
-                <p class="text-sm text-gray-800 font-semibold">Email</p>
-                <p class="text-sm text-gray-600">{{ profile_user.email|default:"Not provided" }}</p>
+                <div class="font-semibold text-gray-800 mb-2">Received Services</div>
+                <ul class="space-y-2">
+                <!-- Service and Request Debits -->
+                  {% for transaction in all_debits %}
+                    <li class="flex items-center text-gray-800 text-sm">
+                      <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
+                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="flex-1 border-b border-primary py-1 mx-2"></span>
+                      <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
+                    </li>
+                  {% empty %}
+                    <li class="text-gray-600 text-sm">No received activity</li>
+                  {% endfor %}
+                </ul>
               </div>
+            <!-- Community Donations -->
               <div>
-                <p class="text-sm text-gray-800 font-semibold">Phone</p>
-                <p class="text-sm text-gray-600">{{ profile_user.phone_number|default:"Not provided" }}</p>
+                <div class="font-semibold text-gray-800 mb-2">Community Donations</div>
+                <ul class="space-y-2">
+                  {% for transaction in community_donations %}
+                    <li class="flex items-center text-gray-800 text-sm">
+                      <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
+                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="flex-1 border-b border-primary py-1 mx-2"></span>
+                      <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
+                    </li>
+                  {% empty %}
+                    <li class="text-gray-600 text-sm">No community donations</li>
+                  {% endfor %}
+                </ul>
               </div>
+            <!-- Community Requests -->
               <div>
-                <p class="text-sm text-gray-800 font-semibold">Street Address</p>
-                <p class="text-sm text-gray-600">{{ profile_user.address|default:"Not provided" }}</p>
-              </div>
-              <div class="md:col-span-2">
-                <p class="text-sm text-gray-800 font-semibold">Bio</p>
-                <p class="text-sm text-gray-600">{{ profile_user.bio|default:"Not provided" }}</p>
+                <div class="font-semibold text-gray-800 mb-2">Community Requests</div>
+                <ul class="space-y-2">
+                  {% for transaction in community_requests %}
+                    <li class="flex items-center text-gray-800 text-sm">
+                      <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
+                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="flex-1 border-b border-primary py-1 mx-2"></span>
+                      <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
+                    </li>
+                  {% empty %}
+                    <li class="text-gray-600 text-sm">No community requests</li>
+                  {% endfor %}
+                </ul>
               </div>
             </div>
           </div>
+        <!-- Settings Card -->
+          <div class="bg-card rounded-lg p-8">
+            <div class="flex items-center justify-between mb-4">
+              <div class="text-xl font-semibold uppercase tracking-wide text-primary">Account Settings</div>
+              {% if profile_user.id == request.user.id %}
+                <a
+                  href="{% url 'user_me_edit' %}"
+                  class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                >
+                  <i class="fas fa-edit mr-2"></i>
+                  Edit User
+                </a>
+              {% endif %}
+            </div>
+            <div class="border-t-2 border-primary my-2"></div>
+
+          <!-- User Information -->
+            <div class="rounded-lg p-2 mb-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">User Information</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <p class="text-sm text-gray-800 font-semibold">Name</p>
+                  <p class="text-sm text-gray-600">{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-800 font-semibold">Email</p>
+                  <p class="text-sm text-gray-600">{{ profile_user.email|default:"Not provided" }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-800 font-semibold">Phone</p>
+                  <p class="text-sm text-gray-600">{{ profile_user.phone_number|default:"Not provided" }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-800 font-semibold">Street Address</p>
+                  <p class="text-sm text-gray-600">{{ profile_user.address|default:"Not provided" }}</p>
+                </div>
+                <div class="md:col-span-2">
+                  <p class="text-sm text-gray-800 font-semibold">Bio</p>
+                  <p class="text-sm text-gray-600">{{ profile_user.bio|default:"Not provided" }}</p>
+                </div>
+              </div>
+            </div>
 
           <!-- Account Information -->
-          <div class="rounded-lg p-2 mb-4">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Account Information</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p class="text-sm text-gray-800 font-semibold">Member Since</p>
-                <p class="text-sm text-gray-600">{{ profile_user.date_joined|date:"F j, Y" }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-800 font-semibold">Last Updated</p>
-                <p class="text-sm text-gray-600">{{ profile_user.updated_at|date:"F j, Y" }}</p>
+            <div class="rounded-lg p-2 mb-4">
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">Account Information</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <p class="text-sm text-gray-800 font-semibold">Member Since</p>
+                  <p class="text-sm text-gray-600">{{ profile_user.date_joined|date:"F j, Y" }}</p>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-800 font-semibold">Last Updated</p>
+                  <p class="text-sm text-gray-600">{{ profile_user.updated_at|date:"F j, Y" }}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -230,5 +231,4 @@
       </div>
     </div>
   </div>
-</div>
 {% endblock content %}

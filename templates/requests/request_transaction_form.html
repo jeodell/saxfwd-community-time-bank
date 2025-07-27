@@ -1,206 +1,206 @@
-<!-- prettier-ignore -->
+
 {% extends 'base.html' %}
 {% block title %}Offer Help - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto p-8">
-  <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+  <div class="max-w-7xl mx-auto p-8">
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
     <!-- Header -->
-    <div class="bg-gradient-to-r from-primary to-primary-light px-8 py-6 text-white">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-bold">Offer Help</h1>
-          <p class="mt-2 text-sm text-primary-100">
-            Offer help for "{{ request.title }}" by {{ request.requester.first_name }} {{ request.requester.last_name }}
-          </p>
-        </div>
-        <a
-          href="{% url 'request_detail' request.pk %}"
-          class="inline-flex items-center text-sm font-medium text-primary-100 hover:text-white transition-colors duration-200 bg-white/10 px-4 py-2 rounded-lg"
-        >
-          <i class="fas fa-arrow-left mr-2"></i>
-          Back to Request
-        </a>
-      </div>
-    </div>
-
-    <div class="p-8">
-      <!-- Request Summary Card -->
-      <div class="bg-gray-50 rounded-lg p-6 mb-8">
-        <div class="flex items-start justify-between">
-          <div class="flex-1">
-            <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ request.title }}</h2>
-            <div class="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-              {% if request.category %}
-              <span class="bg-primary/10 text-primary px-3 py-1 rounded-full font-medium">
-                {{ request.category.name }}
-              </span>
-              {% endif %}
-              <span
-                class="px-3 py-1 rounded-full font-medium {% if request.priority == 'high' %}bg-red-100 text-red-800{% elif request.priority == 'medium' %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}"
-              >
-                {{ request.get_priority_display }} Priority
-              </span>
-            </div>
-            <p class="text-gray-700">{{ request.description }}</p>
-          </div>
-
-          <!-- Time Balance Display -->
-          <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
-            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Your Balance</p>
-            <p class="text-2xl font-bold text-primary">{{ user.time_balance|default:0 }} hours</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Request Details -->
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-        <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
-          <i class="fas fa-info-circle mr-2"></i>
-          Request Details
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {% if request.estimated_hours %}
-          <div class="bg-white rounded-lg p-4 shadow-sm">
-            <p class="text-sm font-medium text-gray-500">Estimated Hours</p>
-            <p class="text-lg font-semibold text-gray-900">{{ request.estimated_hours }} hours</p>
-          </div>
-          {% endif %} {% if request.preferred_date %}
-          <div class="bg-white rounded-lg p-4 shadow-sm">
-            <p class="text-sm font-medium text-gray-500">Preferred Date</p>
-            <p class="text-lg font-semibold text-gray-900">{{ request.preferred_date|date:"F j, Y" }}</p>
-          </div>
-          {% endif %}
-          <div class="bg-white rounded-lg p-4 shadow-sm">
-            <p class="text-sm font-medium text-gray-500">People Needed</p>
-            <p class="text-lg font-semibold text-gray-900">
-              {{ request.num_users_needed }} person{{ request.num_users_needed|pluralize }}
+      <div class="bg-gradient-to-r from-primary to-primary-light px-8 py-6 text-white">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-bold">Offer Help</h1>
+            <p class="mt-2 text-sm text-primary-100">
+              Offer help for "{{ request.title }}" by {{ request.requester.first_name }} {{ request.requester.last_name }}
             </p>
           </div>
+          <a
+            href="{% url 'request_detail' request.pk %}"
+            class="inline-flex items-center text-sm font-medium text-primary-100 hover:text-white transition-colors duration-200 bg-white/10 px-4 py-2 rounded-lg"
+          >
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to Request
+          </a>
         </div>
       </div>
 
-      <!-- Form -->
-      <form method="post" class="space-y-8">
-        {% csrf_token %}
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <!-- Message -->
-          <div class="space-y-3">
-            <label for="id_message" class="text-sm font-semibold text-gray-700 flex items-center">
-              Why you'd like to help
-              <span class="text-red-500 ml-1">*</span>
-            </label>
-            <textarea
-              name="message"
-              id="id_message"
-              rows="6"
-              required
-              placeholder="Tell the requester why you'd like to help with this request and any relevant experience you have..."
-              class="w-full px-4 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm rounded-lg bg-white shadow-sm transition duration-150 ease-in-out resize-none"
-            >
-{{ form.message.value|default:'' }}</textarea
-            >
-            {% if form.message.errors %}
-            <p class="mt-2 text-sm text-red-600">{{ form.message.errors.0 }}</p>
-            {% endif %}
-          </div>
-
-          <div class="space-y-6">
-            <!-- Hours Proposed -->
-            <div class="space-y-2">
-              <label for="id_proposed_hours" class="text-sm font-semibold text-gray-700 flex items-center">
-                Hours you can offer
-                <span class="text-red-500 ml-1">*</span>
-              </label>
-              <input
-                type="number"
-                name="proposed_hours"
-                id="id_proposed_hours"
-                min="0.25"
-                step="0.25"
-                value="{{ form.proposed_hours.value|default:'' }}"
-                required
-                placeholder="Enter hours (minimum 0.25)"
-                class="w-full px-4 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm rounded-lg bg-white shadow-sm transition duration-150 ease-in-out"
-              />
-              {% if form.proposed_hours.errors %}
-              <p class="mt-2 text-sm text-red-600">{{ form.proposed_hours.errors.0 }}</p>
-              {% endif %} {% if request.estimated_hours %}
-              <p class="text-sm text-gray-500 mt-1">
-                Request estimates {{ request.estimated_hours }} hours, but you can offer what works for you
-              </p>
-              {% endif %}
+      <div class="p-8">
+      <!-- Request Summary Card -->
+        <div class="bg-gray-50 rounded-lg p-6 mb-8">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ request.title }}</h2>
+              <div class="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                {% if request.category %}
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full font-medium">
+                    {{ request.category.name }}
+                  </span>
+                {% endif %}
+                <span
+                  class="px-3 py-1 rounded-full font-medium {% if request.priority == 'high' %}bg-red-100 text-red-800{% elif request.priority == 'medium' %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}"
+                >
+                  {{ request.get_priority_display }} Priority
+                </span>
+              </div>
+              <p class="text-gray-700">{{ request.description }}</p>
             </div>
 
+          <!-- Time Balance Display -->
+            <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+              <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Your Balance</p>
+              <p class="text-2xl font-bold text-primary">{{ user.time_balance|default:0 }} hours</p>
+            </div>
+          </div>
+        </div>
+
+      <!-- Request Details -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+          <h3 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            Request Details
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% if request.estimated_hours %}
+              <div class="bg-white rounded-lg p-4 shadow-sm">
+                <p class="text-sm font-medium text-gray-500">Estimated Hours</p>
+                <p class="text-lg font-semibold text-gray-900">{{ request.estimated_hours }} hours</p>
+              </div>
+            {% endif %} {% if request.preferred_date %}
+              <div class="bg-white rounded-lg p-4 shadow-sm">
+                <p class="text-sm font-medium text-gray-500">Preferred Date</p>
+                <p class="text-lg font-semibold text-gray-900">{{ request.preferred_date|date:"F j, Y" }}</p>
+              </div>
+            {% endif %}
+            <div class="bg-white rounded-lg p-4 shadow-sm">
+              <p class="text-sm font-medium text-gray-500">People Needed</p>
+              <p class="text-lg font-semibold text-gray-900">
+                {{ request.num_users_needed }} person{{ request.num_users_needed|pluralize }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+      <!-- Form -->
+        <form method="post" class="space-y-8">
+          {% csrf_token %}
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Message -->
+            <div class="space-y-3">
+              <label for="id_message" class="text-sm font-semibold text-gray-700 flex items-center">
+                Why you'd like to help
+                <span class="text-red-500 ml-1">*</span>
+              </label>
+              <textarea
+                name="message"
+                id="id_message"
+                rows="6"
+                required
+                placeholder="Tell the requester why you'd like to help with this request and any relevant experience you have..."
+                class="w-full px-4 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm rounded-lg bg-white shadow-sm transition duration-150 ease-in-out resize-none"
+              >
+                {{ form.message.value|default:'' }}</textarea
+                >
+                {% if form.message.errors %}
+                  <p class="mt-2 text-sm text-red-600">{{ form.message.errors.0 }}</p>
+                {% endif %}
+              </div>
+
+              <div class="space-y-6">
+            <!-- Hours Proposed -->
+                <div class="space-y-2">
+                  <label for="id_proposed_hours" class="text-sm font-semibold text-gray-700 flex items-center">
+                    Hours you can offer
+                    <span class="text-red-500 ml-1">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    name="proposed_hours"
+                    id="id_proposed_hours"
+                    min="0.25"
+                    step="0.25"
+                    value="{{ form.proposed_hours.value|default:'' }}"
+                    required
+                    placeholder="Enter hours (minimum 0.25)"
+                    class="w-full px-4 py-3 text-base border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm rounded-lg bg-white shadow-sm transition duration-150 ease-in-out"
+                  />
+                  {% if form.proposed_hours.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.proposed_hours.errors.0 }}</p>
+                  {% endif %} {% if request.estimated_hours %}
+                    <p class="text-sm text-gray-500 mt-1">
+                      Request estimates {{ request.estimated_hours }} hours, but you can offer what works for you
+                    </p>
+                  {% endif %}
+                </div>
+
             <!-- Your Profile Info -->
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                <i class="fas fa-user mr-2 text-primary"></i>
-                Your Profile
-              </h4>
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Name:</span>
-                  <span class="text-gray-700 font-medium">{{ user.first_name }} {{ user.last_name }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Member since:</span>
-                  <span class="text-gray-700 font-medium">{{ user.date_joined|date:"F Y" }}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Time balance:</span>
-                  <span class="text-gray-700 font-medium">{{ user.time_balance|default:0 }} hours</span>
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                    <i class="fas fa-user mr-2 text-primary"></i>
+                    Your Profile
+                  </h4>
+                  <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Name:</span>
+                      <span class="text-gray-700 font-medium">{{ user.first_name }} {{ user.last_name }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Member since:</span>
+                      <span class="text-gray-700 font-medium">{{ user.date_joined|date:"F Y" }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Time balance:</span>
+                      <span class="text-gray-700 font-medium">{{ user.time_balance|default:0 }} hours</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
         <!-- Time Credit Balance Formula -->
-        <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-6 border border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <i class="fas fa-calculator mr-2 text-primary"></i>
-            Time Credit Impact
-          </h3>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white rounded-lg p-4 shadow-sm">
-              <p class="text-sm font-medium text-gray-500">Current Balance</p>
-              <p class="text-2xl font-bold text-green-600">{{ user.time_balance|default:0 }} hours</p>
+            <div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-6 border border-gray-200">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <i class="fas fa-calculator mr-2 text-primary"></i>
+                Time Credit Impact
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                  <p class="text-sm font-medium text-gray-500">Current Balance</p>
+                  <p class="text-2xl font-bold text-green-600">{{ user.time_balance|default:0 }} hours</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                  <p class="text-sm font-medium text-gray-500">Hours to Earn</p>
+                  <p class="text-2xl font-bold text-orange-600" id="hours-to-earn">0 hours</p>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-sm">
+                  <p class="text-sm font-medium text-gray-500">New Balance</p>
+                  <p class="text-2xl font-bold text-blue-600" id="new-balance">{{ user.time_balance|default:0 }} hours</p>
+                </div>
+              </div>
             </div>
-            <div class="bg-white rounded-lg p-4 shadow-sm">
-              <p class="text-sm font-medium text-gray-500">Hours to Earn</p>
-              <p class="text-2xl font-bold text-orange-600" id="hours-to-earn">0 hours</p>
-            </div>
-            <div class="bg-white rounded-lg p-4 shadow-sm">
-              <p class="text-sm font-medium text-gray-500">New Balance</p>
-              <p class="text-2xl font-bold text-blue-600" id="new-balance">{{ user.time_balance|default:0 }} hours</p>
-            </div>
-          </div>
-        </div>
 
         <!-- Submit Button -->
-        <div class="flex justify-end pt-6">
-          <button
-            type="submit"
-            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-          >
-            <i class="fas fa-handshake mr-2"></i>
-            Submit Offer
-          </button>
+            <div class="flex justify-end pt-6">
+              <button
+                type="submit"
+                class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+              >
+                <i class="fas fa-handshake mr-2"></i>
+                Submit Offer
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-      const hoursInput = document.getElementById('id_proposed_hours');
-      const hoursToEarn = document.getElementById('hours-to-earn');
-      const newBalance = document.getElementById('new-balance');
-      const currentBalance = {{ user.time_balance|default:0 }};
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const hoursInput = document.getElementById('id_proposed_hours');
+        const hoursToEarn = document.getElementById('hours-to-earn');
+        const newBalance = document.getElementById('new-balance');
+        const currentBalance = {{ user.time_balance|default:0 }};
 
-      function updateCalculation() {
+        function updateCalculation() {
           const hours = parseFloat(hoursInput.value) || 0;
           const newTotal = currentBalance + hours;
 
@@ -209,16 +209,16 @@
 
           // Color coding for new balance
           if (newTotal > currentBalance + 5) {
-              newBalance.className = 'text-2xl font-bold text-green-600';
+            newBalance.className = 'text-2xl font-bold text-green-600';
           } else if (newTotal > currentBalance) {
-              newBalance.className = 'text-2xl font-bold text-blue-600';
+            newBalance.className = 'text-2xl font-bold text-blue-600';
           } else {
-              newBalance.className = 'text-2xl font-bold text-gray-600';
+            newBalance.className = 'text-2xl font-bold text-gray-600';
           }
-      }
+        }
 
-      hoursInput.addEventListener('input', updateCalculation);
-      updateCalculation(); // Initial calculation
-  });
-</script>
+        hoursInput.addEventListener('input', updateCalculation);
+        updateCalculation(); // Initial calculation
+      });
+    </script>
 {% endblock %}

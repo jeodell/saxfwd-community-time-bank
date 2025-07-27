@@ -10,6 +10,7 @@ charset-normalizer==3.4.2
 click==8.2.1
 cookiecutter==2.6.0
 crispy-tailwind==1.0.3
+djhtml==1.5.2
 Django==5.0.2
 django-recaptcha==4.1.0
 django-storages==1.14.6

@@ -4,21 +4,21 @@
   <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
     <div class="font-bold text-lg flex items-center">SAXAPAHAW TIMEBANK</div>
     <div class="flex flex-col items-center space-y-2 text-center md:text-left">
-      <!-- prettier-ignore -->
+
       {% if request.path != '/' %}
-      <a href="{% url 'home' %}">{% trans "Home" %}</a>
+        <a href="{% url 'home' %}">{% trans "Home" %}</a>
       {% endif %}
-      <!-- prettier-ignore -->
+
       {% if request.path != '/about/' %}
-      <a href="{% url 'about' %}">{% trans "About" %}</a>
+        <a href="{% url 'about' %}">{% trans "About" %}</a>
       {% endif %}
-      <!-- prettier-ignore -->
+
       {% if request.path != '/services/' %}
-      <a href="{% url 'service_list' %}">{% trans "Services" %}</a>
+        <a href="{% url 'service_list' %}">{% trans "Services" %}</a>
       {% endif %}
-      <!-- prettier-ignore -->
+
       {% if request.path != '/user/me/' %}
-      <a href="{% url 'user_me' %}">{% trans "My Account" %}</a>
+        <a href="{% url 'user_me' %}">{% trans "My Account" %}</a>
       {% endif %}
     </div>
     <div class="flex flex-col space-y-2 justify-center items-end text-center md:text-right">

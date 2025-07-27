@@ -1,280 +1,273 @@
-<!-- prettier-ignore -->
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Community - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto p-8">
-  <div class="bg-white rounded-lg shadow-sm p-12">
+  <div class="max-w-7xl mx-auto p-8">
+    <div class="bg-white rounded-lg shadow-sm p-12">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-      <div>
-        <h1 class="text-2xl text-primary font-bold mb-2">Timebank Community</h1>
-        <p class="text-gray-600">Transparent record of all time bank transactions and community members</p>
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+          <h1 class="text-2xl text-primary font-bold mb-2">Timebank Community</h1>
+          <p class="text-gray-600">Transparent record of all time bank transactions and community members</p>
+        </div>
       </div>
-    </div>
 
     <!-- Stats Section -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-2">Total Transactions</h2>
-        <p class="text-4xl font-bold text-primary">{{ total_transactions }}</p>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-2">Total Hours Exchanged</h2>
-        <p class="text-4xl font-bold text-primary">{{ total_hours_exchanged }}</p>
-      </div>
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-2">Community Hours Balance</h2>
-        <p class="text-4xl font-bold text-primary">{{ community_hours_balance }}</p>
-        {% if user.is_authenticated %}
-        <!-- prettier-ignore -->
-        <button
-          id="donationButton"
-          {% if user_time_balance <= 0 %}
-          disabled
-          class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-400 cursor-not-allowed relative group"
-          title="You need to have available hours to make a donation"
-          {% else %}
-          class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">Total Transactions</h2>
+          <p class="text-4xl font-bold text-primary">{{ total_transactions }}</p>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">Total Hours Exchanged</h2>
+          <p class="text-4xl font-bold text-primary">{{ total_hours_exchanged }}</p>
+        </div>
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+          <h2 class="text-lg font-semibold text-gray-900 mb-2">Community Hours Balance</h2>
+          <p class="text-4xl font-bold text-primary">{{ community_hours_balance }}</p>
+          {% if user.is_authenticated %}
+            <button
+              id="donationButton"
+              {% if user_time_balance <= 0 %}
+                disabled
+                class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-400 cursor-not-allowed relative group"
+                title="You need to have available hours to make a donation"
+              {% else %}
+                class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+              {% endif %}
+            >
+              <i class="fas fa-gift mr-2"></i>
+              Donate Hours
+            </button>
           {% endif %}
-        >
-          <i class="fas fa-gift mr-2"></i>
-          Donate Hours
-        </button>
-        {% endif %}
+        </div>
       </div>
-    </div>
 
     <!-- Donation Modal -->
-    <div id="donationModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-        <div class="p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Donate Hours to Community</h3>
-            <button
-              onclick="document.getElementById('donationModal').classList.add('hidden')"
-              class="text-gray-400 hover:text-gray-500"
-            >
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          <form method="post" action="{% url 'donate_community_hours' %}" class="space-y-4">
-            {% csrf_token %}
-            <div>
-              <label for="hours" class="block text-sm font-medium text-gray-700">Hours to Donate</label>
-              <input
-                type="number"
-                name="hours"
-                id="hours"
-                min="0.25"
-                step="0.25"
-                required
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-              />
-            </div>
-            <div>
-              <label for="description" class="block text-sm font-medium text-gray-700">Description (Optional)</label>
-              <textarea
-                name="description"
-                id="description"
-                rows="3"
-                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-              ></textarea>
-            </div>
-            <div class="flex justify-end space-x-3">
+      <div id="donationModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+          <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-gray-900">Donate Hours to Community</h3>
               <button
-                type="button"
                 onclick="document.getElementById('donationModal').classList.add('hidden')"
-                class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                class="text-gray-400 hover:text-gray-500"
               >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-              >
-                Donate Hours
+                <i class="fas fa-times"></i>
               </button>
             </div>
-          </form>
+            <form method="post" action="{% url 'donate_community_hours' %}" class="space-y-4">
+              {% csrf_token %}
+              <div>
+                <label for="hours" class="block text-sm font-medium text-gray-700">Hours to Donate</label>
+                <input
+                  type="number"
+                  name="hours"
+                  id="hours"
+                  min="0.25"
+                  step="0.25"
+                  required
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                />
+              </div>
+              <div>
+                <label for="description" class="block text-sm font-medium text-gray-700">Description (Optional)</label>
+                <textarea
+                  name="description"
+                  id="description"
+                  rows="3"
+                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                ></textarea>
+              </div>
+              <div class="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onclick="document.getElementById('donationModal').classList.add('hidden')"
+                  class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                >
+                  Donate Hours
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
 
     <!-- Recent Transactions Section -->
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-      <div class="p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Transactions</h2>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Service
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Spending Hours
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Receiving Hours
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Hours
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              {% for transaction in transactions %}
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ transaction.created_at|date:"M d, Y" }}
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-900">{{ transaction.description }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <!-- prettier-ignore -->
-                  {% if transaction.from_user %}
-                  {% if transaction.from_user == "Community" %}
-                  Community
-                  {% else %} {{ transaction.from_user.first_name }} {{ transaction.from_user.last_name }}
-                  <!-- prettier-ignore -->
-                  {% endif %}
-                  {% else %}
-                  Community
-                  {% endif %}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  <!-- prettier-ignore -->
-                  {% if transaction.to_user %}
-                  {% if transaction.to_user == "Community" %}
-                  Community
-                  {% else %} {{ transaction.to_user.first_name }} {{ transaction.to_user.last_name }}
-                  <!-- prettier-ignore -->
-                  {% endif %}
-                  {% else %}
-                  Community
-                  {% endif %}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.hours }}</td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No transactions found</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Transactions</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Service
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Spending Hours
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Receiving Hours
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Hours
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                {% for transaction in transactions %}
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {{ transaction.created_at|date:"M d, Y" }}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">{{ transaction.description }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {% if transaction.from_user %}
+                        {% if transaction.from_user == "Community" %}
+                          Community
+                        {% else %} {{ transaction.from_user.first_name }} {{ transaction.from_user.last_name }}
+                        {% endif %}
+                      {% else %}
+                        Community
+                      {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {% if transaction.to_user %}
+                        {% if transaction.to_user == "Community" %}
+                          Community
+                        {% else %} {{ transaction.to_user.first_name }} {{ transaction.to_user.last_name }}
+                        {% endif %}
+                      {% else %}
+                        Community
+                      {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ transaction.hours }}</td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No transactions found</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
 
         <!-- Pagination -->
-        {% if is_paginated %}
-        <div class="mt-8 flex justify-center">
-          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            {% if page_obj.has_previous %}
-            <a
-              href="?page={{ page_obj.previous_page_number }}"
-              class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-            >
-              <i class="fas fa-chevron-left"></i>
-            </a>
-            {% endif %} {% for num in page_obj.paginator.page_range %} {% if page_obj.number == num %}
-            <span
-              class="relative inline-flex items-center px-4 py-2 border border-primary bg-green-50 text-sm font-medium text-primary"
-            >
-              {{ num }}
-            </span>
-            {% else %}
-            <a
-              href="?page={{ num }}"
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              {{ num }}
-            </a>
-            {% endif %} {% endfor %} {% if page_obj.has_next %}
-            <a
-              href="?page={{ page_obj.next_page_number }}"
-              class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-            >
-              <i class="fas fa-chevron-right"></i>
-            </a>
-            {% endif %}
-          </nav>
+          {% if is_paginated %}
+            <div class="mt-8 flex justify-center">
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                {% if page_obj.has_previous %}
+                  <a
+                    href="?page={{ page_obj.previous_page_number }}"
+                    class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  >
+                    <i class="fas fa-chevron-left"></i>
+                  </a>
+                {% endif %} {% for num in page_obj.paginator.page_range %} {% if page_obj.number == num %}
+                  <span
+                    class="relative inline-flex items-center px-4 py-2 border border-primary bg-green-50 text-sm font-medium text-primary"
+                  >
+                    {{ num }}
+                  </span>
+                {% else %}
+                  <a
+                    href="?page={{ num }}"
+                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    {{ num }}
+                  </a>
+                {% endif %} {% endfor %} {% if page_obj.has_next %}
+                  <a
+                    href="?page={{ page_obj.next_page_number }}"
+                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  >
+                    <i class="fas fa-chevron-right"></i>
+                  </a>
+                {% endif %}
+              </nav>
+            </div>
+          {% endif %}
         </div>
-        {% endif %}
       </div>
-    </div>
 
     <!-- Users Section -->
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mt-8">
-      <div class="p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Community Members</h2>
-        <div class="overflow-x-auto rounded-lg shadow">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Member Since
-                </th>
-                <th
-                  scope="col"
-                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                ></th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              {% for user in users %}
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ user.get_full_name }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ user.email }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ user.date_joined|date:"M d, Y" }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-right">
-                  <a
-                    href="{% url 'user' user.id %}"
-                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                  >
-                    View Profile
-                  </a>
-                </td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No users found.</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mt-8">
+        <div class="p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Community Members</h2>
+          <div class="overflow-x-auto rounded-lg shadow">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Member Since
+                  </th>
+                  <th
+                    scope="col"
+                    class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  ></th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                {% for user in users %}
+                  <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">{{ user.get_full_name }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">{{ user.email }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">{{ user.date_joined|date:"M d, Y" }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right">
+                      <a
+                        href="{% url 'user' user.id %}"
+                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                      >
+                        View Profile
+                      </a>
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No users found.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 {% endblock %}
 
-<!-- prettier-ignore -->
 {% block extra_js %}
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const donationModal = document.getElementById('donationModal');
-    const donationButton = document.getElementById('donationButton');
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const donationModal = document.getElementById('donationModal');
+      const donationButton = document.getElementById('donationButton');
 
-    donationButton.addEventListener('click', function () {
-      donationModal.classList.remove('hidden');
-      donationModal.classList.add('flex');
+      donationButton.addEventListener('click', function () {
+        donationModal.classList.remove('hidden');
+        donationModal.classList.add('flex');
+      });
     });
-  });
-</script>
+  </script>
 {% endblock %}

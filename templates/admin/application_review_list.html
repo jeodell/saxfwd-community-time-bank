@@ -1,171 +1,169 @@
-<!-- prettier-ignore -->
 {% extends "base.html" %}
 {% block title %}Application Review - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto p-8">
-  <div class="bg-white rounded-lg shadow-sm p-12">
-    <div class="mb-6">
-      <h1 class="text-2xl text-primary font-bold mb-4 md:mb-0">Application Review</h1>
-    </div>
+  <div class="max-w-7xl mx-auto p-8">
+    <div class="bg-white rounded-lg shadow-sm p-12">
+      <div class="mb-6">
+        <h1 class="text-2xl text-primary font-bold mb-4 md:mb-0">Application Review</h1>
+      </div>
 
     <!-- Status Filter -->
-    <div class="border-b border-gray-200 mb-6">
-      <nav class="-mb-px flex space-x-8">
-        <a
-          href="?status=all"
-          class="{% if status_filter == 'all' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-        >
-          <i class="fas fa-list mr-2"></i>
-          All
-        </a>
-        <a
-          href="?status=pending"
-          class="{% if status_filter == 'pending' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-        >
-          <i class="fas fa-clock mr-2"></i>
-          Pending
-        </a>
-        <a
-          href="?status=approved"
-          class="{% if status_filter == 'approved' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-        >
-          <i class="fas fa-check-circle mr-2"></i>
-          Approved
-        </a>
-        <a
-          href="?status=rejected"
-          class="{% if status_filter == 'rejected' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-        >
-          <i class="fas fa-times-circle mr-2"></i>
-          Rejected
-        </a>
-      </nav>
-    </div>
+      <div class="border-b border-gray-200 mb-6">
+        <nav class="-mb-px flex space-x-8">
+          <a
+            href="?status=all"
+            class="{% if status_filter == 'all' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+          >
+            <i class="fas fa-list mr-2"></i>
+            All
+          </a>
+          <a
+            href="?status=pending"
+            class="{% if status_filter == 'pending' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+          >
+            <i class="fas fa-clock mr-2"></i>
+            Pending
+          </a>
+          <a
+            href="?status=approved"
+            class="{% if status_filter == 'approved' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+          >
+            <i class="fas fa-check-circle mr-2"></i>
+            Approved
+          </a>
+          <a
+            href="?status=rejected"
+            class="{% if status_filter == 'rejected' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+          >
+            <i class="fas fa-times-circle mr-2"></i>
+            Rejected
+          </a>
+        </nav>
+      </div>
 
     <!-- Applications Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {% for application in applications %}
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-        <div class="p-6">
-          <div class="flex items-center mb-4">
-            <div class="flex-shrink-0">
-              <div class="h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <span class="text-white font-semibold text-lg">
-                  {{ application.user.first_name|first }}{{ application.user.last_name|first }}
-                </span>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for application in applications %}
+          <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div class="p-6">
+              <div class="flex items-center mb-4">
+                <div class="flex-shrink-0">
+                  <div class="h-12 w-12 rounded-full bg-primary flex items-center justify-center">
+                    <span class="text-white font-semibold text-lg">
+                      {{ application.user.first_name|first }}{{ application.user.last_name|first }}
+                    </span>
+                  </div>
+                </div>
+                <div class="ml-4 flex-1">
+                  <h2 class="text-lg font-semibold text-gray-900">
+                    {{ application.user.first_name }} {{ application.user.last_name }}
+                  </h2>
+                  <p class="text-sm text-gray-500">{{ application.user.email }}</p>
+                </div>
+              </div>
+
+              <div class="space-y-3 mb-4">
+                <div class="flex items-center text-sm text-gray-600">
+                  <i class="fas fa-user-friends mr-2 text-gray-400"></i>
+                  <span>
+                    {% if application.referral_member %}
+                      Referred by: {{ application.referral_member.first_name }} {{ application.referral_member.last_name }}
+                    {% elif application.referral_member == None %}
+                      <span class="text-gray-500 italic">No referral member</span>
+                    {% endif %}
+                  </span>
+                </div>
+                <div class="flex items-center text-sm text-gray-600">
+                  <i class="fas fa-calendar mr-2 text-gray-400"></i>
+                  <span>Applied: {{ application.created_at|date:"M j, Y" }}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  {% if application.status == 'pending' %}
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-800"
+                    >
+                      Pending
+                    </span>
+                  {% elif application.status == 'approved' %}
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-800"
+                    >
+                      Approved
+                    </span>
+                  {% elif application.status == 'rejected' %}
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-800"
+                    >
+                      Rejected
+                    </span>
+                  {% endif %}
+                </div>
+                <a
+                  href="{% url 'application_review_detail' application.id %}"
+                  class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                >
+                  <i class="fas fa-eye mr-2"></i>
+                  Review
+                </a>
               </div>
             </div>
-            <div class="ml-4 flex-1">
-              <h2 class="text-lg font-semibold text-gray-900">
-                {{ application.user.first_name }} {{ application.user.last_name }}
-              </h2>
-              <p class="text-sm text-gray-500">{{ application.user.email }}</p>
-            </div>
           </div>
-
-          <div class="space-y-3 mb-4">
-            <div class="flex items-center text-sm text-gray-600">
-              <i class="fas fa-user-friends mr-2 text-gray-400"></i>
-              <span>
-                <!-- prettier-ignore -->
-                {% if application.referral_member %}
-                Referred by: {{ application.referral_member.first_name }} {{ application.referral_member.last_name }}
-                {% elif application.referral_member == None %}
-                <span class="text-gray-500 italic">No referral member</span>
-                {% endif %}
-              </span>
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <i class="fas fa-calendar mr-2 text-gray-400"></i>
-              <span>Applied: {{ application.created_at|date:"M j, Y" }}</span>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              {% if application.status == 'pending' %}
-              <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-800"
-              >
-                Pending
-              </span>
-              {% elif application.status == 'approved' %}
-              <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-800"
-              >
-                Approved
-              </span>
-              {% elif application.status == 'rejected' %}
-              <span
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-800"
-              >
-                Rejected
-              </span>
+        {% empty %}
+          <div class="col-span-full">
+            <div class="text-center py-12">
+              <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
+              {% if status_filter == 'all' %}
+                <p class="text-gray-500">No applications found</p>
+              {% elif status_filter == 'pending' %}
+                <p class="text-gray-500">No pending applications to review</p>
+              {% elif status_filter == 'approved' %}
+                <p class="text-gray-500">No approved applications found</p>
+              {% elif status_filter == 'rejected' %}
+                <p class="text-gray-500">No rejected applications found</p>
               {% endif %}
             </div>
-            <a
-              href="{% url 'application_review_detail' application.id %}"
-              class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-            >
-              <i class="fas fa-eye mr-2"></i>
-              Review
-            </a>
           </div>
-        </div>
+        {% endfor %}
       </div>
-      {% empty %}
-      <div class="col-span-full">
-        <div class="text-center py-12">
-          <i class="fas fa-inbox text-4xl text-gray-400 mb-4"></i>
-          {% if status_filter == 'all' %}
-          <p class="text-gray-500">No applications found</p>
-          {% elif status_filter == 'pending' %}
-          <p class="text-gray-500">No pending applications to review</p>
-          {% elif status_filter == 'approved' %}
-          <p class="text-gray-500">No approved applications found</p>
-          {% elif status_filter == 'rejected' %}
-          <p class="text-gray-500">No rejected applications found</p>
-          {% endif %}
-        </div>
-      </div>
-      {% endfor %}
-    </div>
 
     <!-- Pagination -->
-    {% if applications.has_other_pages %}
-    <div class="mt-8 flex justify-center">
-      <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-        {% if applications.has_previous %}
-        <a
-          href="?page={{ applications.previous_page_number }}&status={{ status_filter }}"
-          class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-        >
-          <i class="fas fa-chevron-left"></i>
-        </a>
-        {% endif %} {% for i in applications.paginator.page_range %} {% if applications.number == i %}
-        <span
-          class="relative inline-flex items-center px-4 py-2 border border-primary bg-green-50 text-sm font-medium text-primary"
-        >
-          {{ i }}
-        </span>
-        {% else %}
-        <a
-          href="?page={{ i }}&status={{ status_filter }}"
-          class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          {{ i }}
-        </a>
-        {% endif %} {% endfor %} {% if applications.has_next %}
-        <a
-          href="?page={{ applications.next_page_number }}&status={{ status_filter }}"
-          class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-        >
-          <i class="fas fa-chevron-right"></i>
-        </a>
-        {% endif %}
-      </nav>
+      {% if applications.has_other_pages %}
+        <div class="mt-8 flex justify-center">
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            {% if applications.has_previous %}
+              <a
+                href="?page={{ applications.previous_page_number }}&status={{ status_filter }}"
+                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </a>
+            {% endif %} {% for i in applications.paginator.page_range %} {% if applications.number == i %}
+              <span
+                class="relative inline-flex items-center px-4 py-2 border border-primary bg-green-50 text-sm font-medium text-primary"
+              >
+                {{ i }}
+              </span>
+            {% else %}
+              <a
+                href="?page={{ i }}&status={{ status_filter }}"
+                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                {{ i }}
+              </a>
+            {% endif %} {% endfor %} {% if applications.has_next %}
+              <a
+                href="?page={{ applications.next_page_number }}&status={{ status_filter }}"
+                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            {% endif %}
+          </nav>
+        </div>
+      {% endif %}
     </div>
-    {% endif %}
   </div>
-</div>
 {% endblock %}

@@ -1,174 +1,173 @@
-<!-- prettier-ignore -->
 {% extends "base.html" %}
 {% load static %}
 {% block title %}About - Saxapahaw Timebank{% endblock %}
 {% block content %}
 <!-- About Section -->
-<section class="grid grid-cols-1 lg:grid-cols-2 gap-12 pb-16">
-  <h2
-    class="col-span-1 lg:col-span-2 text-5xl font-bold text-primary tracking-widest uppercase bg-card w-full text-left px-8 lg:pl-24 lg:pr-8 pt-24 pb-12"
-  >
-    About
-  </h2>
-  <div class="col-span-1 space-y-12 px-8 lg:pl-24 lg:pr-8">
-    <p class="text-gray-700 text-lg">
-      In a Timebank, people exchange time instead of money. One hour of service earns one credit, which can be spent by
-      receiving help from another member.
-    </p>
-    <div class="space-y-4">
-      <h3 class="font-bold text-2xl text-primary uppercase">Our Mission</h3>
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 pb-16">
+    <h2
+      class="col-span-1 lg:col-span-2 text-5xl font-bold text-primary tracking-widest uppercase bg-card w-full text-left px-8 lg:pl-24 lg:pr-8 pt-24 pb-12"
+    >
+      About
+    </h2>
+    <div class="col-span-1 space-y-12 px-8 lg:pl-24 lg:pr-8">
       <p class="text-gray-700 text-lg">
-        Saxapahaw's mission is to create social trust and collaboration through skill-sharing and mutual support. We
-        believe everyone has something valuable to offer, and together we can build a resilient, connected community.
+        In a Timebank, people exchange time instead of money. One hour of service earns one credit, which can be spent by
+        receiving help from another member.
       </p>
+      <div class="space-y-4">
+        <h3 class="font-bold text-2xl text-primary uppercase">Our Mission</h3>
+        <p class="text-gray-700 text-lg">
+          Saxapahaw's mission is to create social trust and collaboration through skill-sharing and mutual support. We
+          believe everyone has something valuable to offer, and together we can build a resilient, connected community.
+        </p>
+      </div>
+      <div class="space-y-4">
+        <h3 class="font-bold text-2xl text-primary uppercase">Our Values</h3>
+        <p class="text-gray-700 text-lg">
+          In a Timebank, everyone's time has the same value. The power of community comes from recognizing and supporting
+          every member's contribution.
+        </p>
+      </div>
     </div>
-    <div class="space-y-4">
-      <h3 class="font-bold text-2xl text-primary uppercase">Our Values</h3>
-      <p class="text-gray-700 text-lg">
-        In a Timebank, everyone's time has the same value. The power of community comes from recognizing and supporting
-        every member's contribution.
-      </p>
+    <div class="col-span-1 lg:-mt-36 px-8 lg:pr-24 lg:pl-8 flex items-center justify-center">
+      <img
+        src="{% static 'img/sax_mill_area.jpg' %}"
+        alt="About Saxapahaw"
+        class="rounded-xl shadow-xl w-full object-cover h-full object-center"
+      />
     </div>
-  </div>
-  <div class="col-span-1 lg:-mt-36 px-8 lg:pr-24 lg:pl-8 flex items-center justify-center">
-    <img
-      src="{% static 'img/sax_mill_area.jpg' %}"
-      alt="About Saxapahaw"
-      class="rounded-xl shadow-xl w-full object-cover h-full object-center"
-    />
-  </div>
-</section>
+  </section>
 
 <!-- How It Works Section -->
-<section class="p-8 md:p-12 lg:p-16 max-w-7xl mx-auto">
-  <h2 class="text-5xl font-bold text-center text-primary mb-16 tracking-widest uppercase">How It Works</h2>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-    <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
-      <div class="font-bold text-2xl mb-2 text-primary uppercase">1. Join the Timebank</div>
-      <div class="h-[2px] bg-primary my-4"></div>
-      <p class="text-gray-600 text-lg pb-12">
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-        enim ipsam
-      </p>
+  <section class="p-8 md:p-12 lg:p-16 max-w-7xl mx-auto">
+    <h2 class="text-5xl font-bold text-center text-primary mb-16 tracking-widest uppercase">How It Works</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+      <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
+        <div class="font-bold text-2xl mb-2 text-primary uppercase">1. Join the Timebank</div>
+        <div class="h-[2px] bg-primary my-4"></div>
+        <p class="text-gray-600 text-lg pb-12">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+          aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+          enim ipsam
+        </p>
+      </div>
+      <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
+        <div class="font-bold text-2xl mb-2 text-primary uppercase">2. Offer a Skill or Service</div>
+        <div class="h-[2px] bg-primary my-4"></div>
+        <p class="text-gray-600 text-lg pb-12">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+          aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+          enim ipsam
+        </p>
+      </div>
+      <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
+        <div class="font-bold text-2xl mb-2 text-primary uppercase">3. Earn Time Credits</div>
+        <div class="h-[2px] bg-primary my-4"></div>
+        <p class="text-gray-600 text-lg pb-12">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+          aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+          enim ipsam
+        </p>
+      </div>
+      <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
+        <div class="font-bold text-2xl mb-2 text-primary uppercase">4. Spend Credits to Receive Help</div>
+        <div class="h-[2px] bg-primary my-4"></div>
+        <p class="text-gray-600 text-lg pb-12">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
+          aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
+          enim ipsam
+        </p>
+      </div>
     </div>
-    <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
-      <div class="font-bold text-2xl mb-2 text-primary uppercase">2. Offer a Skill or Service</div>
-      <div class="h-[2px] bg-primary my-4"></div>
-      <p class="text-gray-600 text-lg pb-12">
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-        enim ipsam
-      </p>
-    </div>
-    <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
-      <div class="font-bold text-2xl mb-2 text-primary uppercase">3. Earn Time Credits</div>
-      <div class="h-[2px] bg-primary my-4"></div>
-      <p class="text-gray-600 text-lg pb-12">
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-        enim ipsam
-      </p>
-    </div>
-    <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
-      <div class="font-bold text-2xl mb-2 text-primary uppercase">4. Spend Credits to Receive Help</div>
-      <div class="h-[2px] bg-primary my-4"></div>
-      <p class="text-gray-600 text-lg pb-12">
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-        aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-        enim ipsam
-      </p>
-    </div>
-  </div>
-</section>
+  </section>
 
 <!-- Who It's For Section -->
-<section class="relative">
-  <img
-    src="{% static 'img/sax_village_in_snow.jpg' %}"
-    alt="Who It's For"
-    class="w-full h-[700px] object-cover object-[center_25%]"
-  />
-  <div class="absolute top-12 right-12 bg-secondary bg-opacity-80 rounded-xl p-8 max-w-sm shadow-lg">
-    <div class="font-bold text-2xl text-primary mb-2 uppercase">Who It's For</div>
-    <p class="text-gray-800 text-lg">
-      Timebanking works best locally, building relationships and trust among neighbors. Anyone in the Saxapahaw area who
-      wants to give and receive help is welcome to join!
-    </p>
-  </div>
-</section>
+  <section class="relative">
+    <img
+      src="{% static 'img/sax_village_in_snow.jpg' %}"
+      alt="Who It's For"
+      class="w-full h-[700px] object-cover object-[center_25%]"
+    />
+    <div class="absolute top-12 right-12 bg-secondary bg-opacity-80 rounded-xl p-8 max-w-sm shadow-lg">
+      <div class="font-bold text-2xl text-primary mb-2 uppercase">Who It's For</div>
+      <p class="text-gray-800 text-lg">
+        Timebanking works best locally, building relationships and trust among neighbors. Anyone in the Saxapahaw area who
+        wants to give and receive help is welcome to join!
+      </p>
+    </div>
+  </section>
 
 <!-- FAQ Section -->
-<section class="bg-cream rounded-2xl px-8 md:px-12 lg:px-16 py-16 md:py-20 lg:py-24">
-  <div class="max-w-4xl mx-auto">
-    <h2 class="text-5xl font-bold text-center text-primary mb-16 tracking-widest uppercase">
-      Frequently Asked Questions
-    </h2>
-    <div class="space-y-8">
-      <div class="space-y-4">
-        <div class="font-bold text-lg">Here's a big question that I have that needs answering?</div>
-        <p class="text-gray-700">
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Soluta ver
-          aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-          Nemo enim ipsam voluptatem.
-        </p>
-      </div>
-      <div class="space-y-4">
-        <div class="font-bold text-lg">Here's a big question that I have that needs answering?</div>
-        <p class="text-gray-700">
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Soluta ver
-          aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-          Nemo enim ipsam voluptatem.
-        </p>
-      </div>
-      <div class="space-y-4">
-        <div class="font-bold text-lg">Here's a big question that I have that needs answering?</div>
-        <p class="text-gray-700">
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Soluta ver
-          aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-          Nemo enim ipsam voluptatem.
-        </p>
+  <section class="bg-cream rounded-2xl px-8 md:px-12 lg:px-16 py-16 md:py-20 lg:py-24">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-5xl font-bold text-center text-primary mb-16 tracking-widest uppercase">
+        Frequently Asked Questions
+      </h2>
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <div class="font-bold text-lg">Here's a big question that I have that needs answering?</div>
+          <p class="text-gray-700">
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Soluta ver
+            aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+            Nemo enim ipsam voluptatem.
+          </p>
+        </div>
+        <div class="space-y-4">
+          <div class="font-bold text-lg">Here's a big question that I have that needs answering?</div>
+          <p class="text-gray-700">
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Soluta ver
+            aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+            Nemo enim ipsam voluptatem.
+          </p>
+        </div>
+        <div class="space-y-4">
+          <div class="font-bold text-lg">Here's a big question that I have that needs answering?</div>
+          <p class="text-gray-700">
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Soluta ver
+            aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+            Nemo enim ipsam voluptatem.
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
 <!-- Ready to Join Section -->
-{% if not user.is_authenticated %}
-<section class="text-center px-8 md:px-12 lg:px-16 py-16 md:py-24 lg:py-32">
-  <h2 class="text-3xl font-bold text-primary mb-8 tracking-widest uppercase">Ready to Join Us?</h2>
-  <a
-    href="{% url 'apply' %}"
-    class="inline-block bg-secondary text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-secondary/80 transition"
-  >
-    APPLY TO JOIN
-  </a>
-</section>
-{% endif %}
+  {% if not user.is_authenticated %}
+    <section class="text-center px-8 md:px-12 lg:px-16 py-16 md:py-24 lg:py-32">
+      <h2 class="text-3xl font-bold text-primary mb-8 tracking-widest uppercase">Ready to Join Us?</h2>
+      <a
+        href="{% url 'apply' %}"
+        class="inline-block bg-secondary text-white px-8 py-4 rounded-lg text-lg font-bold hover:bg-secondary/80 transition"
+      >
+        APPLY TO JOIN
+      </a>
+    </section>
+  {% endif %}
 
 <!-- Footer Image Section -->
-<section class="relative">
-  <img src="{% static 'img/sax_lake_in_fall.jpg' %}" alt="Footer" class="w-full h-[600px] object-cover" />
-</section>
+  <section class="relative">
+    <img src="{% static 'img/sax_lake_in_fall.jpg' %}" alt="Footer" class="w-full h-[600px] object-cover" />
+  </section>
 
 <!-- Meeting Notes Section -->
-<section id="meeting-notes" class="px-8 md:px-12 lg:px-16 py-16 md:py-20 lg:py-24">
-  <div class="max-w-4xl mx-auto">
-    <h2 class="text-5xl font-bold text-center text-primary mb-16 tracking-widest uppercase">Meeting Notes</h2>
+  <section id="meeting-notes" class="px-8 md:px-12 lg:px-16 py-16 md:py-20 lg:py-24">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-5xl font-bold text-center text-primary mb-16 tracking-widest uppercase">Meeting Notes</h2>
 
-    {% if meeting_notes %}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {% for notes in meeting_notes %}
-      <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
-        <div class="font-bold text-2xl mb-2 text-primary uppercase">{{ notes.meeting_date|date:"F j, Y" }}</div>
-        <div class="h-[2px] bg-primary my-4"></div>
-        <a href="{{ notes.pdf_file.url }}" class="text-primary hover:underline" target="_blank">View Full Notes →</a>
-      </div>
-      {% endfor %}
+      {% if meeting_notes %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {% for notes in meeting_notes %}
+            <div class="bg-card rounded-lg p-8 shadow border border-gray-100">
+              <div class="font-bold text-2xl mb-2 text-primary uppercase">{{ notes.meeting_date|date:"F j, Y" }}</div>
+              <div class="h-[2px] bg-primary my-4"></div>
+              <a href="{{ notes.pdf_file.url }}" class="text-primary hover:underline" target="_blank">View Full Notes →</a>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-center text-gray-600 text-lg">No meeting notes available yet.</p>
+      {% endif %}
     </div>
-    {% else %}
-    <p class="text-center text-gray-600 text-lg">No meeting notes available yet.</p>
-    {% endif %}
-  </div>
-</section>
+  </section>
 {% endblock %}

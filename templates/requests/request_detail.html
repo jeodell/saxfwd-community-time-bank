@@ -1,565 +1,565 @@
-<!-- prettier-ignore -->
+
 {% extends 'base.html' %}
 {% block title %}{{ request.title }} - Saxapahaw Timebank{% endblock %}
 {% block content %}
-<div class="max-w-7xl mx-auto p-8">
-  <div class="bg-white rounded-lg shadow-sm p-8">
+  <div class="max-w-7xl mx-auto p-8">
+    <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Back Button -->
-    <div class="mb-6">
-      <a
-        href="{% url 'request_list' %}"
-        class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200"
-      >
-        <i class="fas fa-arrow-left mr-2"></i>
-        Back to Community Requests
-      </a>
-    </div>
+      <div class="mb-6">
+        <a
+          href="{% url 'request_list' %}"
+          class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200"
+        >
+          <i class="fas fa-arrow-left mr-2"></i>
+          Back to Community Requests
+        </a>
+      </div>
 
     <!-- Request Header -->
-    <div class="border-b border-gray-200 pb-6 mb-6">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ request.title }}</h1>
-          <div class="flex items-center space-x-4">
-            <span
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {% if request.priority == 'high' %}bg-red-100 text-red-800 border-red-800{% elif request.priority == 'medium' %}bg-yellow-100 text-yellow-800 border-yellow-800{% else %}bg-green-100 text-green-800 border-green-800{% endif %}"
-            >
-              {{ request.get_priority_display }} Priority
-            </span>
-            {% if request.category %}
-            <span
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[{{ request.category.color }}] text-white"
-            >
-              {{ request.category.name }}
-            </span>
+      <div class="border-b border-gray-200 pb-6 mb-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ request.title }}</h1>
+            <div class="flex items-center space-x-4">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {% if request.priority == 'high' %}bg-red-100 text-red-800 border-red-800{% elif request.priority == 'medium' %}bg-yellow-100 text-yellow-800 border-yellow-800{% else %}bg-green-100 text-green-800 border-green-800{% endif %}"
+              >
+                {{ request.get_priority_display }} Priority
+              </span>
+              {% if request.category %}
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[{{ request.category.color }}] text-white"
+                >
+                  {{ request.category.name }}
+                </span>
+              {% endif %}
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if is_fully_staffed %}bg-green-100 text-green-800 border border-green-800{% else %}bg-blue-100 text-blue-800 border border-blue-800{% endif %}"
+              >
+                <i class="fas {% if is_fully_staffed %}fa-check-circle{% else %}fa-users{% endif %} mr-1"></i>
+                {% if is_fully_staffed %}Fully Staffed{% else %}{{ accepted_offers_count }}/{{ request.num_users_needed }}
+                  Staffed{% endif %}
+              </span>
+            </div>
+          </div>
+          {% if user.is_authenticated and user != request.requester and not is_fully_staffed %}
+            <div class="mt-4 md:mt-0">
+              <a
+                href="{% url 'request_offer' request.pk %}"
+                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+              >
+                <i class="fas fa-handshake mr-2"></i>
+                Offer Help
+              </a>
+            </div>
+          {% elif user.is_authenticated and user != request.requester and is_fully_staffed %}
+            <div class="mt-4 md:mt-0">
+              <span
+                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-500 bg-gray-100 cursor-not-allowed"
+              >
+                <i class="fas fa-check-circle mr-2"></i>
+                Fully Staffed ({{ accepted_offers_count }}/{{ request.num_users_needed }})
+              </span>
+            </div>
+          {% elif user == request.requester %}
+            <div class="mt-4 md:mt-0">
+              <div class="flex space-x-4">
+                <a
+                  href="{% url 'request_edit' request.pk %}"
+                  class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                >
+                  <i class="fas fa-edit mr-2"></i>
+                  Edit Request
+                </a>
+                <form method="POST" action="{% url 'request_toggle_active' request.pk %}" class="inline">
+                  {% csrf_token %}
+                  <button
+                    type="submit"
+                    class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md {% if request.is_active %}text-red-700 bg-white hover:bg-red-50{% else %}text-green-700 bg-white hover:bg-green-50{% endif %} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                  >
+                    <i class="fas {% if request.is_active %}fa-pause{% else %}fa-play{% endif %} mr-2"></i>
+                    {% if request.is_active %}Deactivate Request{% else %}Activate Request{% endif %}
+                  </button>
+                </form>
+                <button
+                  type="button"
+                  id="deleteButton"
+                  class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+                >
+                  <i class="fas fa-trash-alt mr-2"></i>
+                  Delete Request
+                </button>
+              </div>
+            </div>
+          {% else %}
+            <div class="mt-4 md:mt-0">
+              {% if is_fully_staffed %}
+                <span
+                  class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-500 bg-gray-100 cursor-not-allowed"
+                >
+                  <i class="fas fa-check-circle mr-2"></i>
+                  Fully Staffed ({{ accepted_offers_count }}/{{ request.num_users_needed }})
+                </span>
+              {% else %}
+                <a
+                  href="{% url 'login' %}"
+                  class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                >
+                  Login to Offer Help
+                </a>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    <!-- Request Content -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Main Content -->
+        <div class="md:col-span-2">
+          <div class="prose max-w-none">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Description</h2>
+            <p class="text-gray-600 mb-6">{{ request.description }}</p>
+
+            {% if request.preferred_date %}
+              <h2 class="text-xl font-semibold text-gray-900 mb-4">Preferred Date</h2>
+              <p class="text-gray-600 mb-6">{{ request.preferred_date|date:"F j, Y" }}</p>
+            {% endif %} {% if request.estimated_hours %}
+              <h2 class="text-xl font-semibold text-gray-900 mb-4">Estimated Time</h2>
+              <p class="text-gray-600 mb-6">{{ request.estimated_hours }} hours</p>
             {% endif %}
-            <span
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if is_fully_staffed %}bg-green-100 text-green-800 border border-green-800{% else %}bg-blue-100 text-blue-800 border border-blue-800{% endif %}"
-            >
-              <i class="fas {% if is_fully_staffed %}fa-check-circle{% else %}fa-users{% endif %} mr-1"></i>
-              {% if is_fully_staffed %}Fully Staffed{% else %}{{ accepted_offers_count }}/{{ request.num_users_needed }}
-              Staffed{% endif %}
-            </span>
+
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Help Needed</h2>
+            <div class="space-y-4">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Number of People Needed</p>
+                <p class="text-gray-600">{{ request.num_users_needed }} person{{ request.num_users_needed|pluralize }}</p>
+              </div>
+            </div>
           </div>
         </div>
-        {% if user.is_authenticated and user != request.requester and not is_fully_staffed %}
-        <div class="mt-4 md:mt-0">
-          <a
-            href="{% url 'request_offer' request.pk %}"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-          >
-            <i class="fas fa-handshake mr-2"></i>
-            Offer Help
-          </a>
+
+      <!-- Sidebar -->
+        <div class="md:col-span-1">
+        <!-- Requester Info -->
+          <div class="rounded-lg p-6 mb-6 border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Requested By</h3>
+            <div class="flex items-center space-x-4">
+              <div class="flex-shrink-0">
+                <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900">
+                  {{ request.requester.first_name }} {{ request.requester.last_name }}
+                </p>
+                <p class="text-sm text-gray-500">Member since {{ request.requester.date_joined|date:"F Y" }}</p>
+              </div>
+            </div>
+          </div>
+
+        <!-- Request Details -->
+          <div class="rounded-lg p-6 border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Request Details</h3>
+            <dl class="space-y-4">
+              {% if request.category %}
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Category</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ request.category.name }}</dd>
+                </div>
+              {% endif %}
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Priority</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ request.get_priority_display }}</dd>
+              </div>
+              <div>
+                <dt class="text-sm font-medium text-gray-500">Posted</dt>
+                <dd class="mt-1 text-sm text-gray-900">{{ request.created_at|date:"F j, Y" }}</dd>
+              </div>
+              {% if request.estimated_hours %}
+                <div>
+                  <dt class="text-sm font-medium text-gray-500">Estimated Hours</dt>
+                  <dd class="mt-1 text-sm text-gray-900">{{ request.estimated_hours }} hours</dd>
+                </div>
+              {% endif %}
+            </dl>
+          </div>
         </div>
-        {% elif user.is_authenticated and user != request.requester and is_fully_staffed %}
-        <div class="mt-4 md:mt-0">
-          <span
-            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-500 bg-gray-100 cursor-not-allowed"
-          >
-            <i class="fas fa-check-circle mr-2"></i>
-            Fully Staffed ({{ accepted_offers_count }}/{{ request.num_users_needed }})
-          </span>
+      </div>
+
+    <!-- Offers Section -->
+      {% if offers %}
+        <div class="border-t border-gray-200 pt-8 mt-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Offers to Help</h2>
+          <div class="space-y-4">
+            {% for offer in offers %}
+              <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-4 mb-3">
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if offer.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif offer.status == 'accepted' %}bg-blue-100 text-blue-800{% elif offer.status == 'completed' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}"
+                      >
+                        {{ offer.get_status_display }}
+                      </span>
+                      <span class="text-sm text-gray-500">
+                        <i class="fas fa-clock mr-1"></i>
+
+                        {% if offer.status == 'completed' %}
+                          {{ offer.hours_completed_calculated }} hours
+                        {% else %}
+                          {{ offer.proposed_hours }} hours
+                        {% endif %}
+                      </span>
+                      <span class="text-sm text-gray-500">
+                        <i class="fas fa-calendar-alt mr-1"></i>
+                        {{ offer.created_at|date:"F j, Y, g:i a" }}
+                      </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p class="text-gray-500">Offered by</p>
+                        <p class="font-medium text-gray-900">
+                          {{ offer.provider.first_name }} {{ offer.provider.last_name }}
+                        </p>
+                      </div>
+                      <div>
+                        <p class="text-gray-500">Message</p>
+                        <p class="text-gray-700">{{ offer.message|truncatewords:15 }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="mt-4 md:mt-0 md:ml-6 flex space-x-2">
+                    {% if user == request.requester and offer.status == 'pending' %}
+              <!-- Accept/Reject buttons for pending offers -->
+                      <form method="post" action="{% url 'request_transaction_accept' offer.pk %}" class="inline">
+                        {% csrf_token %}
+                        <button
+                          type="submit"
+                          class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                        >
+                          <i class="fas fa-check mr-1"></i>
+                          Accept
+                        </button>
+                      </form>
+                      <button
+                        data-offer-id="{{ offer.pk }}"
+                        class="reject-offer-btn inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+                      >
+                        <i class="fas fa-times mr-1"></i>
+                        Reject
+                      </button>
+                    {% elif user == request.requester and offer.status == 'accepted' and not offer.requester_completed %}
+              <!-- Complete button for accepted offers -->
+                      <a
+                        href="{% url 'request_transaction_complete_form' offer.pk %}"
+                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                      >
+                        <i class="fas fa-flag-checkered mr-1"></i>
+                        Mark Complete
+                      </a>
+                    {% elif user == offer.provider and offer.status == 'accepted' and not offer.provider_completed %}
+              <!-- Complete button for providers -->
+                      <a
+                        href="{% url 'request_transaction_complete_form' offer.pk %}"
+                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                      >
+                        <i class="fas fa-flag-checkered mr-1"></i>
+                        Mark Complete
+                      </a>
+                    {% elif user == offer.provider and offer.status == 'pending' %}
+              <!-- Cancel button for providers -->
+                      <button
+                        data-offer-id="{{ offer.pk }}"
+                        class="cancel-offer-btn inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
+                      >
+                        <i class="fas fa-ban mr-1"></i>
+                        Cancel Offer
+                      </button>
+                    {% endif %}
+
+              <!-- Show completion status for accepted offers -->
+                    {% if offer.status == 'accepted' and offer.provider_completed or offer.requester_completed %}
+                      <div class="text-xs text-gray-600 mt-2">
+                        <p>Completion Status:</p>
+                        <ul class="list-disc list-inside text-xs">
+                          <li>Provider: {% if offer.provider_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
+                          <li>Requester: {% if offer.requester_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
+                        </ul>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
         </div>
-        {% elif user == request.requester %}
-        <div class="mt-4 md:mt-0">
-          <div class="flex space-x-4">
-            <a
-              href="{% url 'request_edit' request.pk %}"
-              class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-            >
-              <i class="fas fa-edit mr-2"></i>
-              Edit Request
-            </a>
-            <form method="POST" action="{% url 'request_toggle_active' request.pk %}" class="inline">
-              {% csrf_token %}
-              <button
-                type="submit"
-                class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md {% if request.is_active %}text-red-700 bg-white hover:bg-red-50{% else %}text-green-700 bg-white hover:bg-green-50{% endif %} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-              >
-                <i class="fas {% if request.is_active %}fa-pause{% else %}fa-play{% endif %} mr-2"></i>
-                {% if request.is_active %}Deactivate Request{% else %}Activate Request{% endif %}
-              </button>
-            </form>
+      {% endif %}
+    </div>
+  </div>
+
+<!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96 max-w-sm mx-4">
+      <div class="mt-3 text-center">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+          <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mt-4">Delete Request</h3>
+        <div class="mt-2 px-7 py-3">
+          <p class="text-sm text-gray-500">
+            Are you sure you want to delete "
+            <strong>{{ request.title }}</strong>
+            "? This action cannot be undone.
+          </p>
+        </div>
+
+      <!-- Request Details in Modal -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-4 mx-4">
+          <h4 class="text-sm font-medium text-gray-900 mb-2">Request Details</h4>
+          <dl class="text-sm text-gray-600 space-y-1">
+            <div class="flex justify-between">
+              <dt>Category:</dt>
+              <dd>{{ request.category.name|default:"Not specified" }}</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt>priority:</dt>
+              <dd>{{ request.get_priority_display }}</dd>
+            </div>
+            <div class="flex justify-between">
+              <dt>Posted:</dt>
+              <dd>{{ request.created_at|date:"F j, Y" }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="flex justify-center space-x-4 mt-6">
+          <button
+            id="cancelDeleteButton"
+            class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-200"
+          >
+            Cancel
+          </button>
+          <form method="POST" action="{% url 'request_delete' request.pk %}" class="inline">
+            {% csrf_token %}
             <button
-              type="button"
-              id="deleteButton"
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+              type="submit"
+              class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200"
             >
               <i class="fas fa-trash-alt mr-2"></i>
               Delete Request
             </button>
-          </div>
-        </div>
-        {% else %}
-        <div class="mt-4 md:mt-0">
-          {% if is_fully_staffed %}
-          <span
-            class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-500 bg-gray-100 cursor-not-allowed"
-          >
-            <i class="fas fa-check-circle mr-2"></i>
-            Fully Staffed ({{ accepted_offers_count }}/{{ request.num_users_needed }})
-          </span>
-          {% else %}
-          <a
-            href="{% url 'login' %}"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-          >
-            Login to Offer Help
-          </a>
-          {% endif %}
-        </div>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Request Content -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Main Content -->
-      <div class="md:col-span-2">
-        <div class="prose max-w-none">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Description</h2>
-          <p class="text-gray-600 mb-6">{{ request.description }}</p>
-
-          {% if request.preferred_date %}
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Preferred Date</h2>
-          <p class="text-gray-600 mb-6">{{ request.preferred_date|date:"F j, Y" }}</p>
-          {% endif %} {% if request.estimated_hours %}
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Estimated Time</h2>
-          <p class="text-gray-600 mb-6">{{ request.estimated_hours }} hours</p>
-          {% endif %}
-
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Help Needed</h2>
-          <div class="space-y-4">
-            <div>
-              <p class="text-sm font-medium text-gray-500">Number of People Needed</p>
-              <p class="text-gray-600">{{ request.num_users_needed }} person{{ request.num_users_needed|pluralize }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sidebar -->
-      <div class="md:col-span-1">
-        <!-- Requester Info -->
-        <div class="rounded-lg p-6 mb-6 border border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Requested By</h3>
-          <div class="flex items-center space-x-4">
-            <div class="flex-shrink-0">
-              <i class="fas fa-user-circle text-4xl text-gray-400"></i>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-gray-900">
-                {{ request.requester.first_name }} {{ request.requester.last_name }}
-              </p>
-              <p class="text-sm text-gray-500">Member since {{ request.requester.date_joined|date:"F Y" }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Request Details -->
-        <div class="rounded-lg p-6 border border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Request Details</h3>
-          <dl class="space-y-4">
-            {% if request.category %}
-            <div>
-              <dt class="text-sm font-medium text-gray-500">Category</dt>
-              <dd class="mt-1 text-sm text-gray-900">{{ request.category.name }}</dd>
-            </div>
-            {% endif %}
-            <div>
-              <dt class="text-sm font-medium text-gray-500">Priority</dt>
-              <dd class="mt-1 text-sm text-gray-900">{{ request.get_priority_display }}</dd>
-            </div>
-            <div>
-              <dt class="text-sm font-medium text-gray-500">Posted</dt>
-              <dd class="mt-1 text-sm text-gray-900">{{ request.created_at|date:"F j, Y" }}</dd>
-            </div>
-            {% if request.estimated_hours %}
-            <div>
-              <dt class="text-sm font-medium text-gray-500">Estimated Hours</dt>
-              <dd class="mt-1 text-sm text-gray-900">{{ request.estimated_hours }} hours</dd>
-            </div>
-            {% endif %}
-          </dl>
+          </form>
         </div>
       </div>
     </div>
-
-    <!-- Offers Section -->
-    {% if offers %}
-    <div class="border-t border-gray-200 pt-8 mt-8">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Offers to Help</h2>
-      <div class="space-y-4">
-        {% for offer in offers %}
-        <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div class="flex-1">
-              <div class="flex items-center space-x-4 mb-3">
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if offer.status == 'pending' %}bg-yellow-100 text-yellow-800{% elif offer.status == 'accepted' %}bg-blue-100 text-blue-800{% elif offer.status == 'completed' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}"
-                >
-                  {{ offer.get_status_display }}
-                </span>
-                <span class="text-sm text-gray-500">
-                  <i class="fas fa-clock mr-1"></i>
-                  <!-- prettier-ignore -->
-                  {% if offer.status == 'completed' %}
-                  {{ offer.hours_completed_calculated }} hours
-                  {% else %}
-                  {{ offer.proposed_hours }} hours
-                  {% endif %}
-                </span>
-                <span class="text-sm text-gray-500">
-                  <i class="fas fa-calendar-alt mr-1"></i>
-                  {{ offer.created_at|date:"F j, Y, g:i a" }}
-                </span>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p class="text-gray-500">Offered by</p>
-                  <p class="font-medium text-gray-900">
-                    {{ offer.provider.first_name }} {{ offer.provider.last_name }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-gray-500">Message</p>
-                  <p class="text-gray-700">{{ offer.message|truncatewords:15 }}</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-4 md:mt-0 md:ml-6 flex space-x-2">
-              {% if user == request.requester and offer.status == 'pending' %}
-              <!-- Accept/Reject buttons for pending offers -->
-              <form method="post" action="{% url 'request_transaction_accept' offer.pk %}" class="inline">
-                {% csrf_token %}
-                <button
-                  type="submit"
-                  class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-                >
-                  <i class="fas fa-check mr-1"></i>
-                  Accept
-                </button>
-              </form>
-              <button
-                data-offer-id="{{ offer.pk }}"
-                class="reject-offer-btn inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
-              >
-                <i class="fas fa-times mr-1"></i>
-                Reject
-              </button>
-              {% elif user == request.requester and offer.status == 'accepted' and not offer.requester_completed %}
-              <!-- Complete button for accepted offers -->
-              <a
-                href="{% url 'request_transaction_complete_form' offer.pk %}"
-                class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-              >
-                <i class="fas fa-flag-checkered mr-1"></i>
-                Mark Complete
-              </a>
-              {% elif user == offer.provider and offer.status == 'accepted' and not offer.provider_completed %}
-              <!-- Complete button for providers -->
-              <a
-                href="{% url 'request_transaction_complete_form' offer.pk %}"
-                class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-              >
-                <i class="fas fa-flag-checkered mr-1"></i>
-                Mark Complete
-              </a>
-              {% elif user == offer.provider and offer.status == 'pending' %}
-              <!-- Cancel button for providers -->
-              <button
-                data-offer-id="{{ offer.pk }}"
-                class="cancel-offer-btn inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
-              >
-                <i class="fas fa-ban mr-1"></i>
-                Cancel Offer
-              </button>
-              {% endif %}
-
-              <!-- Show completion status for accepted offers -->
-              {% if offer.status == 'accepted' and offer.provider_completed or offer.requester_completed %}
-              <div class="text-xs text-gray-600 mt-2">
-                <p>Completion Status:</p>
-                <ul class="list-disc list-inside text-xs">
-                  <li>Provider: {% if offer.provider_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
-                  <li>Requester: {% if offer.requester_completed %}✓ Completed{% else %}Waiting...{% endif %}</li>
-                </ul>
-              </div>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
   </div>
-</div>
 
-<!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 items-center justify-center z-50 hidden">
-  <div class="bg-white rounded-lg shadow-lg p-6 w-96 max-w-sm mx-4">
-    <div class="mt-3 text-center">
-      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
-      </div>
-      <h3 class="text-lg font-medium text-gray-900 mt-4">Delete Request</h3>
-      <div class="mt-2 px-7 py-3">
-        <p class="text-sm text-gray-500">
-          Are you sure you want to delete "
-          <strong>{{ request.title }}</strong>
-          "? This action cannot be undone.
-        </p>
-      </div>
-
-      <!-- Request Details in Modal -->
-      <div class="bg-gray-50 rounded-lg p-4 mb-4 mx-4">
-        <h4 class="text-sm font-medium text-gray-900 mb-2">Request Details</h4>
-        <dl class="text-sm text-gray-600 space-y-1">
-          <div class="flex justify-between">
-            <dt>Category:</dt>
-            <dd>{{ request.category.name|default:"Not specified" }}</dd>
-          </div>
-          <div class="flex justify-between">
-            <dt>priority:</dt>
-            <dd>{{ request.get_priority_display }}</dd>
-          </div>
-          <div class="flex justify-between">
-            <dt>Posted:</dt>
-            <dd>{{ request.created_at|date:"F j, Y" }}</dd>
-          </div>
-        </dl>
-      </div>
-
-      <div class="flex justify-center space-x-4 mt-6">
-        <button
-          id="cancelDeleteButton"
-          class="px-4 py-2 bg-gray-300 text-gray-700 text-base font-medium rounded-md shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-200"
-        >
-          Cancel
-        </button>
-        <form method="POST" action="{% url 'request_delete' request.pk %}" class="inline">
-          {% csrf_token %}
-          <button
-            type="submit"
-            class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-200"
-          >
-            <i class="fas fa-trash-alt mr-2"></i>
-            Delete Request
+<!-- Reject Offer Modal -->
+  <div id="rejectOfferModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Reject Offer</h3>
+          <button onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-500">
+            <i class="fas fa-times"></i>
           </button>
+        </div>
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-yellow-700">
+                Are you sure you want to reject this offer? Please provide a reason for rejection.
+              </p>
+            </div>
+          </div>
+        </div>
+        <form id="rejectOfferForm" method="post" action="" class="space-y-4">
+          {% csrf_token %}
+          <input type="hidden" id="rejectOfferId" name="offer_id" value="" />
+          <div>
+            <label for="rejection_reason" class="block text-sm font-medium text-gray-700">Reason for Rejection</label>
+            <textarea
+              name="rejection_reason"
+              id="rejection_reason"
+              rows="4"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+              required
+            ></textarea>
+          </div>
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              onclick="closeRejectModal()"
+              class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              <i class="fas fa-times mr-2"></i>
+              Reject Offer
+            </button>
+          </div>
         </form>
       </div>
     </div>
   </div>
-</div>
-
-<!-- Reject Offer Modal -->
-<div id="rejectOfferModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div class="p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-900">Reject Offer</h3>
-        <button onclick="closeRejectModal()" class="text-gray-400 hover:text-gray-500">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
-        <div class="flex">
-          <div class="flex-shrink-0">
-            <i class="fas fa-exclamation-triangle text-yellow-400"></i>
-          </div>
-          <div class="ml-3">
-            <p class="text-sm text-yellow-700">
-              Are you sure you want to reject this offer? Please provide a reason for rejection.
-            </p>
-          </div>
-        </div>
-      </div>
-      <form id="rejectOfferForm" method="post" action="" class="space-y-4">
-        {% csrf_token %}
-        <input type="hidden" id="rejectOfferId" name="offer_id" value="" />
-        <div>
-          <label for="rejection_reason" class="block text-sm font-medium text-gray-700">Reason for Rejection</label>
-          <textarea
-            name="rejection_reason"
-            id="rejection_reason"
-            rows="4"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-            required
-          ></textarea>
-        </div>
-        <div class="flex justify-end space-x-3">
-          <button
-            type="button"
-            onclick="closeRejectModal()"
-            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-          >
-            <i class="fas fa-times mr-2"></i>
-            Reject Offer
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 
 <!-- Cancel Offer Modal -->
-<div id="cancelOfferModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
-  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-    <div class="p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-900">Cancel Offer</h3>
-        <button onclick="closeCancelModal()" class="text-gray-400 hover:text-gray-500">
-          <i class="fas fa-times"></i>
-        </button>
+  <div id="cancelOfferModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Cancel Offer</h3>
+          <button onclick="closeCancelModal()" class="text-gray-400 hover:text-gray-500">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form id="cancelOfferForm" method="post" action="" class="space-y-4">
+          {% csrf_token %}
+          <input type="hidden" id="cancelOfferId" name="offer_id" value="" />
+          <div>
+            <label for="cancellation_reason" class="block text-sm font-medium text-gray-700">
+              Reason for Cancellation (Optional)
+            </label>
+            <textarea
+              name="cancellation_reason"
+              id="cancellation_reason"
+              rows="3"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+            ></textarea>
+          </div>
+          <div class="flex justify-end space-x-3">
+            <button
+              type="button"
+              onclick="closeCancelModal()"
+              class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            >
+              Back
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              Cancel Offer
+            </button>
+          </div>
+        </form>
       </div>
-      <form id="cancelOfferForm" method="post" action="" class="space-y-4">
-        {% csrf_token %}
-        <input type="hidden" id="cancelOfferId" name="offer_id" value="" />
-        <div>
-          <label for="cancellation_reason" class="block text-sm font-medium text-gray-700">
-            Reason for Cancellation (Optional)
-          </label>
-          <textarea
-            name="cancellation_reason"
-            id="cancellation_reason"
-            rows="3"
-            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-          ></textarea>
-        </div>
-        <div class="flex justify-end space-x-3">
-          <button
-            type="button"
-            onclick="closeCancelModal()"
-            class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-          >
-            Back
-          </button>
-          <button
-            type="submit"
-            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-          >
-            Cancel Offer
-          </button>
-        </div>
-      </form>
     </div>
   </div>
-</div>
 {% endblock %}
 
-<!-- prettier-ignore -->
+
 {% block extra_js %}
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const deleteModal = document.getElementById('deleteModal');
-    const deleteButton = document.getElementById('deleteButton');
-    const cancelDeleteButton = document.getElementById('cancelDeleteButton');
-    const rejectOfferModal = document.getElementById('rejectOfferModal');
-    const cancelOfferModal = document.getElementById('cancelOfferModal');
-    const rejectOfferForm = document.getElementById('rejectOfferForm');
-    const cancelOfferForm = document.getElementById('cancelOfferForm');
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const deleteModal = document.getElementById('deleteModal');
+      const deleteButton = document.getElementById('deleteButton');
+      const cancelDeleteButton = document.getElementById('cancelDeleteButton');
+      const rejectOfferModal = document.getElementById('rejectOfferModal');
+      const cancelOfferModal = document.getElementById('cancelOfferModal');
+      const rejectOfferForm = document.getElementById('rejectOfferForm');
+      const cancelOfferForm = document.getElementById('cancelOfferForm');
 
-    function openDeleteModal() {
-      deleteModal.classList.remove('hidden');
-      deleteModal.classList.add('flex');
-    }
+      function openDeleteModal() {
+        deleteModal.classList.remove('hidden');
+        deleteModal.classList.add('flex');
+      }
 
-    function closeDeleteModal() {
-      deleteModal.classList.add('hidden');
-      deleteModal.classList.remove('flex');
-    }
+      function closeDeleteModal() {
+        deleteModal.classList.add('hidden');
+        deleteModal.classList.remove('flex');
+      }
 
-    function openRejectModal(offerId) {
-      rejectOfferForm.action = '/requests/transaction/' + offerId + '/reject/';
-      document.getElementById('rejectOfferId').value = offerId;
-      rejectOfferModal.classList.remove('hidden');
-      rejectOfferModal.classList.add('flex');
-    }
+      function openRejectModal(offerId) {
+        rejectOfferForm.action = '/requests/transaction/' + offerId + '/reject/';
+        document.getElementById('rejectOfferId').value = offerId;
+        rejectOfferModal.classList.remove('hidden');
+        rejectOfferModal.classList.add('flex');
+      }
 
-    function closeRejectModal() {
-      rejectOfferModal.classList.add('hidden');
-      rejectOfferModal.classList.remove('flex');
-    }
+      function closeRejectModal() {
+        rejectOfferModal.classList.add('hidden');
+        rejectOfferModal.classList.remove('flex');
+      }
 
-    function openCancelModal(offerId) {
-      cancelOfferForm.action = '/requests/transaction/' + offerId + '/cancel/';
-      document.getElementById('cancelOfferId').value = offerId;
-      cancelOfferModal.classList.remove('hidden');
-      cancelOfferModal.classList.add('flex');
-    }
+      function openCancelModal(offerId) {
+        cancelOfferForm.action = '/requests/transaction/' + offerId + '/cancel/';
+        document.getElementById('cancelOfferId').value = offerId;
+        cancelOfferModal.classList.remove('hidden');
+        cancelOfferModal.classList.add('flex');
+      }
 
-    function closeCancelModal() {
-      cancelOfferModal.classList.add('hidden');
-      cancelOfferModal.classList.remove('flex');
-    }
+      function closeCancelModal() {
+        cancelOfferModal.classList.add('hidden');
+        cancelOfferModal.classList.remove('flex');
+      }
 
     // Make functions globally available for onclick handlers
-    window.closeRejectModal = closeRejectModal;
-    window.closeCancelModal = closeCancelModal;
+      window.closeRejectModal = closeRejectModal;
+      window.closeCancelModal = closeCancelModal;
 
-    if (cancelDeleteButton) {
-      cancelDeleteButton.addEventListener('click', function () {
-        closeDeleteModal();
-      });
-    }
+      if (cancelDeleteButton) {
+        cancelDeleteButton.addEventListener('click', function () {
+          closeDeleteModal();
+        });
+      }
 
-    if (deleteButton) {
-      deleteButton.addEventListener('click', function () {
-        openDeleteModal();
-      });
-    }
+      if (deleteButton) {
+        deleteButton.addEventListener('click', function () {
+          openDeleteModal();
+        });
+      }
 
     // Handle reject offer buttons
-    document.querySelectorAll('.reject-offer-btn').forEach(button => {
-      button.addEventListener('click', function () {
-        const offerId = this.getAttribute('data-offer-id');
-        openRejectModal(offerId);
+      document.querySelectorAll('.reject-offer-btn').forEach(button => {
+        button.addEventListener('click', function () {
+          const offerId = this.getAttribute('data-offer-id');
+          openRejectModal(offerId);
+        });
       });
-    });
 
     // Handle cancel offer buttons
-    document.querySelectorAll('.cancel-offer-btn').forEach(button => {
-      button.addEventListener('click', function () {
-        const offerId = this.getAttribute('data-offer-id');
-        openCancelModal(offerId);
+      document.querySelectorAll('.cancel-offer-btn').forEach(button => {
+        button.addEventListener('click', function () {
+          const offerId = this.getAttribute('data-offer-id');
+          openCancelModal(offerId);
+        });
+      });
+
+      document.getElementById('deleteModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+          closeDeleteModal();
+        }
+      });
+
+      rejectOfferModal.addEventListener('click', function (e) {
+        if (e.target === this) {
+          closeRejectModal();
+        }
+      });
+
+      cancelOfferModal.addEventListener('click', function (e) {
+        if (e.target === this) {
+          closeCancelModal();
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          closeDeleteModal();
+          closeRejectModal();
+          closeCancelModal();
+        }
       });
     });
-
-    document.getElementById('deleteModal').addEventListener('click', function (e) {
-      if (e.target === this) {
-        closeDeleteModal();
-      }
-    });
-
-    rejectOfferModal.addEventListener('click', function (e) {
-      if (e.target === this) {
-        closeRejectModal();
-      }
-    });
-
-    cancelOfferModal.addEventListener('click', function (e) {
-      if (e.target === this) {
-        closeCancelModal();
-      }
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        closeDeleteModal();
-        closeRejectModal();
-        closeCancelModal();
-      }
-    });
-  });
-</script>
+  </script>
 {% endblock %}
