@@ -1,3 +1,4 @@
+{% load i18n %}
 <!-- Footer Section -->
 <section class="relative p-8 md:p-12 lg:p-16 bg-primary text-white">
   <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -5,25 +6,25 @@
     <div class="flex flex-col items-center space-y-2 text-center md:text-left">
       <!-- prettier-ignore -->
       {% if request.path != '/' %}
-      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'home' %}">{% trans "Home" %}</a>
       {% endif %}
       <!-- prettier-ignore -->
       {% if request.path != '/about/' %}
-      <a href="{% url 'about' %}">About</a>
+      <a href="{% url 'about' %}">{% trans "About" %}</a>
       {% endif %}
       <!-- prettier-ignore -->
       {% if request.path != '/services/' %}
-      <a href="{% url 'service_list' %}">Services</a>
+      <a href="{% url 'service_list' %}">{% trans "Services" %}</a>
       {% endif %}
       <!-- prettier-ignore -->
       {% if request.path != '/user/me/' %}
-      <a href="{% url 'user_me' %}">My Account</a>
+      <a href="{% url 'user_me' %}">{% trans "My Account" %}</a>
       {% endif %}
     </div>
     <div class="flex flex-col space-y-2 justify-center items-end text-center md:text-right">
-      <div class="font-bold text-2xl">QUESTIONS?</div>
-      <a href="{% url 'home' %}#contact" class="underline text-lg">CONTACT US</a>
+      <div class="font-bold text-2xl uppercase">{% trans "Questions?" %}</div>
+      <a href="{% url 'home' %}#contact" class="underline text-lg">{% trans "Contact Us" %}</a>
     </div>
   </div>
-  <div class="text-center text-3xl pt-16 pb-4 font-bold tracking-widest">NEIGHBORS HELPING NEIGHBORS</div>
+  <div class="text-center text-3xl pt-16 pb-4 font-bold tracking-widest">{% trans "Neighbors Helping Neighbors" %}</div>
 </section>

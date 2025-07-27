@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-27 19:19+0000\n"
+"POT-Creation-Date: 2025-07-27 19:33+0000\n"
 "PO-Revision-Date: 2025-07-27 16:39+0000\n"
 "Last-Translator: Jason O'Dell <jasoneodell@gmail.com>\n"
 "Language-Team: English <en@li.org>\n"
@@ -26,7 +26,7 @@ msgstr "email address"
 msgid "Saxapahaw Timebank"
 msgstr "Saxapahaw Timebank"
 
-#: templates/core/home.html:4
+#: templates/core/home.html:4 templates/navigation/footer.html:9
 msgid "Home"
 msgstr "Home"
 
@@ -34,7 +34,7 @@ msgstr "Home"
 msgid "Saxapahaw River and Dam"
 msgstr "Saxapahaw River and Dam"
 
-#: templates/core/home.html:21
+#: templates/core/home.html:21 templates/navigation/footer.html:29
 msgid "Neighbors Helping Neighbors"
 msgstr "Neighbors Helping Neighbors"
 
@@ -62,9 +62,9 @@ msgstr ""
 msgid "Learn More"
 msgstr "Learn More"
 
-#: templates/core/home.html:55 templates/navigation/navbar.html:119
-#: templates/navigation/navbar.html:163 templates/navigation/navbar.html:200
-#: templates/navigation/navbar.html:244
+#: templates/core/home.html:55 templates/navigation/footer.html:17
+#: templates/navigation/navbar.html:119 templates/navigation/navbar.html:163
+#: templates/navigation/navbar.html:200 templates/navigation/navbar.html:244
 msgid "Services"
 msgstr "Services"
 
@@ -107,6 +107,8 @@ msgid ""
 "Every hour of service is valued equally, recognizing that all contributions "
 "strengthen our community."
 msgstr ""
+"Every hour of service is valued equally, recognizing that all contributions "
+"strengthen our community."
 
 #: templates/core/home.html:97
 msgid "Reciprocity"
@@ -143,6 +145,8 @@ msgid ""
 "Have questions about our time bank? We'd love to hear from you. Send us a "
 "message and we'll respond as soon as possible."
 msgstr ""
+"Have questions about our time bank? We'd love to hear from you. Send us a "
+"message and we'll respond as soon as possible."
 
 #: templates/core/home.html:124
 msgid "Name"
@@ -160,14 +164,28 @@ msgstr "Message"
 msgid "Send Message"
 msgstr "Send Message"
 
+#: templates/navigation/footer.html:13 templates/navigation/navbar.html:113
+#: templates/navigation/navbar.html:157 templates/navigation/navbar.html:194
+#: templates/navigation/navbar.html:238
+msgid "About"
+msgstr "About"
+
+#: templates/navigation/footer.html:21 templates/navigation/navbar.html:52
+#: templates/navigation/navbar.html:143 templates/navigation/navbar.html:224
+msgid "My Account"
+msgstr "My Account"
+
+#: templates/navigation/footer.html:25
+msgid "Questions?"
+msgstr "Questions?"
+
+#: templates/navigation/footer.html:26
+msgid "Contact Us"
+msgstr "Contact Us"
+
 #: templates/navigation/navbar.html:32
 msgid "Welcome"
 msgstr "Welcome"
-
-#: templates/navigation/navbar.html:52 templates/navigation/navbar.html:143
-#: templates/navigation/navbar.html:224
-msgid "My Account"
-msgstr "My Account"
 
 #: templates/navigation/navbar.html:61
 msgid "Logout"
@@ -193,11 +211,6 @@ msgstr "Saxapahaw"
 msgid "Timebank"
 msgstr "Timebank"
 
-#: templates/navigation/navbar.html:113 templates/navigation/navbar.html:157
-#: templates/navigation/navbar.html:194 templates/navigation/navbar.html:238
-msgid "About"
-msgstr "About"
-
 #: templates/navigation/navbar.html:125 templates/navigation/navbar.html:206
 msgid "Requests"
 msgstr "Requests"
@@ -213,119 +226,3 @@ msgstr "Admin"
 #: templates/navigation/navbar.html:175
 msgid "Open main menu"
 msgstr "Open main menu"
-
-#~ msgid "The maximum file size that can be uploaded is 5MB"
-#~ msgstr "The maximum file size that can be uploaded is 5MB"
-
-#~ msgid "Your message has been sent successfully!"
-#~ msgstr "Your message has been sent successfully!"
-
-#~ msgid "There was an error sending your message. Please try again."
-#~ msgstr "There was an error sending your message. Please try again."
-
-#~ msgid "Service created successfully!"
-#~ msgstr "Service created successfully!"
-
-#~ msgid "There was an error creating the service."
-#~ msgstr "There was an error creating the service."
-
-#~ msgid ""
-#~ "Cannot delete service while there are pending or accepted requests. "
-#~ "Please handle all outstanding requests first."
-#~ msgstr ""
-#~ "Cannot delete service while there are pending or accepted requests. "
-#~ "Please handle all outstanding requests first."
-
-#~ msgid "Service deleted successfully."
-#~ msgstr "Service deleted successfully."
-
-#~ msgid "Service updated successfully!"
-#~ msgstr "Service updated successfully!"
-
-#~ msgid "Service request submitted successfully!"
-#~ msgstr "Service request submitted successfully!"
-
-#~ msgid "There was an error submitting the request."
-#~ msgstr "There was an error submitting the request."
-
-#~ msgid "You do not have permission to view this request."
-#~ msgstr "You do not have permission to view this request."
-
-#~ msgid ""
-#~ "Cannot deactivate service while there are outstanding requests. Please "
-#~ "handle all pending and accepted requests first."
-#~ msgstr ""
-#~ "Cannot deactivate service while there are outstanding requests. Please "
-#~ "handle all pending and accepted requests first."
-
-#~ msgid "activated"
-#~ msgstr "activated"
-
-#~ msgid "deactivated"
-#~ msgstr "deactivated"
-
-#~ msgid "Only the service provider can accept requests."
-#~ msgstr "Only the service provider can accept requests."
-
-#~ msgid "Request accepted successfully!"
-#~ msgstr "Request accepted successfully!"
-
-#~ msgid "Only the service provider can reject requests."
-#~ msgstr "Only the service provider can reject requests."
-
-#~ msgid "Request rejected successfully!"
-#~ msgstr "Request rejected successfully!"
-
-#~ msgid "Please provide a reason for rejecting the request."
-#~ msgstr "Please provide a reason for rejecting the request."
-
-#~ msgid "Only the requester can cancel requests."
-#~ msgstr "Only the requester can cancel requests."
-
-#~ msgid "Request canceled successfully!"
-#~ msgstr "Request canceled successfully!"
-
-#~ msgid "There was an error processing your request."
-#~ msgstr "There was an error processing your request."
-
-#~ msgid "Request completed successfully! Time credits have been transferred."
-#~ msgstr "Request completed successfully! Time credits have been transferred."
-
-#~ msgid "Completion status updated. Waiting for the other party to complete."
-#~ msgstr "Completion status updated. Waiting for the other party to complete."
-
-#~ msgid "You do not have permission to complete this request."
-#~ msgstr "You do not have permission to complete this request."
-
-#~ msgid "This request cannot be completed at this time."
-#~ msgstr "This request cannot be completed at this time."
-
-#~ msgid "You have already marked this request as completed."
-#~ msgstr "You have already marked this request as completed."
-
-#~ msgid "You have already confirmed this request as completed."
-#~ msgstr "You have already confirmed this request as completed."
-
-#~ msgid "This request cannot be converted to a community request."
-#~ msgstr "This request cannot be converted to a community request."
-
-#~ msgid "Only the requester can convert to a community request."
-#~ msgstr "Only the requester can convert to a community request."
-
-#~ msgid "Please provide a reason for requesting community hours."
-#~ msgstr "Please provide a reason for requesting community hours."
-
-#~ msgid "Community hours request submitted successfully!"
-#~ msgstr "Community hours request submitted successfully!"
-
-#~ msgid "This request cannot be approved."
-#~ msgstr "This request cannot be approved."
-
-#~ msgid "Community hours request approved successfully!"
-#~ msgstr "Community hours request approved successfully!"
-
-#~ msgid "This request cannot be rejected."
-#~ msgstr "This request cannot be rejected."
-
-#~ msgid "Community hours request rejected."
-#~ msgstr "Community hours request rejected."

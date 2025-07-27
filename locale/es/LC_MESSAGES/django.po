@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-27 19:19+0000\n"
+"POT-Creation-Date: 2025-07-27 19:33+0000\n"
 "PO-Revision-Date: 2025-07-27 17:25+0000\n"
 "Last-Translator: Jason O'Dell <jasoneodell@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -25,17 +25,17 @@ msgstr "dirección de correo electrónico"
 
 #: templates/base.html:15 templates/core/home.html:4
 msgid "Saxapahaw Timebank"
-msgstr ""
+msgstr "Banco de Tiempo de Saxapahaw"
 
-#: templates/core/home.html:4
+#: templates/core/home.html:4 templates/navigation/footer.html:9
 msgid "Home"
-msgstr ""
+msgstr "Inicio"
 
 #: templates/core/home.html:12
 msgid "Saxapahaw River and Dam"
-msgstr ""
+msgstr "Río Saxapahaw y Presa"
 
-#: templates/core/home.html:21
+#: templates/core/home.html:21 templates/navigation/footer.html:29
 msgid "Neighbors Helping Neighbors"
 msgstr "Vecinos ayudando a Vecinos"
 
@@ -49,37 +49,37 @@ msgstr "Aplicar para unirse"
 
 #: templates/core/home.html:40
 msgid "How It Works"
-msgstr ""
+msgstr "Cómo Funciona"
 
 #: templates/core/home.html:42
 msgid "How It Works Description"
-msgstr ""
+msgstr "Descripción de Cómo Funciona"
 
 #: templates/core/home.html:48
 msgid "Learn More"
-msgstr ""
+msgstr "Aprender Más"
 
-#: templates/core/home.html:55 templates/navigation/navbar.html:119
-#: templates/navigation/navbar.html:163 templates/navigation/navbar.html:200
-#: templates/navigation/navbar.html:244
+#: templates/core/home.html:55 templates/navigation/footer.html:17
+#: templates/navigation/navbar.html:119 templates/navigation/navbar.html:163
+#: templates/navigation/navbar.html:200 templates/navigation/navbar.html:244
 msgid "Services"
 msgstr "Servicios"
 
 #: templates/core/home.html:65
 msgid "Explore More"
-msgstr ""
+msgstr "Explorar Más"
 
 #: templates/core/home.html:66
 msgid "Discover all the services our community offers"
-msgstr ""
+msgstr "Descubre todos los servicios que nuestra comunidad ofrece"
 
 #: templates/core/home.html:74
 msgid "Our Values"
-msgstr ""
+msgstr "Nuestros Valores"
 
 #: templates/core/home.html:79
 msgid "Saxapahaw Community"
-msgstr ""
+msgstr "Comunidad de Saxapahaw"
 
 #: templates/core/home.html:85 templates/navigation/navbar.html:131
 #: templates/navigation/navbar.html:212
@@ -91,71 +91,95 @@ msgid ""
 "Building stronger connections between neighbors through shared experiences "
 "and mutual support."
 msgstr ""
+"Construyendo conexiones más fuertes entre vecinos a través de experiencias "
+"compartidas y apoyo mutuo."
 
 #: templates/core/home.html:91
 msgid "Equality"
-msgstr ""
+msgstr "Igualdad"
 
 #: templates/core/home.html:93
 msgid ""
 "Every hour of service is valued equally, recognizing that all contributions "
 "strengthen our community."
 msgstr ""
+"Cada hora de servicio es valorada igualmente, reconociendo que todas las "
+"contribuciones fortalecen nuestra comunidad."
 
 #: templates/core/home.html:97
 msgid "Reciprocity"
-msgstr ""
+msgstr "Reciprocidad"
 
 #: templates/core/home.html:99
 msgid ""
 "Giving and receiving in equal measure, creating a sustainable cycle of "
 "community support."
 msgstr ""
+"Dando y recibiendo en igual medida, creando un ciclo sostenible de apoyo "
+"comunitario."
 
 #: templates/core/home.html:103
 msgid "Trust"
-msgstr ""
+msgstr "Confianza"
 
 #: templates/core/home.html:105
 msgid ""
 "Building trust through shared experiences and reliable connections between "
 "neighbors."
 msgstr ""
+"Construyendo confianza a través de experiencias compartidas y conexiones "
+"confiables entre vecinos."
 
 #: templates/core/home.html:116
 msgid "Get in Touch"
-msgstr ""
+msgstr "Contactar"
 
 #: templates/core/home.html:118
 msgid ""
 "Have questions about our time bank? We'd love to hear from you. Send us a "
 "message and we'll respond as soon as possible."
 msgstr ""
+"¿Tienes preguntas sobre nuestro banco de tiempo? Nos encantaría escucharte. "
+"Envíanos un mensaje y te responderemos lo antes posible."
 
 #: templates/core/home.html:124
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #: templates/core/home.html:137
 msgid "Email"
-msgstr ""
+msgstr "Correo electrónico"
 
 #: templates/core/home.html:150
 msgid "Message"
-msgstr ""
+msgstr "Mensaje"
 
 #: templates/core/home.html:173
 msgid "Send Message"
-msgstr ""
+msgstr "Enviar Mensaje"
+
+#: templates/navigation/footer.html:13 templates/navigation/navbar.html:113
+#: templates/navigation/navbar.html:157 templates/navigation/navbar.html:194
+#: templates/navigation/navbar.html:238
+msgid "About"
+msgstr "Acerca de"
+
+#: templates/navigation/footer.html:21 templates/navigation/navbar.html:52
+#: templates/navigation/navbar.html:143 templates/navigation/navbar.html:224
+msgid "My Account"
+msgstr "Mi Cuenta"
+
+#: templates/navigation/footer.html:25
+msgid "Questions?"
+msgstr "¿Preguntas?"
+
+#: templates/navigation/footer.html:26
+msgid "Contact Us"
+msgstr "Contactar"
 
 #: templates/navigation/navbar.html:32
 msgid "Welcome"
 msgstr "Bienvenido"
-
-#: templates/navigation/navbar.html:52 templates/navigation/navbar.html:143
-#: templates/navigation/navbar.html:224
-msgid "My Account"
-msgstr "Mi Cuenta"
 
 #: templates/navigation/navbar.html:61
 msgid "Logout"
@@ -181,11 +205,6 @@ msgstr "Saxapahaw"
 msgid "Timebank"
 msgstr "Banco de Tiempo"
 
-#: templates/navigation/navbar.html:113 templates/navigation/navbar.html:157
-#: templates/navigation/navbar.html:194 templates/navigation/navbar.html:238
-msgid "About"
-msgstr "Acerca de"
-
 #: templates/navigation/navbar.html:125 templates/navigation/navbar.html:206
 msgid "Requests"
 msgstr "Solicitudes"
@@ -201,64 +220,3 @@ msgstr "Administrador"
 #: templates/navigation/navbar.html:175
 msgid "Open main menu"
 msgstr "Abrir menú principal"
-
-#~ msgid "The maximum file size that can be uploaded is 5MB"
-#~ msgstr "El tamaño máximo de archivo que se puede subir es 5MB"
-
-#~ msgid "Your message has been sent successfully!"
-#~ msgstr "¡Su mensaje ha sido enviado exitosamente!"
-
-#~ msgid "There was an error sending your message. Please try again."
-#~ msgstr "Hubo un error al enviar su mensaje. Por favor, inténtelo de nuevo."
-
-#~ msgid "Service created successfully!"
-#~ msgstr "Servicio creado exitosamente!"
-
-#~ msgid "There was an error creating the service."
-#~ msgstr "Hubo un error al crear el servicio."
-
-#~ msgid ""
-#~ "Cannot delete service while there are pending or accepted requests. "
-#~ "Please handle all outstanding requests first."
-#~ msgstr ""
-#~ "No se puede eliminar el servicio mientras haya solicitudes pendientes o "
-#~ "aceptadas. Por favor, maneje todas las solicitudes pendientes y aceptadas "
-#~ "primero."
-
-#~ msgid "Service deleted successfully."
-#~ msgstr "Servicio eliminado exitosamente."
-
-#~ msgid "Service updated successfully!"
-#~ msgstr "Servicio actualizado exitosamente!"
-
-#~ msgid "Service request submitted successfully!"
-#~ msgstr "Solicitud de servicio enviada exitosamente!"
-
-#~ msgid "There was an error submitting the request."
-#~ msgstr "Hubo un error al enviar la solicitud."
-
-#~ msgid "You do not have permission to view this request."
-#~ msgstr "No tiene permiso para ver esta solicitud."
-
-#~ msgid ""
-#~ "Cannot deactivate service while there are outstanding requests. Please "
-#~ "handle all pending and accepted requests first."
-#~ msgstr ""
-#~ "No se puede desactivar el servicio mientras haya solicitudes pendientes o "
-#~ "aceptadas. Por favor, maneje todas las solicitudes pendientes y aceptadas "
-#~ "primero."
-
-#~ msgid "activated"
-#~ msgstr "activado"
-
-#~ msgid "deactivated"
-#~ msgstr "desactivado"
-
-#~ msgid "Only the service provider can accept requests."
-#~ msgstr "Solo el proveedor de servicios puede aceptar solicitudes."
-
-#~ msgid "Request accepted successfully!"
-#~ msgstr "Solicitud aceptada exitosamente!"
-
-#~ msgid "Only the service provider can reject requests."
-#~ msgstr "Solo el proveedor de servicios puede rechazar solicitudes."
