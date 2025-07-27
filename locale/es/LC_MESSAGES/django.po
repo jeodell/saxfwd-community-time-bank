@@ -53,7 +53,7 @@ msgstr "Cómo Funciona"
 
 #: templates/core/home.html:42
 msgid "How It Works Description"
-msgstr "Descripción de Cómo Funciona"
+msgstr "El Banco de Tiempo de Saxapahaw es una iniciativa comunitaria que permite a los vecinos intercambiar servicios y créditos de tiempo. Es una forma de fortalecer lazos comunitarios, apoyar mutuamente y construir una comunidad más resiliente y sostenible."
 
 #: templates/core/home.html:48
 msgid "Learn More"
