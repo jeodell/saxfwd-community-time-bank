@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-27 19:42+0000\n"
+"POT-Creation-Date: 2025-07-27 20:18+0000\n"
 "PO-Revision-Date: 2025-07-27 16:39+0000\n"
 "Last-Translator: Jason O'Dell <jasoneodell@gmail.com>\n"
 "Language-Team: English <en@li.org>\n"
@@ -63,8 +63,8 @@ msgid "Learn More"
 msgstr "Learn More"
 
 #: templates/core/home.html:55 templates/navigation/footer.html:17
-#: templates/navigation/navbar.html:121 templates/navigation/navbar.html:165
-#: templates/navigation/navbar.html:202 templates/navigation/navbar.html:246
+#: templates/navigation/navbar.html:128 templates/navigation/navbar.html:172
+#: templates/navigation/navbar.html:209 templates/navigation/navbar.html:253
 msgid "Services"
 msgstr "Services"
 
@@ -80,8 +80,8 @@ msgstr "Our Values"
 msgid "Saxapahaw Community"
 msgstr "Saxapahaw Community"
 
-#: templates/core/home.html:84 templates/navigation/navbar.html:133
-#: templates/navigation/navbar.html:214
+#: templates/core/home.html:84 templates/navigation/navbar.html:140
+#: templates/navigation/navbar.html:221
 msgid "Community"
 msgstr "Community"
 
@@ -160,14 +160,14 @@ msgstr "Message"
 msgid "Send Message"
 msgstr "Send Message"
 
-#: templates/navigation/footer.html:13 templates/navigation/navbar.html:115
-#: templates/navigation/navbar.html:159 templates/navigation/navbar.html:196
-#: templates/navigation/navbar.html:240
+#: templates/navigation/footer.html:13 templates/navigation/navbar.html:122
+#: templates/navigation/navbar.html:166 templates/navigation/navbar.html:203
+#: templates/navigation/navbar.html:247
 msgid "About"
 msgstr "About"
 
 #: templates/navigation/footer.html:21 templates/navigation/navbar.html:52
-#: templates/navigation/navbar.html:145 templates/navigation/navbar.html:226
+#: templates/navigation/navbar.html:152 templates/navigation/navbar.html:233
 msgid "My Account"
 msgstr "My Account"
 
@@ -187,39 +187,43 @@ msgstr "Welcome"
 msgid "Logout"
 msgstr "Logout"
 
-#: templates/navigation/navbar.html:87
+#: templates/navigation/navbar.html:75
+msgid "Spanish translations are in progress"
+msgstr "Spanish translations are in progress"
+
+#: templates/navigation/navbar.html:94
 msgid "Login"
 msgstr "Login"
 
-#: templates/navigation/navbar.html:88
+#: templates/navigation/navbar.html:95
 msgid "or"
 msgstr "or"
 
-#: templates/navigation/navbar.html:89
+#: templates/navigation/navbar.html:96
 msgid "Apply"
 msgstr "Apply"
 
-#: templates/navigation/navbar.html:104
+#: templates/navigation/navbar.html:111
 msgid "Saxapahaw"
 msgstr "Saxapahaw"
 
-#: templates/navigation/navbar.html:105
+#: templates/navigation/navbar.html:112
 msgid "Timebank"
 msgstr "Timebank"
 
-#: templates/navigation/navbar.html:127 templates/navigation/navbar.html:208
+#: templates/navigation/navbar.html:134 templates/navigation/navbar.html:215
 msgid "Requests"
 msgstr "Requests"
 
-#: templates/navigation/navbar.html:139 templates/navigation/navbar.html:220
+#: templates/navigation/navbar.html:146 templates/navigation/navbar.html:227
 msgid "My Requests"
 msgstr "My Requests"
 
-#: templates/navigation/navbar.html:152 templates/navigation/navbar.html:233
+#: templates/navigation/navbar.html:159 templates/navigation/navbar.html:240
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/navigation/navbar.html:177
+#: templates/navigation/navbar.html:184
 msgid "Open main menu"
 msgstr "Open main menu"
 

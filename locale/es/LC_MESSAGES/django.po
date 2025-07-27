@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-27 19:42+0000\n"
+"POT-Creation-Date: 2025-07-27 20:18+0000\n"
 "PO-Revision-Date: 2025-07-27 17:25+0000\n"
 "Last-Translator: Jason O'Dell <jasoneodell@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -53,15 +53,19 @@ msgstr "Cómo Funciona"
 
 #: templates/core/home.html:42
 msgid "How It Works Description"
-msgstr "El Banco de Tiempo de Saxapahaw es una iniciativa comunitaria que permite a los vecinos intercambiar servicios y créditos de tiempo. Es una forma de fortalecer lazos comunitarios, apoyar mutuamente y construir una comunidad más resiliente y sostenible."
+msgstr ""
+"El Banco de Tiempo de Saxapahaw es una iniciativa comunitaria que permite a "
+"los vecinos intercambiar servicios y créditos de tiempo. Es una forma de "
+"fortalecer lazos comunitarios, apoyar mutuamente y construir una comunidad "
+"más resiliente y sostenible."
 
 #: templates/core/home.html:48
 msgid "Learn More"
 msgstr "Aprender Más"
 
 #: templates/core/home.html:55 templates/navigation/footer.html:17
-#: templates/navigation/navbar.html:121 templates/navigation/navbar.html:165
-#: templates/navigation/navbar.html:202 templates/navigation/navbar.html:246
+#: templates/navigation/navbar.html:128 templates/navigation/navbar.html:172
+#: templates/navigation/navbar.html:209 templates/navigation/navbar.html:253
 msgid "Services"
 msgstr "Servicios"
 
@@ -77,8 +81,8 @@ msgstr "Nuestros Valores"
 msgid "Saxapahaw Community"
 msgstr "Comunidad de Saxapahaw"
 
-#: templates/core/home.html:84 templates/navigation/navbar.html:133
-#: templates/navigation/navbar.html:214
+#: templates/core/home.html:84 templates/navigation/navbar.html:140
+#: templates/navigation/navbar.html:221
 msgid "Community"
 msgstr "Comunidad"
 
@@ -154,14 +158,14 @@ msgstr "Mensaje"
 msgid "Send Message"
 msgstr "Enviar Mensaje"
 
-#: templates/navigation/footer.html:13 templates/navigation/navbar.html:115
-#: templates/navigation/navbar.html:159 templates/navigation/navbar.html:196
-#: templates/navigation/navbar.html:240
+#: templates/navigation/footer.html:13 templates/navigation/navbar.html:122
+#: templates/navigation/navbar.html:166 templates/navigation/navbar.html:203
+#: templates/navigation/navbar.html:247
 msgid "About"
 msgstr "Acerca de"
 
 #: templates/navigation/footer.html:21 templates/navigation/navbar.html:52
-#: templates/navigation/navbar.html:145 templates/navigation/navbar.html:226
+#: templates/navigation/navbar.html:152 templates/navigation/navbar.html:233
 msgid "My Account"
 msgstr "Mi Cuenta"
 
@@ -181,39 +185,43 @@ msgstr "Bienvenido"
 msgid "Logout"
 msgstr "Cerrar Sesión"
 
-#: templates/navigation/navbar.html:87
+#: templates/navigation/navbar.html:75
+msgid "Spanish translations are in progress"
+msgstr "Las traducciones al español están en progreso"
+
+#: templates/navigation/navbar.html:94
 msgid "Login"
 msgstr "Iniciar Sesión"
 
-#: templates/navigation/navbar.html:88
+#: templates/navigation/navbar.html:95
 msgid "or"
 msgstr "o"
 
-#: templates/navigation/navbar.html:89
+#: templates/navigation/navbar.html:96
 msgid "Apply"
 msgstr "Solicitar"
 
-#: templates/navigation/navbar.html:104
+#: templates/navigation/navbar.html:111
 msgid "Saxapahaw"
 msgstr "Saxapahaw"
 
-#: templates/navigation/navbar.html:105
+#: templates/navigation/navbar.html:112
 msgid "Timebank"
 msgstr "Banco de Tiempo"
 
-#: templates/navigation/navbar.html:127 templates/navigation/navbar.html:208
+#: templates/navigation/navbar.html:134 templates/navigation/navbar.html:215
 msgid "Requests"
 msgstr "Solicitudes"
 
-#: templates/navigation/navbar.html:139 templates/navigation/navbar.html:220
+#: templates/navigation/navbar.html:146 templates/navigation/navbar.html:227
 msgid "My Requests"
 msgstr "Mis Solicitudes"
 
-#: templates/navigation/navbar.html:152 templates/navigation/navbar.html:233
+#: templates/navigation/navbar.html:159 templates/navigation/navbar.html:240
 msgid "Admin"
 msgstr "Administrador"
 
-#: templates/navigation/navbar.html:177
+#: templates/navigation/navbar.html:184
 msgid "Open main menu"
 msgstr "Abrir menú principal"
 
