@@ -189,8 +189,8 @@ msgid "Logout"
 msgstr "Logout"
 
 #: templates/navigation/navbar.html:75
-msgid "Spanish translations are in progress"
-msgstr "Spanish translations are in progress"
+msgid "Spanish translations are a work in progress"
+msgstr "Spanish translations are a work in progress"
 
 #: templates/navigation/navbar.html:94
 msgid "Login"
