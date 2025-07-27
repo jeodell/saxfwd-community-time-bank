@@ -1,14 +1,17 @@
-<!-- prettier-ignore -->
 {% comment %} TODO add back in prod {% endcomment %}
 {% comment %} {% load static tailwind_tags %} {% endcomment %}
 {% comment %} TODO remove in prod {% endcomment %}
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Saxapahaw Timebank{% endblock %}</title>
+    <title>
+      {% block title %}
+      {% trans "Saxapahaw Timebank" %}
+      {% endblock %}
+    </title>
     <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,7 +19,6 @@
       href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <!-- prettier-ignore -->
     {% comment %} TOOD add back in production {% endcomment %}
     {% comment %} {% tailwind_css %} {% endcomment %}
     {% comment %} TODO remove in production {% endcomment %}
@@ -77,7 +79,6 @@
         {% endfor %}
       </div>
       {% endif %}
-      <!-- prettier-ignore -->
       {% block content %}
       {% endblock %}
       {% include "navigation/footer.html" %}

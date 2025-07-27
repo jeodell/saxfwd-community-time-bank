@@ -25,3 +25,6 @@ build/
 # Cache files
 __pycache__/
 *.pyc
+
+# HTML files
+*.html
