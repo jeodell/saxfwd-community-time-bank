@@ -152,8 +152,8 @@ class User(AbstractUser):
 
     @property
     def is_fully_approved(self):
-        """Check if user has both referral approval and onboarding completed."""
-        return self.is_referral_approved and self.is_onboarded
+        """Check if user has both referral approval and orientation completed."""
+        return self.is_referral_approved and self.is_orientation_completed
 
     @property
     def is_referral_approved(self):
@@ -180,18 +180,18 @@ class User(AbstractUser):
             return None
 
     @property
-    def is_onboarded(self):
-        """Check if user has completed onboarding through their application."""
+    def is_orientation_completed(self):
+        """Check if user has completed orientation through their application."""
         try:
-            return self.application.is_onboarded
+            return self.application.is_orientation_completed
         except Application.DoesNotExist:
             return False
 
     @property
-    def onboarded_at(self):
-        """Get the onboarding completion timestamp from the application."""
+    def orientation_at(self):
+        """Get the orientation completion timestamp from the application."""
         try:
-            return self.application.onboarded_at
+            return self.application.orientation_at
         except Application.DoesNotExist:
             return None
 
@@ -386,7 +386,9 @@ class ServiceTransaction(models.Model):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="service_transactions")
+    service = models.ForeignKey(
+        Service, on_delete=models.CASCADE, related_name="service_transactions"
+    )
     requester = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="service_requests"
     )
@@ -566,13 +568,13 @@ class ServiceTransaction(models.Model):
         try:
             # Get the service_credit ledger entry for this transaction
             ledger_entry = TimeBankLedger.objects.get(
-                service_transaction=self,
-                transaction_type="service_credit"
+                service_transaction=self, transaction_type="service_credit"
             )
             return ledger_entry.hours
         except TimeBankLedger.DoesNotExist:
             # If no ledger entry exists, return the requested hours
             return self.hours_requested
+
 
 class Request(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -615,7 +617,9 @@ class Request(models.Model):
     @property
     def accepted_offers_count(self):
         """Count the number of accepted offers for this request."""
-        return RequestTransaction.objects.filter(request=self, status="accepted").count()
+        return RequestTransaction.objects.filter(
+            request=self, status="accepted"
+        ).count()
 
     @property
     def is_fully_staffed(self):
@@ -789,13 +793,13 @@ class RequestTransaction(models.Model):
         try:
             # Get the request_credit ledger entry for this transaction
             ledger_entry = TimeBankLedger.objects.get(
-                request_transaction=self,
-                transaction_type="request_credit"
+                request_transaction=self, transaction_type="request_credit"
             )
             return ledger_entry.hours
         except TimeBankLedger.DoesNotExist:
             # If no ledger entry exists, return the proposed hours
             return self.proposed_hours
+
 
 class CommunityTransaction(ServiceTransaction):
     STATUS_CHOICES = [
@@ -1025,9 +1029,9 @@ class Application(models.Model):
     )
     referral_approved_at = models.DateTimeField(null=True, blank=True)
 
-    # Onboarding tracking
-    is_onboarded = models.BooleanField(default=False)
-    onboarded_at = models.DateTimeField(null=True, blank=True)
+    # Orientation tracking
+    is_orientation_completed = models.BooleanField(default=False)
+    orientation_at = models.DateTimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -1053,10 +1057,10 @@ class Application(models.Model):
             description="Welcome bonus for approved application",
         )
 
-    def mark_onboarded(self):
-        """Mark the user as having completed onboarding."""
-        self.is_onboarded = True
-        self.onboarded_at = timezone.now()
+    def mark_orientation_completed(self):
+        """Mark the user as having completed orientation."""
+        self.is_orientation_completed = True
+        self.orientation_at = timezone.now()
         if self.is_referral_approved and self.status == "pending":
             self.status = "approved"
         self.save()

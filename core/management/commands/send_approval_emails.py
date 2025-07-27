@@ -76,7 +76,7 @@ class Command(BaseCommand):
             # Send to all eligible users
             eligible_users = User.objects.filter(
                 application__is_referral_approved=True,
-                application__is_onboarded=True,
+                application__is_orientation_completed=True,
                 is_active=False,
             )
 

@@ -264,8 +264,8 @@ class ApplicationAdmin(admin.ModelAdmin):
         "referral_approved_at",
         "referral_member_name",
         "is_referral_approved",
-        "onboarded_at",
-        "is_onboarded",
+        "orientation_at",
+        "is_orientation_completed",
         "created_at",
         "updated_at",
     )
@@ -305,8 +305,8 @@ class ApplicationAdmin(admin.ModelAdmin):
                     "referral_approved_by",
                     "referral_approved_at",
                     "is_referral_approved",
-                    "onboarded_at",
-                    "is_onboarded",
+                    "orientation_at",
+                    "is_orientation_completed",
                 )
             },
         ),
@@ -471,7 +471,7 @@ class CommunityHoursAdmin(admin.ModelAdmin):
             "Community Hours Balance",
             {
                 "fields": ("total_hours",),
-                "description": "This balance is calculated automatically from ledger entries (donations - requests)."
+                "description": "This balance is calculated automatically from ledger entries (donations - requests).",
             },
         ),
         (

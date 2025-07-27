@@ -21,7 +21,8 @@ def validate_file_size(value):
 class UserApplicationForm(forms.ModelForm):
     referral_member = forms.ModelChoiceField(
         queryset=User.objects.filter(is_active=True).filter(
-            application__is_referral_approved=True, application__is_onboarded=True
+            application__is_referral_approved=True,
+            application__is_orientation_completed=True,
         ),
         required=True,
         help_text="Please select the existing member who referred you to the timebank",

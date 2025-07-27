@@ -273,8 +273,8 @@ class Command(BaseCommand):
                         "referral_approved_by": admin_user,
                         "referral_approved_at": timezone.now()
                         - timedelta(days=random.randint(30, 90)),
-                        "is_onboarded": True,
-                        "onboarded_at": timezone.now()
+                        "is_orientation_completed": True,
+                        "orientation_at": timezone.now()
                         - timedelta(days=random.randint(15, 60)),
                     },
                 )
@@ -291,7 +291,9 @@ class Command(BaseCommand):
                         description="Welcome bonus for approved application",
                     )
                     self.stdout.write(
-                        self.style.SUCCESS(f"Added 5 hours welcome bonus for: {user.full_name}")
+                        self.style.SUCCESS(
+                            f"Added 5 hours welcome bonus for: {user.full_name}"
+                        )
                     )
 
         # Create services

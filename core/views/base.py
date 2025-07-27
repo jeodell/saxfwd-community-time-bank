@@ -290,8 +290,8 @@ class ApplicationReviewDetailView(LoginRequiredMixin, UserPassesTestMixin, Detai
         return redirect("application_review_detail", application_id=application.pk)
 
 
-class MarkUserOnboardedView(LoginRequiredMixin, UserPassesTestMixin, View):
-    """Mark a user as onboarded."""
+class MarkUserOrientationCompletedView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """Mark orientation as completed for a user."""
 
     def test_func(self):
         """Check if user is staff."""
@@ -301,19 +301,22 @@ class MarkUserOnboardedView(LoginRequiredMixin, UserPassesTestMixin, View):
         user = get_object_or_404(User, id=user_id)
         try:
             application = user.application
-            application.mark_onboarded()
+            application.mark_orientation_completed()
 
             # Send approval email if user is now fully approved
             if user.is_fully_approved:
                 send_approval_email(user)
                 messages.success(
                     request,
-                    f"User marked as onboarded. Approval email sent to {user.email}",
+                    f"Orientation marked as completed for {user.full_name}. Approval email sent to {user.email}",
                 )
             else:
-                messages.success(request, "User marked as onboarded")
+                messages.success(
+                    request,
+                    f"Orientation marked as completed for {user.full_name}.",
+                )
 
         except Application.DoesNotExist:
-            messages.error(request, "User does not have an application")
+            messages.error(request, "User does not have an application.")
 
         return redirect("application_review_detail", application_id=application.pk)
