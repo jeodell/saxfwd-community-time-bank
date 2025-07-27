@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-27 19:33+0000\n"
+"POT-Creation-Date: 2025-07-27 19:42+0000\n"
 "PO-Revision-Date: 2025-07-27 16:39+0000\n"
 "Last-Translator: Jason O'Dell <jasoneodell@gmail.com>\n"
 "Language-Team: English <en@li.org>\n"
@@ -63,8 +63,8 @@ msgid "Learn More"
 msgstr "Learn More"
 
 #: templates/core/home.html:55 templates/navigation/footer.html:17
-#: templates/navigation/navbar.html:119 templates/navigation/navbar.html:163
-#: templates/navigation/navbar.html:200 templates/navigation/navbar.html:244
+#: templates/navigation/navbar.html:121 templates/navigation/navbar.html:165
+#: templates/navigation/navbar.html:202 templates/navigation/navbar.html:246
 msgid "Services"
 msgstr "Services"
 
@@ -72,24 +72,20 @@ msgstr "Services"
 msgid "Explore More"
 msgstr "Explore More"
 
-#: templates/core/home.html:66
-msgid "Discover all the services our community offers"
-msgstr "Discover all the services our community offers"
-
-#: templates/core/home.html:74
+#: templates/core/home.html:73
 msgid "Our Values"
 msgstr "Our Values"
 
-#: templates/core/home.html:79
+#: templates/core/home.html:78
 msgid "Saxapahaw Community"
 msgstr "Saxapahaw Community"
 
-#: templates/core/home.html:85 templates/navigation/navbar.html:131
-#: templates/navigation/navbar.html:212
+#: templates/core/home.html:84 templates/navigation/navbar.html:133
+#: templates/navigation/navbar.html:214
 msgid "Community"
 msgstr "Community"
 
-#: templates/core/home.html:87
+#: templates/core/home.html:86
 msgid ""
 "Building stronger connections between neighbors through shared experiences "
 "and mutual support."
@@ -98,11 +94,11 @@ msgstr ""
 "and mutual support.Building stronger connections between neighbors through "
 "shared experiences and mutual support."
 
-#: templates/core/home.html:91
+#: templates/core/home.html:90
 msgid "Equality"
 msgstr "Equality"
 
-#: templates/core/home.html:93
+#: templates/core/home.html:92
 msgid ""
 "Every hour of service is valued equally, recognizing that all contributions "
 "strengthen our community."
@@ -110,11 +106,11 @@ msgstr ""
 "Every hour of service is valued equally, recognizing that all contributions "
 "strengthen our community."
 
-#: templates/core/home.html:97
+#: templates/core/home.html:96
 msgid "Reciprocity"
 msgstr "Reciprocity"
 
-#: templates/core/home.html:99
+#: templates/core/home.html:98
 msgid ""
 "Giving and receiving in equal measure, creating a sustainable cycle of "
 "community support."
@@ -123,11 +119,11 @@ msgstr ""
 "community support.Giving and receiving in equal measure, creating a "
 "sustainable cycle of community support."
 
-#: templates/core/home.html:103
+#: templates/core/home.html:102
 msgid "Trust"
 msgstr "Trust"
 
-#: templates/core/home.html:105
+#: templates/core/home.html:104
 msgid ""
 "Building trust through shared experiences and reliable connections between "
 "neighbors."
@@ -136,11 +132,11 @@ msgstr ""
 "neighbors.Building trust through shared experiences and reliable connections "
 "between neighbors."
 
-#: templates/core/home.html:116
+#: templates/core/home.html:115
 msgid "Get in Touch"
 msgstr "Get in Touch"
 
-#: templates/core/home.html:118
+#: templates/core/home.html:117
 msgid ""
 "Have questions about our time bank? We'd love to hear from you. Send us a "
 "message and we'll respond as soon as possible."
@@ -148,30 +144,30 @@ msgstr ""
 "Have questions about our time bank? We'd love to hear from you. Send us a "
 "message and we'll respond as soon as possible."
 
-#: templates/core/home.html:124
+#: templates/core/home.html:123
 msgid "Name"
 msgstr "Name"
 
-#: templates/core/home.html:137
+#: templates/core/home.html:136
 msgid "Email"
 msgstr "Email"
 
-#: templates/core/home.html:150
+#: templates/core/home.html:149
 msgid "Message"
 msgstr "Message"
 
-#: templates/core/home.html:173
+#: templates/core/home.html:172
 msgid "Send Message"
 msgstr "Send Message"
 
-#: templates/navigation/footer.html:13 templates/navigation/navbar.html:113
-#: templates/navigation/navbar.html:157 templates/navigation/navbar.html:194
-#: templates/navigation/navbar.html:238
+#: templates/navigation/footer.html:13 templates/navigation/navbar.html:115
+#: templates/navigation/navbar.html:159 templates/navigation/navbar.html:196
+#: templates/navigation/navbar.html:240
 msgid "About"
 msgstr "About"
 
 #: templates/navigation/footer.html:21 templates/navigation/navbar.html:52
-#: templates/navigation/navbar.html:143 templates/navigation/navbar.html:224
+#: templates/navigation/navbar.html:145 templates/navigation/navbar.html:226
 msgid "My Account"
 msgstr "My Account"
 
@@ -191,38 +187,41 @@ msgstr "Welcome"
 msgid "Logout"
 msgstr "Logout"
 
-#: templates/navigation/navbar.html:86
+#: templates/navigation/navbar.html:87
 msgid "Login"
 msgstr "Login"
 
-#: templates/navigation/navbar.html:87
+#: templates/navigation/navbar.html:88
 msgid "or"
 msgstr "or"
 
-#: templates/navigation/navbar.html:88
+#: templates/navigation/navbar.html:89
 msgid "Apply"
 msgstr "Apply"
 
-#: templates/navigation/navbar.html:102
+#: templates/navigation/navbar.html:104
 msgid "Saxapahaw"
 msgstr "Saxapahaw"
 
-#: templates/navigation/navbar.html:103
+#: templates/navigation/navbar.html:105
 msgid "Timebank"
 msgstr "Timebank"
 
-#: templates/navigation/navbar.html:125 templates/navigation/navbar.html:206
+#: templates/navigation/navbar.html:127 templates/navigation/navbar.html:208
 msgid "Requests"
 msgstr "Requests"
 
-#: templates/navigation/navbar.html:137 templates/navigation/navbar.html:218
+#: templates/navigation/navbar.html:139 templates/navigation/navbar.html:220
 msgid "My Requests"
 msgstr "My Requests"
 
-#: templates/navigation/navbar.html:150 templates/navigation/navbar.html:231
+#: templates/navigation/navbar.html:152 templates/navigation/navbar.html:233
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/navigation/navbar.html:175
+#: templates/navigation/navbar.html:177
 msgid "Open main menu"
 msgstr "Open main menu"
+
+#~ msgid "Discover all the services our community offers"
+#~ msgstr "Discover all the services our community offers"

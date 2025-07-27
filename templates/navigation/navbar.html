@@ -67,7 +67,7 @@
         </div>
       {% else %}
         <div class="hidden sm:flex col-span-1 md:col-span-4 lg:col-span-5 items-center justify-start bg-primary"></div>
-        <div class="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12 space-x-4">
+        <div class="col-span-1 md:col-span-3 lg:col-span-2 flex items-center justify-end bg-secondary pr-4 md:pr-12 space-x-8">
         <!-- Language Switcher -->
           <form action="{% url 'set_language' %}" method="post" class="inline">
             {% csrf_token %}
@@ -83,9 +83,11 @@
             </select>
           </form>
 
-          <a href="{% url 'login' %}" class="text-white hover:text-white/80 uppercase">{% trans "Login" %}</a>
-          <span class="text-white px-1">{% trans "or" %}</span>
-          <a href="{% url 'apply' %}" class="text-white hover:text-white/80 uppercase">{% trans "Apply" %}</a>
+          <div class="flex items-center">
+            <a href="{% url 'login' %}" class="text-white hover:text-white/80 uppercase">{% trans "Login" %}</a>
+            <span class="text-white px-1">{% trans "or" %}</span>
+            <a href="{% url 'apply' %}" class="text-white hover:text-white/80 uppercase">{% trans "Apply" %}</a>
+          </div>
         </div>
       {% endif %}
     </div>
