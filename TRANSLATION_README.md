@@ -29,6 +29,12 @@ This Django project now supports Spanish translations alongside English. The int
 - **Templates**: Added `{% load i18n %}` and `{% trans %}` tags
 - **Navigation**: Added language switcher dropdown
 
+### 5. Build Process Integration
+
+- Updated `build.sh` to include translation compilation
+- Added `makemessages` with proper ignore options to exclude `venv` and static directories
+- Translations are now automatically compiled during deployment
+
 ## How to Use
 
 ### Language Switcher
@@ -56,10 +62,16 @@ Users can switch languages using the dropdown in the top navigation bar. The lan
    <h1>{% trans "Welcome to Saxapahaw Timebank" %}</h1>
    ```
 
-3. **Generate translation files**:
+3. **Generate translation files** (excluding venv and static directories):
 
    ```bash
-   python manage.py makemessages -l es
+   python manage.py makemessages -a --ignore=venv/* --ignore=staticfiles/* --ignore=static/*
+   ```
+
+   Or for a specific language:
+
+   ```bash
+   python manage.py makemessages -l es --ignore=venv/* --ignore=staticfiles/* --ignore=static/*
    ```
 
 4. **Edit the translation file**:
@@ -75,10 +87,18 @@ Users can switch languages using the dropdown in the top navigation bar. The lan
 ### Translation Workflow
 
 1. **Development**: Mark strings as you develop
-2. **Extract**: Run `makemessages` to update `.po` files
+2. **Extract**: Run `makemessages` with ignore options to update `.po` files
 3. **Translate**: Edit the `.po` files with translations
 4. **Compile**: Run `compilemessages` to create `.mo` files
 5. **Test**: Switch languages in the UI to verify translations
+
+### Production Deployment
+
+The build process automatically handles translations:
+
+1. **During build**: `makemessages` regenerates translation files (excluding venv)
+2. **During build**: `compilemessages` compiles translations for production
+3. **Runtime**: Django serves the compiled translations
 
 ## Current Translation Status
 
@@ -127,6 +147,8 @@ locale/
 
 4. **Keep translations up to date**: Run `makemessages` regularly during development.
 
+5. **Exclude unnecessary directories**: Always use `--ignore` options to exclude `venv`, `staticfiles`, and `static` directories.
+
 ## Testing Translations
 
 1. Start the development server:
@@ -156,7 +178,7 @@ To add another language (e.g., French):
 2. Generate translation files:
 
    ```bash
-   python manage.py makemessages -l fr
+   python manage.py makemessages -l fr --ignore=venv/* --ignore=staticfiles/* --ignore=static/*
    ```
 
 3. Translate the `.po` file and compile:
@@ -170,6 +192,26 @@ To add another language (e.g., French):
 - **Missing translations**: Check that strings are properly marked with `_()` or `{% trans %}`
 - **Language switcher not working**: Verify `LocaleMiddleware` is in `MIDDLEWARE`
 - **URLs not working**: Check that `i18n_patterns` is properly configured
+- **Translation files too large**: Use `--ignore` options to exclude venv and static directories
+- **Production translations not working**: Ensure `compilemessages` is in your build script
+
+## Build Script Integration
+
+The `build.sh` script now includes:
+
+```bash
+# Generate translation files (excluding venv and static directories)
+python manage.py makemessages -a --ignore=venv/* --ignore=staticfiles/* --ignore=static/*
+
+# Compile translations for production
+python manage.py compilemessages
+```
+
+This ensures that:
+
+- Translation files are clean (no venv strings)
+- Translations are compiled during deployment
+- Production has the latest translations
 
 ## Next Steps
 
@@ -178,3 +220,4 @@ To add another language (e.g., French):
 3. **Dynamic content**: Consider translating database content (categories, etc.)
 4. **Testing**: Create comprehensive tests for translation functionality
 5. **Documentation**: Translate user documentation and help text
+6. **Quality assurance**: Review and refine existing translations for accuracy and naturalness
