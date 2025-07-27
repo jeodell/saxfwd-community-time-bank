@@ -1,180 +1,181 @@
-<!-- prettier-ignore -->
 {% extends "base.html" %}
-{% load static %}
-{% block title %}Home - Saxapahaw Timebank{% endblock %}
+{% load i18n %}
+{% load static i18n %}
+{% block title %}{% trans "Home" %} - {% trans "Saxapahaw Timebank" %}{% endblock %}
 {% block content %}
 
 <!-- Hero Section -->
-<section class="relative h-[600px]">
-  <div class="absolute inset-0">
-    <img
-      src="{% static 'img/sax_river_and_dam.jpg' %}"
-      alt="Saxapahaw River and Dam"
-      class="w-full h-full object-cover object-[center_30%]"
-      loading="eager"
-    />
-    <div class="absolute inset-0 bg-primary/50"></div>
-  </div>
-  <div class="relative h-full flex items-center justify-center text-center px-4">
-    <div class="max-w-3/4">
-      <h1 class="text-3xl md:text-5xl font-bold text-white mb-6 uppercase">Neighbors Helping Neighbors</h1>
-      <p class="text-lg md:text-xl text-white mb-8">in SAXAPAHAW, NC</p>
-      {% if not user.is_authenticated %}
-      <a
-        href="{% url 'apply' %}"
-        class="inline-block bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-light transition-colors uppercase"
-      >
-        Apply to Join
-      </a>
-      {% endif %}
+  <section class="relative h-[600px]">
+    <div class="absolute inset-0">
+      <img
+        src="{% static 'img/sax_river_and_dam.jpg' %}"
+        alt="{% trans 'Saxapahaw River and Dam' %}"
+        class="w-full h-full object-cover object-[center_30%]"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-primary/50"></div>
     </div>
-  </div>
-</section>
+    <div class="relative h-full flex items-center justify-center text-center px-4">
+      <div class="max-w-3/4">
+        <h1 class="text-3xl md:text-5xl font-bold text-white mb-6 uppercase">
+          {% trans "Neighbors Helping Neighbors" %}
+        </h1>
+        <p class="text-lg md:text-xl text-white mb-8">
+          {% trans "in SAXAPAHAW, NC" %}</p>
+        {% if not user.is_authenticated %}
+          <a
+            href="{% url 'apply' %}"
+            class="inline-block bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary-light transition-colors uppercase"
+          >
+            {% trans "Apply to Join" %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
 
 <!-- How It Works Section -->
-<section class="bg-cream py-16 px-4 sm:px-6 lg:px-8">
-  <div class="text-left max-w-3xl mx-auto">
-    <h2 class="text-3xl font-bold text-primary mb-4 uppercase">How It Works</h2>
-    <p class="text-lg text-gray-600">
-      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-      aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo
-      enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui
-      ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur,
-      adipisci velit, sed quia non numquam eius modi tempora incidunt.
-    </p>
-    <a
-      href="{% url 'about' %}"
-      class="inline-block mt-8 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors"
-    >
-      Learn More
-    </a>
-  </div>
-</section>
+  <section class="bg-cream py-16 px-4 sm:px-6 lg:px-8">
+    <div class="text-left max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-primary mb-4 uppercase">{% trans "How It Works" %}</h2>
+      <p class="text-lg text-gray-600">
+        {% trans "How It Works Description" %}
+      </p>
+      <a
+        href="{% url 'about' %}"
+        class="inline-block mt-8 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-light transition-colors"
+      >
+        {% trans "Learn More" %}
+      </a>
+    </div>
+  </section>
 
 <!-- Services Grid -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-  <h2 class="text-3xl font-bold text-secondary text-center uppercase">Services</h2>
-  <div class="border-b-2 border-secondary mt-4 mb-16 w-48 mx-auto"></div>
-  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    <!-- prettier-ignore -->
-    {% for category in categories %}
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <h2 class="text-3xl font-bold text-secondary text-center uppercase">{% trans "Services" %}</h2>
+    <div class="border-b-2 border-secondary mt-4 mb-16 w-48 mx-auto"></div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% for category in categories %}
         {% include "services/service_category_card.html" with category=category %}
       {% endfor %}
-    <a
-      href="{% url 'service_list' %}"
-      class="bg-primary text-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow h-48 flex flex-col justify-end"
-    >
-      <h3 class="text-xl font-semibold text-white mb-2">Explore More</h3>
-      <p class="text-white/80">Discover all the services our community offers</p>
-    </a>
-  </div>
-</section>
+      <a
+        href="{% url 'service_list' %}"
+        class="bg-primary text-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow h-48 flex flex-col justify-end"
+      >
+        <h3 class="text-xl font-semibold text-white mb-2">{% trans "Explore More" %}</h3>
+        <p class="text-white/80">{% trans "Discover all the services our community offers" %}</p>
+      </a>
+    </div>
+  </section>
 
 <!-- Values Section -->
-<section class="bg-cream py-16">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-3xl font-bold text-primary text-center uppercase mb-16">Our Values</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-      <div class="relative h-[500px] rounded-lg overflow-hidden">
-        <img src="{% static 'img/saxpatch.jpg' %}" alt="Saxapahaw Community" class="w-full h-full object-cover" />
-      </div>
-      <div class="space-y-8">
-        <div class="space-y-4">
-          <h3 class="text-2xl font-semibold text-primary">Community</h3>
-          <p class="text-gray-600">
-            Building stronger connections between neighbors through shared experiences and mutual support.
-          </p>
+  <section class="bg-cream py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-primary text-center uppercase mb-16">{% trans "Our Values" %}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div class="relative h-[500px] rounded-lg overflow-hidden">
+          <img
+            src="{% static 'img/saxpatch.jpg' %}"
+            alt="{% trans 'Saxapahaw Community' %}"
+            class="w-full h-full object-cover"
+          />
         </div>
-        <div class="space-y-4">
-          <h3 class="text-2xl font-semibold text-primary">Equality</h3>
-          <p class="text-gray-600">
-            Every hour of service is valued equally, recognizing that all contributions strengthen our community.
-          </p>
-        </div>
-        <div class="space-y-4">
-          <h3 class="text-2xl font-semibold text-primary">Reciprocity</h3>
-          <p class="text-gray-600">
-            Giving and receiving in equal measure, creating a sustainable cycle of community support.
-          </p>
-        </div>
-        <div class="space-y-4">
-          <h3 class="text-2xl font-semibold text-primary">Trust</h3>
-          <p class="text-gray-600">
-            Building trust through shared experiences and reliable connections between neighbors.
-          </p>
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <h3 class="text-2xl font-semibold text-primary">{% trans "Community" %}</h3>
+            <p class="text-gray-600">
+              {% trans "Building stronger connections between neighbors through shared experiences and mutual support." %}
+            </p>
+          </div>
+          <div class="space-y-4">
+            <h3 class="text-2xl font-semibold text-primary">{% trans "Equality" %}</h3>
+            <p class="text-gray-600">
+              {% trans "Every hour of service is valued equally, recognizing that all contributions strengthen our community." %}
+            </p>
+          </div>
+          <div class="space-y-4">
+            <h3 class="text-2xl font-semibold text-primary">{% trans "Reciprocity" %}</h3>
+            <p class="text-gray-600">
+              {% trans "Giving and receiving in equal measure, creating a sustainable cycle of community support." %}
+            </p>
+          </div>
+          <div class="space-y-4">
+            <h3 class="text-2xl font-semibold text-primary">{% trans "Trust" %}</h3>
+            <p class="text-gray-600">
+              {% trans "Building trust through shared experiences and reliable connections between neighbors." %}
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
 <!-- Contact Form -->
-<section id="contact" class="py-16">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 class="text-3xl font-bold text-primary text-center uppercase mb-4">Get in Touch</h2>
-    <p class="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-      Have questions about our time bank? We'd love to hear from you. Send us a message and we'll respond as soon as
-      possible.
-    </p>
-    <form method="post" action="{% url 'home' %}" class="bg-white rounded-lg shadow-lg p-8">
-      {% csrf_token %}
-      <div class="space-y-6">
-        <div>
-          <label for="name" class="block text-sm font-medium text-primary mb-2">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
-            required
-          />
-          {% if form.name.errors %}
-          <p class="mt-2 text-sm text-red-600">{{ form.name.errors.0 }}</p>
-          {% endif %}
+  <section id="contact" class="py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-primary text-center uppercase mb-4">{% trans "Get in Touch" %}</h2>
+      <p class="text-lg text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+        {% trans "Have questions about our time bank? We'd love to hear from you. Send us a message and we'll respond as soon as possible." %}
+      </p>
+      <form method="post" action="{% url 'home' %}" class="bg-white rounded-lg shadow-lg p-8">
+        {% csrf_token %}
+        <div class="space-y-6">
+          <div>
+            <label for="name" class="block text-sm font-medium text-primary mb-2">{% trans "Name" %}</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
+              required
+            />
+            {% if form.name.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-primary mb-2">{% trans "Email" %}</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
+              required
+            />
+            {% if form.email.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <label for="message" class="block text-sm font-medium text-primary mb-2">{% trans "Message" %}</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors resize-none"
+              required
+            ></textarea>
+            {% if form.message.errors %}
+              <p class="mt-2 text-sm text-red-600">{{ form.message.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <div class="flex justify-center">{{ form.recaptcha }}</div>
+            {% if form.recaptcha.errors %}
+              <p class="mt-2 text-sm text-red-600 text-center">{{ form.recaptcha.errors.0 }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <button
+              type="submit"
+              class="w-full bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors uppercase"
+            >
+              {% trans "Send Message" %}
+            </button>
+          </div>
         </div>
-        <div>
-          <label for="email" class="block text-sm font-medium text-primary mb-2">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors"
-            required
-          />
-          {% if form.email.errors %}
-          <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
-          {% endif %}
-        </div>
-        <div>
-          <label for="message" class="block text-sm font-medium text-primary mb-2">Message</label>
-          <textarea
-            id="message"
-            name="message"
-            rows="4"
-            class="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-colors resize-none"
-            required
-          ></textarea>
-          {% if form.message.errors %}
-          <p class="mt-2 text-sm text-red-600">{{ form.message.errors.0 }}</p>
-          {% endif %}
-        </div>
-        <div>
-          <div class="flex justify-center">{{ form.captcha }}</div>
-          {% if form.captcha.errors %}
-          <p class="mt-2 text-sm text-red-600 text-center">{{ form.captcha.errors.0 }}</p>
-          {% endif %}
-        </div>
-        <div>
-          <button
-            type="submit"
-            class="w-full bg-primary text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-primary/90 transition-colors uppercase"
-          >
-            Send Message
-          </button>
-        </div>
-      </div>
-    </form>
-  </div>
-</section>
+      </form>
+    </div>
+  </section>
 
 {% endblock %}
