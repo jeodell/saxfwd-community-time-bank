@@ -21,11 +21,21 @@ class CommunityView(LoginRequiredMixin, ListView):
         # Group transactions
         grouped_transactions = {}
         for transaction in transactions:
-            key = (
-                transaction.service_transaction_id
-                or transaction.request_transaction_id
-                or f"direct_{transaction.id}"
-            )
+            # Create unique key for grouping
+            if transaction.transaction_type == "user_donation":
+                # Group user donations by the donation event (same donated_by, same hours, same timestamp)
+                if transaction.donated_by:
+                    # Use the donor's ID and timestamp to group related entries
+                    key = f"user_donation_{transaction.donated_by.id}_{transaction.created_at.strftime('%Y%m%d_%H%M%S')}"
+                else:
+                    # Fallback for donations without donated_by
+                    key = f"user_donation_{transaction.id}"
+            else:
+                key = (
+                    transaction.service_transaction_id
+                    or transaction.request_transaction_id
+                    or f"direct_{transaction.id}"
+                )
 
             if key not in grouped_transactions:
                 description = None
@@ -61,6 +71,23 @@ class CommunityView(LoginRequiredMixin, ListView):
                     description = transaction.description
                     from_user = "Community"
                     to_user = transaction.user
+
+                # User Donation
+                elif transaction.transaction_type == "user_donation":
+                    if transaction.donated_by:
+                        # This is the debit entry (donor), skip it
+                        if transaction.user == transaction.donated_by:
+                            continue
+
+                        # This is the credit entry (recipient)
+                        description = transaction.description
+                        from_user = transaction.donated_by
+                        to_user = transaction.user
+                    else:
+                        # Fallback for any user donations without donated_by field
+                        description = transaction.description
+                        from_user = "Unknown"
+                        to_user = transaction.user
 
                 grouped_transactions[key] = {
                     "created_at": transaction.created_at,

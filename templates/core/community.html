@@ -45,7 +45,7 @@
 
     <!-- Donation Modal -->
       <div id="donationModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
           <div class="p-6">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900">Donate Hours to Community</h3>
@@ -79,6 +79,30 @@
                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                 ></textarea>
               </div>
+
+              <!-- Balance Impact -->
+              <div class="bg-gray-50 rounded-xl p-8 shadow-sm">
+                <h4 class="font-semibold text-gray-800 mb-4 flex items-center ml-2 text-lg">
+                  Time Balance Impact
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <!-- Current Balance -->
+                  <div class="text-center">
+                    <div class="bg-card-light rounded-lg p-4 border border-secondary text-secondary h-24 flex flex-col items-center justify-center">
+                      <p class="text-xs font-medium uppercase tracking-wide mb-1">Current Balance</p>
+                      <p class="text-2xl font-bold">{{ user_time_balance }} Hours</p>
+                    </div>
+                  </div>
+                  <!-- After Donation -->
+                  <div class="text-center">
+                    <div class="bg-green-50 rounded-lg p-4 border border-green-600 text-green-600 h-24 flex flex-col items-center justify-center">
+                      <p class="text-xs font-medium uppercase tracking-wide mb-1">After Donation</p>
+                      <p class="text-2xl font-bold" id="communityRemainingBalance">{{ user_time_balance }} Hours</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="flex justify-end space-x-3">
                 <button
                   type="button"
@@ -263,11 +287,34 @@
     document.addEventListener('DOMContentLoaded', function () {
       const donationModal = document.getElementById('donationModal');
       const donationButton = document.getElementById('donationButton');
+      const communityHoursInput = document.getElementById('hours');
+      const communityRemainingBalanceElement = document.getElementById('communityRemainingBalance');
+      const currentBalance = {{ user_time_balance }};
 
       donationButton.addEventListener('click', function () {
         donationModal.classList.remove('hidden');
         donationModal.classList.add('flex');
       });
+
+      // Real-time balance calculation for community donations
+      if (communityHoursInput && communityRemainingBalanceElement) {
+        communityHoursInput.addEventListener('input', function() {
+          const hours = parseFloat(this.value) || 0;
+          const remaining = currentBalance - hours;
+
+          if (remaining < 0) {
+            communityRemainingBalanceElement.textContent = 'Insufficient hours';
+            communityRemainingBalanceElement.className = 'text-lg font-bold text-red-600';
+            communityRemainingBalanceElement.parentElement.parentElement.className = 'text-center';
+            communityRemainingBalanceElement.parentElement.className = 'bg-red-50 rounded-lg p-4 border border-red-600 text-red-600 h-24 flex flex-col items-center justify-center';
+          } else {
+            communityRemainingBalanceElement.textContent = remaining.toFixed(2) + ' Hours';
+            communityRemainingBalanceElement.className = 'text-2xl font-bold text-green-600';
+            communityRemainingBalanceElement.parentElement.parentElement.className = 'text-center';
+            communityRemainingBalanceElement.parentElement.className = 'bg-green-50 rounded-lg p-4 border border-green-600 text-green-600 h-24 flex flex-col items-center justify-center';
+          }
+        });
+      }
     });
   </script>
 {% endblock %}
