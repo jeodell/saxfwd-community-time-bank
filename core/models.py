@@ -89,6 +89,10 @@ class User(AbstractUser):
             user=self, transaction_type="application_credit"
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
 
+        user_donation_credits = TimeBankLedger.objects.filter(
+            user=self, transaction_type="user_donation"
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
         service_debits = TimeBankLedger.objects.filter(
             user=self, transaction_type="service_debit"
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
@@ -101,8 +105,17 @@ class User(AbstractUser):
             user=self, transaction_type="community_donation"
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
 
-        return (service_credits + request_credits + application_credits) - (
-            service_debits + request_debits + community_donations
+        user_donation_debits = TimeBankLedger.objects.filter(
+            user=self, transaction_type="user_donation", donated_by=self
+        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+
+        return (
+            service_credits
+            + request_credits
+            + application_credits
+            + user_donation_credits
+        ) - (
+            service_debits + request_debits + community_donations + user_donation_debits
         )
 
     @property
@@ -939,6 +952,7 @@ class TimeBankLedger(models.Model):
         ("request_credit", "Request Credit"),
         ("request_debit", "Request Debit"),
         ("application_credit", "Application Approval Credit"),
+        ("user_donation", "User Donation"),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -954,6 +968,13 @@ class TimeBankLedger(models.Model):
         max_digits=4, decimal_places=2, validators=[MinValueValidator(0.25)]
     )
     description = models.TextField()
+    donated_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="donations_made",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

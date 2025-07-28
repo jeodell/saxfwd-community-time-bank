@@ -240,3 +240,14 @@ class RequestTransactionCancelForm(forms.Form):
         required=False,
         help_text="Please provide a reason for canceling this offer",
     )
+
+
+class UserDonationForm(forms.Form):
+    hours = forms.DecimalField(
+        min_value=0.25,
+        max_digits=4,
+        decimal_places=2,
+    )
+    message = forms.CharField(
+        required=False,
+    )

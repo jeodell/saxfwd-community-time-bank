@@ -3,17 +3,17 @@
 {% block title %}
   {{ profile_user.first_name }} {{ profile_user.last_name }}'s Account - Saxapahaw Timebank
 {% endblock %}
+
 {% block content %}
   <div class="max-w-7xl mx-auto p-8">
     <div class="bg-white rounded-lg shadow-sm p-12">
-    <!-- Header -->
+
+      <!-- Header -->
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-3xl text-gray-800 font-semibold">
-
           {% if profile_user.id == request.user.id %}
             Welcome,
             <span class="text-primary font-bold">{{ profile_user.first_name }}</span>
-
           {% else %}
             {{ profile_user.first_name }}'s Account
           {% endif %}
@@ -30,10 +30,14 @@
           {% endif %}
         </div>
       </div>
+
+      <!-- Main Content Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Sidebar -->
+
+        <!-- Sidebar  -->
         <div class="space-y-8">
-        <!-- Balance Card -->
+
+          <!-- Balance Card -->
           <div class="bg-card-light rounded-xl p-8 shadow-sm flex flex-col items-center text-center">
             <div class="text-xl font-semibold text-center tracking-wide text-secondary uppercase">Balance</div>
             <div class="border-t-2 border-secondary my-2 w-full max-w-[14ch] mx-auto"></div>
@@ -46,7 +50,110 @@
               <div class="text-3xl font-semibold text-yellow-500">Private</div>
             {% endif %}
           </div>
-        <!-- Offered Services Card -->
+
+          <!-- Donation Button -->
+          {% if profile_user.id != request.user.id %}
+            <div class="w-full">
+              <button
+                id="donationButton"
+                class="block w-full text-center px-4 py-2 rounded-md bg-primary text-white font-semibold hover:bg-primary-light transition-colors duration-200 {% if request.user.time_balance <= 0 %}opacity-50 cursor-not-allowed{% endif %}"
+              >
+                <i class="fas fa-gift mr-2"></i>
+                Donate Hours
+              </button>
+            </div>
+          {% endif %}
+
+          <!-- Donation Modal -->
+          <div id="donationModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4">
+              <div class="p-6">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-lg font-semibold text-gray-900">Donate Hours to {{ profile_user.first_name }} {{ profile_user.last_name }}</h3>
+                  <button
+                    id="cancelDonationButton"
+                    class="text-gray-400 hover:text-gray-500"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+
+                <!-- Donation Form -->
+                <form method="post" action="{% url 'user_donate' profile_user.id %}" class="space-y-4">
+                  {% csrf_token %}
+
+                  <!-- Hours Input -->
+                  <div>
+                    <label for="hours" class="block text-sm font-medium text-gray-700">Hours to Donate</label>
+                    <input
+                      type="number"
+                      name="hours"
+                      id="hours"
+                      min="0.25"
+                      step="0.25"
+                      required
+                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                    />
+                  </div>
+
+                  <!-- Message Input -->
+                  <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700">Message (Optional)</label>
+                    <textarea
+                      name="message"
+                      id="message"
+                      rows="3"
+                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                    ></textarea>
+                  </div>
+
+                  <!-- Balance Impact -->
+                  <div class="bg-gray-50 rounded-xl p-8 shadow-sm">
+                    <h4 class="font-semibold text-gray-800 mb-4 flex items-center ml-2 text-lg">
+                      Time Balance Impact
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <!-- Current Balance -->
+                      <div class="text-center">
+                        <div class="bg-card-light rounded-lg p-4 border border-secondary text-secondary h-24 flex flex-col items-center justify-center">
+                          <p class="text-xs font-medium uppercase tracking-wide mb-1">Current Balance</p>
+                          <p class="text-2xl font-bold">{{ request.user.time_balance }} Hours</p>
+                        </div>
+                      </div>
+                      <!-- After Donation -->
+                      <div class="text-center">
+                        <div class="bg-green-50 rounded-lg p-4 border border-green-600 text-green-600 h-24 flex flex-col items-center justify-center">
+                          <p class="text-xs font-medium uppercase tracking-wide mb-1">After Donation</p>
+                          <p class="text-2xl font-bold" id="remainingBalance">{{ request.user.time_balance }} Hours</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Form Actions -->
+                  <div class="flex justify-end space-x-3">
+                    <button
+                      id="submitDonationButton"
+                      type="button"
+                      class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                    >
+                      <i class="fas fa-gift mr-2"></i>
+                      Donate Hours
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Offered Services Card -->
           <div class="bg-card rounded-xl p-8 shadow-sm flex flex-col items-stretch">
             <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">Offered Services</div>
             <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
@@ -69,7 +176,7 @@
             {% endif %}
           </div>
 
-        <!-- Requested Services Card -->
+          <!-- Requested Services Card -->
           <div class="bg-card rounded-xl p-8 shadow-sm flex flex-col items-stretch">
             <div class="text-xl font-semibold text-center tracking-wide text-primary uppercase">Requested Services</div>
             <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
@@ -92,20 +199,22 @@
             {% endif %}
           </div>
         </div>
-      <!-- Main Activity Section -->
+
+        <!-- Main Activity -->
         <div class="md:col-span-2 flex flex-col space-y-8">
-        <!-- Activity Card -->
+
+          <!-- Activity Card -->
           <div class="bg-card rounded-xl p-8 shadow-sm">
             <div class="flex items-center">
               <div class="text-xl font-semibold uppercase tracking-wide text-primary mr-4">Activity</div>
             </div>
             <div class="border-t-2 border-primary my-2"></div>
             <div class="p-2 flex flex-col gap-8">
-            <!-- Provided -->
+
+              <!-- Provided Services -->
               <div>
                 <div class="font-semibold text-gray-800 mb-2">Provided Services</div>
                 <ul class="space-y-2">
-                <!-- Service and Request Credits -->
                   {% for transaction in all_credits %}
                     <li class="flex items-center text-gray-800 text-sm">
                       <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
@@ -118,11 +227,11 @@
                   {% endfor %}
                 </ul>
               </div>
-            <!-- Received -->
+
+              <!-- Received Services -->
               <div>
                 <div class="font-semibold text-gray-800 mb-2">Received Services</div>
                 <ul class="space-y-2">
-                <!-- Service and Request Debits -->
                   {% for transaction in all_debits %}
                     <li class="flex items-center text-gray-800 text-sm">
                       <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
@@ -135,7 +244,8 @@
                   {% endfor %}
                 </ul>
               </div>
-            <!-- Community Donations -->
+
+              <!-- Community Donations -->
               <div>
                 <div class="font-semibold text-gray-800 mb-2">Community Donations</div>
                 <ul class="space-y-2">
@@ -151,7 +261,8 @@
                   {% endfor %}
                 </ul>
               </div>
-            <!-- Community Requests -->
+
+              <!-- Community Requests -->
               <div>
                 <div class="font-semibold text-gray-800 mb-2">Community Requests</div>
                 <ul class="space-y-2">
@@ -167,9 +278,27 @@
                   {% endfor %}
                 </ul>
               </div>
+
+              <!-- User Donations -->
+              <div>
+                <div class="font-semibold text-gray-800 mb-2">User Donations</div>
+                <ul class="space-y-2">
+                  {% for transaction in user_donations %}
+                    <li class="flex items-center text-gray-800 text-sm">
+                      <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
+                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="flex-1 border-b border-primary py-1 mx-2"></span>
+                      <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
+                    </li>
+                  {% empty %}
+                    <li class="text-gray-600 text-sm">No user donations</li>
+                  {% endfor %}
+                </ul>
+              </div>
             </div>
           </div>
-        <!-- Settings Card -->
+
+          <!-- Settings Card -->
           <div class="bg-card rounded-lg p-8">
             <div class="flex items-center justify-between mb-4">
               <div class="text-xl font-semibold uppercase tracking-wide text-primary">Account Settings</div>
@@ -185,7 +314,7 @@
             </div>
             <div class="border-t-2 border-primary my-2"></div>
 
-          <!-- User Information -->
+            <!-- User Information -->
             <div class="rounded-lg p-2 mb-4">
               <h3 class="text-lg font-semibold text-gray-800 mb-4">User Information</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -212,7 +341,7 @@
               </div>
             </div>
 
-          <!-- Account Information -->
+            <!-- Account Information -->
             <div class="rounded-lg p-2 mb-4">
               <h3 class="text-lg font-semibold text-gray-800 mb-4">Account Information</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -232,3 +361,59 @@
     </div>
   </div>
 {% endblock content %}
+
+{% block extra_js %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Get DOM elements
+      const donationModal = document.getElementById('donationModal');
+      const donationButton = document.getElementById('donationButton');
+      const hoursInput = document.getElementById('hours');
+      const remainingBalanceElement = document.getElementById('remainingBalance');
+      const currentBalance = {{ request.user.time_balance }};
+
+      // Modal open functionality
+      if (donationButton) {
+        donationButton.addEventListener('click', function () {
+          donationModal.classList.remove('hidden');
+          donationModal.classList.add('flex');
+        });
+      }
+
+      // Modal close functionality
+      const cancelDonationButton = document.getElementById('cancelDonationButton');
+      if (cancelDonationButton) {
+        cancelDonationButton.addEventListener('click', function () {
+          donationModal.classList.add('hidden');
+        });
+      }
+
+      const submitDonationButton = document.getElementById('submitDonationButton');
+      if (submitDonationButton) {
+        submitDonationButton.addEventListener('click', function () {
+          donationModal.classList.add('hidden');
+        });
+      }
+
+      // Real-time balance calculation
+      if (hoursInput && remainingBalanceElement) {
+        hoursInput.addEventListener('input', function() {
+          const hours = parseFloat(this.value) || 0;
+          const remaining = currentBalance - hours;
+
+          if (remaining < 0) {
+            remainingBalanceElement.textContent = 'Insufficient hours';
+            remainingBalanceElement.className = 'text-lg font-bold text-red-600';
+            remainingBalanceElement.parentElement.parentElement.className = 'text-center';
+            remainingBalanceElement.parentElement.className = 'bg-red-50 rounded-lg p-4 border border-red-600 text-red-600 h-24 flex flex-col items-center justify-center';
+          } else {
+            remainingBalanceElement.textContent = remaining.toFixed(2) + ' Hours';
+            remainingBalanceElement.className = 'text-2xl font-bold text-green-600';
+            remainingBalanceElement.parentElement.parentElement.className = 'text-center';
+            remainingBalanceElement.parentElement.className = 'bg-green-50 rounded-lg p-4 border border-green-600 text-green-600 h-24 flex flex-col items-center justify-center';
+          }
+        });
+      }
+    });
+  </script>
+{% endblock %}
