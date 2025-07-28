@@ -90,8 +90,10 @@ class User(AbstractUser):
         ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
 
         user_donation_credits = TimeBankLedger.objects.filter(
-            user=self, transaction_type="user_donation"
-        ).aggregate(total=models.Sum("hours"))["total"] or Decimal("0.00")
+            user=self, transaction_type="user_donation", donated_by__isnull=False
+        ).exclude(donated_by=self).aggregate(total=models.Sum("hours"))[
+            "total"
+        ] or Decimal("0.00")
 
         service_debits = TimeBankLedger.objects.filter(
             user=self, transaction_type="service_debit"
