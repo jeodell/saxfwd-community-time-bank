@@ -92,6 +92,9 @@
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Availability</h2>
             <p class="text-gray-600 mb-6">{{ service.availability|default:"No availability specified" }}</p>
 
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Experience</h2>
+            <p class="text-gray-600 mb-6">{{ service.experience|default:"No experience specified" }}</p>
+
             {% if service.max_hours or service.max_hours_per_month %}
               <h2 class="text-xl font-semibold text-gray-900 mb-4">Service Limits</h2>
               <div class="space-y-4">
