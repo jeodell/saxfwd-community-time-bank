@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-27 20:44+0000\n"
+"POT-Creation-Date: 2025-08-02 16:32+0000\n"
 "PO-Revision-Date: 2025-07-27 16:39+0000\n"
 "Last-Translator: Jason O'Dell <jasoneodell@gmail.com>\n"
 "Language-Team: English <en@li.org>\n"
@@ -22,14 +22,91 @@ msgstr ""
 msgid "email address"
 msgstr "email address"
 
+#: core/templatetags/category_translations.py:14
+msgid "Arts and Crafts"
+msgstr "Arts and Crafts"
+
+#: core/templatetags/category_translations.py:15
+msgid "Beauty"
+msgstr "Beauty"
+
+#: core/templatetags/category_translations.py:16
+msgid "Caregiving"
+msgstr "Caregiving"
+
+#: core/templatetags/category_translations.py:17
+msgid "Conversation and Counseling"
+msgstr "Conversation and Counseling"
+
+#: core/templatetags/category_translations.py:18
+msgid "Education"
+msgstr "Education"
+
+#: core/templatetags/category_translations.py:19
+msgid "Entertainment"
+msgstr "Entertainment"
+
+#: core/templatetags/category_translations.py:20
+msgid "Financial"
+msgstr "Financial"
+
+#: core/templatetags/category_translations.py:21
+msgid "Fitness"
+msgstr "Fitness"
+
+#: core/templatetags/category_translations.py:22
+msgid "Food"
+msgstr "Food"
+
+#: core/templatetags/category_translations.py:23
+msgid "General Labor"
+msgstr "General Labor"
+
+#: core/templatetags/category_translations.py:24
+msgid "Healthcare"
+msgstr "Healthcare"
+
+#: core/templatetags/category_translations.py:25 templates/core/home.html:4
+#: templates/navigation/footer.html:9
+msgid "Home"
+msgstr "Home"
+
+#: core/templatetags/category_translations.py:26
+msgid "Landscaping"
+msgstr "Landscaping"
+
+#: core/templatetags/category_translations.py:27
+msgid "Legal"
+msgstr "Legal"
+
+#: core/templatetags/category_translations.py:28
+msgid "Other"
+msgstr "Other"
+
+#: core/templatetags/category_translations.py:29
+msgid "Pet"
+msgstr "Pet"
+
+#: core/templatetags/category_translations.py:30
+msgid "Repair"
+msgstr "Repair"
+
+#: core/templatetags/category_translations.py:31
+msgid "Tech"
+msgstr "Tech"
+
+#: core/templatetags/category_translations.py:32
+msgid "Transportation"
+msgstr "Transportation"
+
+#: core/templatetags/category_translations.py:33
+msgid "Wellness"
+msgstr "Wellness"
+
 #: templates/base.html:15 templates/core/home.html:4
 #: templates/navigation/footer.html:5
 msgid "Saxapahaw Timebank"
 msgstr "Saxapahaw Timebank"
-
-#: templates/core/home.html:4 templates/navigation/footer.html:9
-msgid "Home"
-msgstr "Home"
 
 #: templates/core/home.html:12
 msgid "Saxapahaw River and Dam"
@@ -64,8 +141,8 @@ msgid "Learn More"
 msgstr "Learn More"
 
 #: templates/core/home.html:55 templates/navigation/footer.html:17
-#: templates/navigation/navbar.html:128 templates/navigation/navbar.html:172
-#: templates/navigation/navbar.html:209 templates/navigation/navbar.html:253
+#: templates/navigation/navbar.html:129 templates/navigation/navbar.html:173
+#: templates/navigation/navbar.html:210 templates/navigation/navbar.html:254
 msgid "Services"
 msgstr "Services"
 
@@ -81,8 +158,8 @@ msgstr "Our Values"
 msgid "Saxapahaw Community"
 msgstr "Saxapahaw Community"
 
-#: templates/core/home.html:84 templates/navigation/navbar.html:140
-#: templates/navigation/navbar.html:221
+#: templates/core/home.html:84 templates/navigation/navbar.html:141
+#: templates/navigation/navbar.html:222
 msgid "Community"
 msgstr "Community"
 
@@ -161,14 +238,14 @@ msgstr "Message"
 msgid "Send Message"
 msgstr "Send Message"
 
-#: templates/navigation/footer.html:13 templates/navigation/navbar.html:122
-#: templates/navigation/navbar.html:166 templates/navigation/navbar.html:203
-#: templates/navigation/navbar.html:247
+#: templates/navigation/footer.html:13 templates/navigation/navbar.html:123
+#: templates/navigation/navbar.html:167 templates/navigation/navbar.html:204
+#: templates/navigation/navbar.html:248
 msgid "About"
 msgstr "About"
 
-#: templates/navigation/footer.html:21 templates/navigation/navbar.html:52
-#: templates/navigation/navbar.html:152 templates/navigation/navbar.html:233
+#: templates/navigation/footer.html:21 templates/navigation/navbar.html:56
+#: templates/navigation/navbar.html:153 templates/navigation/navbar.html:234
 msgid "My Account"
 msgstr "My Account"
 
@@ -180,53 +257,57 @@ msgstr "Questions?"
 msgid "Contact Us"
 msgstr "Contact Us"
 
-#: templates/navigation/navbar.html:32
-msgid "Welcome"
-msgstr "Welcome"
-
-#: templates/navigation/navbar.html:61
-msgid "Logout"
-msgstr "Logout"
-
-#: templates/navigation/navbar.html:75
+#: templates/navigation/navbar.html:14 templates/navigation/navbar.html:77
 msgid "Spanish translations are a work in progress"
 msgstr "Spanish translations are a work in progress"
 
-#: templates/navigation/navbar.html:94
+#: templates/navigation/navbar.html:36
+msgid "Welcome"
+msgstr "Welcome"
+
+#: templates/navigation/navbar.html:65
+msgid "Logout"
+msgstr "Logout"
+
+#: templates/navigation/navbar.html:95
 msgid "Login"
 msgstr "Login"
 
-#: templates/navigation/navbar.html:95
+#: templates/navigation/navbar.html:96
 msgid "or"
 msgstr "or"
 
-#: templates/navigation/navbar.html:96
+#: templates/navigation/navbar.html:97
 msgid "Apply"
 msgstr "Apply"
 
-#: templates/navigation/navbar.html:111
+#: templates/navigation/navbar.html:112
 msgid "Saxapahaw"
 msgstr "Saxapahaw"
 
-#: templates/navigation/navbar.html:112
+#: templates/navigation/navbar.html:113
 msgid "Timebank"
 msgstr "Timebank"
 
-#: templates/navigation/navbar.html:134 templates/navigation/navbar.html:215
+#: templates/navigation/navbar.html:135 templates/navigation/navbar.html:216
 msgid "Requests"
 msgstr "Requests"
 
-#: templates/navigation/navbar.html:146 templates/navigation/navbar.html:227
+#: templates/navigation/navbar.html:147 templates/navigation/navbar.html:228
 msgid "My Requests"
 msgstr "My Requests"
 
-#: templates/navigation/navbar.html:159 templates/navigation/navbar.html:240
+#: templates/navigation/navbar.html:160 templates/navigation/navbar.html:241
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/navigation/navbar.html:184
+#: templates/navigation/navbar.html:185
 msgid "Open main menu"
 msgstr "Open main menu"
+
+#~ msgctxt "service_category"
+#~ msgid "Home"
+#~ msgstr "Home"
 
 #~ msgid "Discover all the services our community offers"
 #~ msgstr "Discover all the services our community offers"

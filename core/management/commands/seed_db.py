@@ -25,6 +25,7 @@ CATEGORIES = [
     {"name": "Arts and Crafts", "is_featured": True, "color": "#FF6B6B"},
     {"name": "Beauty", "is_featured": False, "color": "#FF8E8E"},
     {"name": "Caregiving", "is_featured": False, "color": "#FFB3B3"},
+    {"name": "Conversation and Counseling", "is_featured": False, "color": "#FFB3B3"},
     {"name": "Education", "is_featured": False, "color": "#4ECDC4"},
     {"name": "Entertainment", "is_featured": False, "color": "#45B7D1"},
     {"name": "Financial", "is_featured": True, "color": "#96CEB4"},
