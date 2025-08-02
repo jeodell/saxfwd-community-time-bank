@@ -112,10 +112,6 @@ class ServiceTransactionAdmin(admin.ModelAdmin):
         ),
     )
 
-    def has_delete_permission(self, request, obj=None):
-        # Prevent deletion of service transactions for audit purposes
-        return False
-
 
 @admin.register(TimeBankLedger)
 class TimeBankLedgerAdmin(admin.ModelAdmin):
@@ -138,10 +134,6 @@ class TimeBankLedgerAdmin(admin.ModelAdmin):
     )
     date_hierarchy = "created_at"
     readonly_fields = ("created_at",)
-
-    def has_delete_permission(self, request, obj=None):
-        # Prevent deletion of ledger entries for audit purposes
-        return False
 
 
 @admin.register(User)
@@ -323,10 +315,6 @@ class ApplicationAdmin(admin.ModelAdmin):
     )
     actions = ["approve_applications", "reject_applications"]
 
-    def has_delete_permission(self, request, obj=None):
-        # Prevent deletion of applications for audit purposes
-        return False
-
     def user_full_name(self, obj):
         return f"{obj.user.first_name} {obj.user.last_name}"
 
@@ -448,10 +436,6 @@ class RequestTransactionAdmin(admin.ModelAdmin):
         ),
     )
 
-    def has_delete_permission(self, request, obj=None):
-        # Prevent deletion of request transactions for audit purposes
-        return False
-
 
 @admin.register(CommunityHours)
 class CommunityHoursAdmin(admin.ModelAdmin):
@@ -461,10 +445,6 @@ class CommunityHoursAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         # Only allow one instance
         return not CommunityHours.objects.exists()
-
-    def has_delete_permission(self, request, obj=None):
-        # Don't allow deletion of the community hours instance
-        return False
 
     fieldsets = (
         (
