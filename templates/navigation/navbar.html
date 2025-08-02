@@ -72,26 +72,24 @@
       {% else %}
         <div class="hidden md:flex col-span-1 md:col-span-1 lg:col-span-5 items-center justify-start bg-primary"></div>
         <div class="col-span-1 md:col-span-1 lg:col-span-3 flex items-center justify-end bg-secondary pr-4 md:pr-8 space-x-4">
-          <div class="flex items-center">
-            <!-- Translation Status Tooltip -->
-            <div class="relative inline-block">
-              <i class="fas fa-question-circle text-white text-sm cursor-help" title="{% trans 'Spanish translations are a work in progress' %}"></i>
-            </div>
-            <!-- Language Switcher -->
-            <form action="{% url 'set_language' %}" method="post" class="inline">
-              {% csrf_token %}
-              {% get_current_language as LANGUAGE_CODE %}
-              <input name="next" type="hidden" value="{{ request.path_info }}">
-              <select name="language" onchange="submitLanguageForm()" class="bg-secondary text-white text-sm border-0 focus:ring-0 focus:outline-none">
-                {% get_available_languages as LANGUAGES %}
-                {% for code, name in LANGUAGES %}
-                  <option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %} class="bg-white text-gray-900">
-                    {{ name }}
-                  </option>
-                {% endfor %}
-              </select>
-            </form>
+          <!-- Translation Status Tooltip -->
+          <div class="relative inline-block text-white">
+            <i class="fas fa-question-circle text-white text-sm cursor-default" title="{% trans 'Spanish translations are a work in progress' %}"></i>
           </div>
+          <!-- Language Switcher -->
+          <form action="{% url 'set_language' %}" method="post" class="inline">
+            {% csrf_token %}
+            {% get_current_language as LANGUAGE_CODE %}
+            <input name="next" type="hidden" value="{{ request.path_info }}">
+            <select name="language" onchange="submitLanguageForm()" class="bg-secondary text-white border-0 focus:ring-0 focus:outline-none">
+              {% get_available_languages as LANGUAGES %}
+              {% for code, name in LANGUAGES %}
+                <option value="{{ code }}" {% if code == LANGUAGE_CODE %}selected{% endif %} class="bg-white text-gray-900">
+                  {{ name }}
+                </option>
+              {% endfor %}
+            </select>
+          </form>
 
           <div class="flex items-center">
             <a href="{% url 'login' %}" class="text-white hover:text-white/80 uppercase">{% trans "Login" %}</a>
