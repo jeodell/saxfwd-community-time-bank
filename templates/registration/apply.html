@@ -24,7 +24,7 @@
           </div>
         {% endif %}
 
-      <!-- Name Fields -->
+        <!-- Name Fields -->
         <div class="grid grid-cols-2 gap-6">
           <div class="col-span-1 space-y-2">
             <label for="id_first_name" class="text-sm font-semibold text-gray-700">
@@ -62,7 +62,7 @@
           </div>
         </div>
 
-      <!-- Email -->
+        <!-- Email -->
         <div class="space-y-2">
           <label for="id_email" class="text-sm font-semibold text-gray-700">
             Email
@@ -81,7 +81,7 @@
           {% endif %}
         </div>
 
-      <!-- Contact Information -->
+        <!-- Contact Information -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-2">
             <label for="id_phone_number" class="text-sm font-semibold text-gray-700">Phone Number (optional)</label>
@@ -98,7 +98,7 @@
           </div>
         </div>
 
-      <!-- Address -->
+        <!-- Address -->
         <div class="space-y-2">
           <label for="id_address" class="text-sm font-semibold text-gray-700">Street Address or General Location (optional)</label>
           <textarea
@@ -112,7 +112,7 @@
           {% endif %}
         </div>
 
-      <!-- Referral Member -->
+        <!-- Referral Member -->
         <div class="space-y-2">
           <label for="id_referral_member" class="text-sm font-semibold text-gray-700">
             Referral Member
@@ -140,7 +140,7 @@
           {% endif %}
         </div>
 
-      <!-- Writeup -->
+        <!-- Writeup -->
         <div class="space-y-2">
           <label for="id_writeup" class="text-sm font-semibold text-gray-700">
             Why do you want to join?
@@ -161,7 +161,32 @@
           {% endif %}
         </div>
 
-      <!-- Terms -->
+        <!-- Age Verification -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-3">
+            <div class="h-5">
+              <input
+                type="checkbox"
+                name="age_verification"
+                id="id_age_verification"
+                {% if form.age_verification.value %}checked{% endif %}
+                required
+                class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div class="text-sm">
+              <label for="id_age_verification" class="font-semibold text-gray-700">
+                I confirm that I am 18 years of age or older, or I have received permission from a parent or guardian to apply to join the Saxapahaw Timebank.
+                <span class="text-red-500">*</span>
+              </label>
+            </div>
+          </div>
+          {% if form.age_verification.errors %}
+            <p class="mt-2 text-sm text-red-600">{{ form.age_verification.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Terms -->
         <div class="space-y-2">
           <div class="flex items-center gap-3">
             <div class="h-5">

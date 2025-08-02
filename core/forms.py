@@ -28,9 +28,11 @@ class UserApplicationForm(forms.ModelForm):
         help_text="Please select the existing member who referred you to the timebank. If you have no referral member, please select 'No referral member'.",
         empty_label="Select a referral member",
     )
-    writeup = forms.CharField(
+    writeup = forms.CharField(required=True)
+    age_verification = forms.BooleanField(
         required=True,
-        help_text="Please tell us why you want to join the Saxapahaw Timebank and how you plan to contribute to our community.",
+        label="I confirm that I am at least 18 years old or I have received permission from a parent or guardian to apply to join the Saxapahaw Timebank.",
+        error_messages={"required": "You must confirm your age to apply."},
     )
     terms_accepted = forms.BooleanField(
         required=True,
@@ -48,6 +50,7 @@ class UserApplicationForm(forms.ModelForm):
             "address",
             "referral_member",
             "writeup",
+            "age_verification",
             "terms_accepted",
         ]
 
