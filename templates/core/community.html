@@ -154,7 +154,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {{ transaction.created_at|date:"M d, Y" }}
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-900">{{ transaction.description }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 whitespace-pre-line">{{ transaction.description }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {% if transaction.from_user %}
                         {% if transaction.from_user == "Community" %}

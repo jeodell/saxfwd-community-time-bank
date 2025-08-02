@@ -144,7 +144,7 @@
                         {% if request.is_fully_staffed %}Fully Staffed{% else %}{{ request.accepted_offers_count }}/{{ request.num_users_needed }} Staffed{% endif %}
                       </span>
                     </div>
-                    <p class="text-gray-600 mb-4">{{ request.description }}</p>
+                    <div class="text-gray-600 mb-4 whitespace-pre-line">{{ request.description }}</div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div>

@@ -122,25 +122,25 @@
           <div class="prose max-w-none">
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Request Description</h2>
             <div class="rounded-lg p-6 mb-6">
-              <p class="text-gray-600">{{ request.description }}</p>
+              <div class="text-gray-600 whitespace-pre-line">{{ request.description }}</div>
             </div>
 
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Service Information</h2>
             <div class="rounded-lg p-6">
-              <p class="text-gray-600">{{ request.service.description }}</p>
+              <div class="text-gray-600 whitespace-pre-line">{{ request.service.description }}</div>
             </div>
 
             {% if request.status == 'rejected' and request.rejection_reason %}
               <h2 class="text-xl font-semibold text-gray-900 mb-4 mt-8">Rejection Reason</h2>
               <div class="rounded-lg p-6 bg-red-50 border border-red-100">
-                <p class="text-red-800">{{ request.rejection_reason }}</p>
+                <div class="text-red-800 whitespace-pre-line">{{ request.rejection_reason }}</div>
               </div>
             {% endif %}
 
             {% if request.status == 'canceled' and request.cancellation_reason %}
               <h2 class="text-xl font-semibold text-gray-900 mb-4 mt-8">Cancellation Reason</h2>
               <div class="rounded-lg p-6 bg-red-50 border border-red-100">
-                <p class="text-red-800">{{ request.cancellation_reason }}</p>
+                <div class="text-red-800 whitespace-pre-line">{{ request.cancellation_reason }}</div>
               </div>
             {% endif %}
           </div>

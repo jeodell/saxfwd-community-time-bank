@@ -159,7 +159,7 @@
             <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
             <ul class="py-2 space-y-4 flex flex-col items-center">
               {% for service in services %}
-                <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold">
+                <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold text-center">
                   <a href="{% url 'service_detail' service.id %}">{{ service.title }}</a>
                 </li>
               {% empty %}
@@ -182,7 +182,7 @@
             <div class="border-t-2 border-primary my-2 w-full max-w-[28ch] mx-auto"></div>
             <ul class="py-2 space-y-4 flex flex-col items-center">
               {% for request in requests %}
-                <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold">
+                <li class="text-primary hover:text-primary-light transition-colors duration-200 text-base font-semibold text-center">
                   <a href="{% url 'request_detail' request.id %}">{{ request.title }}</a>
                 </li>
               {% empty %}
@@ -218,7 +218,7 @@
                   {% for transaction in all_credits %}
                     <li class="flex items-center text-gray-800 text-sm">
                       <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="pl-2 font-medium whitespace-pre-line">{{ transaction.description }}</span>
                       <span class="flex-1 border-b border-primary py-1 mx-2"></span>
                       <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                     </li>
@@ -235,7 +235,7 @@
                   {% for transaction in all_debits %}
                     <li class="flex items-center text-gray-800 text-sm">
                       <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="pl-2 font-medium whitespace-pre-line">{{ transaction.description }}</span>
                       <span class="flex-1 border-b border-primary py-1 mx-2"></span>
                       <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                     </li>
@@ -252,7 +252,7 @@
                   {% for transaction in community_donations %}
                     <li class="flex items-center text-gray-800 text-sm">
                       <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="pl-2 font-medium whitespace-pre-line">{{ transaction.description }}</span>
                       <span class="flex-1 border-b border-primary py-1 mx-2"></span>
                       <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                     </li>
@@ -269,7 +269,7 @@
                   {% for transaction in community_requests %}
                     <li class="flex items-center text-gray-800 text-sm">
                       <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="pl-2 font-medium whitespace-pre-line">{{ transaction.description }}</span>
                       <span class="flex-1 border-b border-primary py-1 mx-2"></span>
                       <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                     </li>
@@ -286,7 +286,7 @@
                   {% for transaction in user_donations %}
                     <li class="flex items-center text-gray-800 text-sm">
                       <span class="w-16 shrink-0">{{ transaction.created_at|date:"n/j/y" }}</span>
-                      <span class="pl-2 font-medium">{{ transaction.description }}</span>
+                      <span class="pl-2 font-medium whitespace-pre-line">{{ transaction.description }}</span>
                       <span class="flex-1 border-b border-primary py-1 mx-2"></span>
                       <span class="font-bold shrink-0">{{ transaction.hours }} Hour{{ transaction.hours|pluralize }}</span>
                     </li>
