@@ -118,7 +118,7 @@ class CommunityView(LoginRequiredMixin, ListView):
             context["user_time_balance"] = self.request.user.time_balance
 
         # Add community members data
-        context["users"] = User.objects.all().order_by("last_name")
+        context["users"] = User.objects.all().order_by("-date_joined")
 
         return context
 
