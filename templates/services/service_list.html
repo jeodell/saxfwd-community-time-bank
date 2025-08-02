@@ -87,12 +87,26 @@
           <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col">
             <div class="p-6 flex flex-col h-full">
               <div class="flex-1">
-                <h2 class="text-lg font-semibold text-gray-900 mb-2">{{ service.title }}</h2>
+                <a href="{% url 'service_detail' service.pk %}" class="hover:text-primary transition-colors duration-200">
+                  <h2 class="text-lg font-semibold text-gray-900 mb-2">
+                    {{ service.title }}
+                  </h2>
+                </a>
                 <div class="text-gray-600 mb-4 whitespace-pre-line">{{ service.description|truncatewords:20 }}</div>
                 <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center text-sm text-gray-500">
-                    <i class="fas fa-user-circle mr-2"></i>
-                    {{ service.provider.first_name }} {{ service.provider.last_name }}
+                  <div class="flex items-center text-sm text-gray-500 space-x-2">
+                    {% if service.provider.image %}
+                      <img
+                        src="{{ service.provider.image.url }}"
+                        alt="Provider Image"
+                        class="w-4 h-4 rounded-full object-cover border-2 border-primary"
+                      />
+                    {% else %}
+                      <i class="fas fa-user-circle text-gray-400"></i>
+                    {% endif %}
+                    <a href="{% url 'user' service.provider.id %}" class="hover:text-primary transition-colors duration-200">
+                      {{ service.provider.first_name }} {{ service.provider.last_name }}
+                    </a>
                   </div>
                 </div>
               </div>

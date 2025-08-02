@@ -176,7 +176,7 @@ class ServiceTransactionView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
     def get_success_url(self):
-        return reverse_lazy("request_detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy("service_transaction_detail", kwargs={"pk": self.object.pk})
 
 
 class ServiceTransactionDetailView(LoginRequiredMixin, DetailView):
@@ -232,7 +232,7 @@ class ServiceTransactionAcceptView(LoginRequiredMixin, View):
             messages.success(request, "Request accepted successfully!")
         except ValueError as e:
             messages.error(request, str(e))
-        return redirect("service_detail", pk=pk)
+        return redirect("service_transaction_detail", pk=pk)
 
 
 class ServiceTransactionRejectView(LoginRequiredMixin, View):
@@ -255,7 +255,7 @@ class ServiceTransactionRejectView(LoginRequiredMixin, View):
                 request, "Please provide a reason for rejecting the request."
             )
 
-        return redirect("service_detail", pk=pk)
+        return redirect("service_transaction_detail", pk=pk)
 
 
 class ServiceTransactionCancelView(LoginRequiredMixin, View):
@@ -276,7 +276,7 @@ class ServiceTransactionCancelView(LoginRequiredMixin, View):
         else:
             messages.error(request, "There was an error processing your request.")
 
-        return redirect("service_detail", pk=pk)
+        return redirect("service_transaction_detail", pk=pk)
 
 
 class ServiceTransactionCompleteView(LoginRequiredMixin, View):
@@ -299,7 +299,7 @@ class ServiceTransactionCompleteView(LoginRequiredMixin, View):
             messages.error(request, str(e))
             return redirect("home")
 
-        return redirect("service_detail", pk=pk)
+        return redirect("service_transaction_detail", pk=pk)
 
 
 class ServiceTransactionCompleteFormView(LoginRequiredMixin, View):
@@ -321,7 +321,7 @@ class ServiceTransactionCompleteFormView(LoginRequiredMixin, View):
         # Check if request is in a state that can be completed
         if service_transaction.status != "accepted":
             messages.error(request, "This request cannot be completed at this time.")
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         # Check if user has already completed their part
         if (
@@ -331,7 +331,7 @@ class ServiceTransactionCompleteFormView(LoginRequiredMixin, View):
             messages.error(
                 request, "You have already marked this request as completed."
             )
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
         if (
             request.user == service_transaction.requester
             and service_transaction.requester_completed
@@ -339,7 +339,7 @@ class ServiceTransactionCompleteFormView(LoginRequiredMixin, View):
             messages.error(
                 request, "You have already confirmed this request as completed."
             )
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         form = ServiceTransactionCompleteForm(
             initial={"hours_completed": service_transaction.hours_requested}
@@ -364,7 +364,7 @@ class ServiceTransactionCompleteFormView(LoginRequiredMixin, View):
         # Check if request is in a state that can be completed
         if service_transaction.status != "accepted":
             messages.error(request, "This request cannot be completed at this time.")
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         # Check if user has already completed their part
         if (
@@ -374,7 +374,7 @@ class ServiceTransactionCompleteFormView(LoginRequiredMixin, View):
             messages.error(
                 request, "You have already marked this request as completed."
             )
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
         if (
             request.user == service_transaction.requester
             and service_transaction.requester_completed
@@ -382,7 +382,7 @@ class ServiceTransactionCompleteFormView(LoginRequiredMixin, View):
             messages.error(
                 request, "You have already confirmed this request as completed."
             )
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         form = ServiceTransactionCompleteForm(request.POST)
         if form.is_valid():
@@ -403,9 +403,9 @@ class ServiceTransactionCompleteFormView(LoginRequiredMixin, View):
                     )
             except ValueError as e:
                 messages.error(request, str(e))
-                return redirect("service_detail", pk=pk)
+                return redirect("service_transaction_detail", pk=pk)
 
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         return render(
             request, self.template_name, {"request": service_transaction, "form": form}
@@ -419,7 +419,7 @@ class ServiceTransactionCommunityHoursView(LoginRequiredMixin, View):
             messages.error(
                 request, "This request cannot be converted to a community request."
             )
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
         return render(
             request,
             "services/service_transaction_form.html",
@@ -432,24 +432,24 @@ class ServiceTransactionCommunityHoursView(LoginRequiredMixin, View):
             messages.error(
                 request, "Only the requester can convert to a community request."
             )
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         if not service_transaction.can_request_community_hours():
             messages.error(
                 request, "This request cannot be converted to a community request."
             )
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         reason = request.POST.get("reason", "")
         if not reason:
             messages.error(
                 request, "Please provide a reason for requesting community hours."
             )
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         service_transaction.request_community_hours(reason)
         messages.success(request, "Community hours request submitted successfully!")
-        return redirect("service_detail", pk=pk)
+        return redirect("service_transaction_detail", pk=pk)
 
 
 class ServiceTransactionCommunityHoursApproveView(LoginRequiredMixin, View):
@@ -457,7 +457,7 @@ class ServiceTransactionCommunityHoursApproveView(LoginRequiredMixin, View):
         service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
         if not service_transaction.can_be_approved():
             messages.error(request, "This request cannot be approved.")
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
         return render(
             request,
             "requests/community_request_review.html",
@@ -468,7 +468,7 @@ class ServiceTransactionCommunityHoursApproveView(LoginRequiredMixin, View):
         service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
         if not service_transaction.can_be_approved():
             messages.error(request, "This request cannot be approved.")
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         notes = request.POST.get("notes", "")
         try:
@@ -476,7 +476,7 @@ class ServiceTransactionCommunityHoursApproveView(LoginRequiredMixin, View):
             messages.success(request, "Community hours request approved successfully!")
         except ValueError as e:
             messages.error(request, str(e))
-        return redirect("service_detail", pk=pk)
+        return redirect("service_transaction_detail", pk=pk)
 
 
 class ServiceTransactionCommunityHoursRejectView(LoginRequiredMixin, View):
@@ -484,7 +484,7 @@ class ServiceTransactionCommunityHoursRejectView(LoginRequiredMixin, View):
         service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
         if not service_transaction.can_be_rejected():
             messages.error(request, "This request cannot be rejected.")
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
         return render(
             request,
             "requests/community_request_review.html",
@@ -495,9 +495,9 @@ class ServiceTransactionCommunityHoursRejectView(LoginRequiredMixin, View):
         service_transaction = get_object_or_404(ServiceTransaction, pk=pk)
         if not service_transaction.can_be_rejected():
             messages.error(request, "This request cannot be rejected.")
-            return redirect("service_detail", pk=pk)
+            return redirect("service_transaction_detail", pk=pk)
 
         notes = request.POST.get("notes", "")
         service_transaction.reject_community_request(request.user, notes)
         messages.success(request, "Community hours request rejected.")
-        return redirect("service_detail", pk=pk)
+        return redirect("service_transaction_detail", pk=pk)

@@ -119,7 +119,7 @@
         <div class="md:col-span-2">
           <div class="prose max-w-none">
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Description</h2>
-            <p class="text-gray-600 mb-6">{{ request.description }}</p>
+            <div class="text-gray-600 mb-6 whitespace-pre-line">{{ request.description }}</div>
 
             {% if request.preferred_date %}
               <h2 class="text-xl font-semibold text-gray-900 mb-4">Preferred Date</h2>
@@ -129,13 +129,8 @@
               <p class="text-gray-600 mb-6">{{ request.estimated_hours }} hours</p>
             {% endif %}
 
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Help Needed</h2>
-            <div class="space-y-4">
-              <div>
-                <p class="text-sm font-medium text-gray-500">Number of People Needed</p>
-                <p class="text-gray-600">{{ request.num_users_needed }} person{{ request.num_users_needed|pluralize }}</p>
-              </div>
-            </div>
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Number of People Needed</h2>
+            <p class="text-gray-600 mb-6">{{ request.num_users_needed }} person{{ request.num_users_needed|pluralize }}</p>
           </div>
         </div>
 
@@ -146,11 +141,21 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Requested By</h3>
             <div class="flex items-center space-x-4">
               <div class="flex-shrink-0">
-                <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+                {% if request.requester.image %}
+                  <img
+                    src="{{ request.requester.image.url }}"
+                    alt="Requester Image"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-primary"
+                  />
+                {% else %}
+                  <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+                {% endif %}
               </div>
               <div>
                 <p class="text-sm font-medium text-gray-900">
-                  {{ request.requester.first_name }} {{ request.requester.last_name }}
+                  <a href="{% url 'user' request.requester.id %}" class="hover:text-primary transition-colors duration-200">
+                    {{ request.requester.first_name }} {{ request.requester.last_name }}
+                  </a>
                 </p>
                 <p class="text-sm text-gray-500">Member since {{ request.requester.date_joined|date:"F Y" }}</p>
               </div>

@@ -47,48 +47,49 @@ urlpatterns = [
         ServiceTransactionView.as_view(),
         name="service_transaction",
     ),
+    # ServiceTransaction URLs
     path(
-        "<uuid:pk>/",
+        "transaction/<uuid:pk>/",
         ServiceTransactionDetailView.as_view(),
         name="service_transaction_detail",
     ),
     path(
-        "<uuid:pk>/accept/",
+        "transaction/<uuid:pk>/accept/",
         ServiceTransactionAcceptView.as_view(),
         name="service_transaction_accept",
     ),
     path(
-        "<uuid:pk>/reject/",
+        "transaction/<uuid:pk>/reject/",
         ServiceTransactionRejectView.as_view(),
         name="service_transaction_reject",
     ),
     path(
-        "<uuid:pk>/cancel/",
+        "transaction/<uuid:pk>/cancel/",
         ServiceTransactionCancelView.as_view(),
         name="service_transaction_cancel",
     ),
     path(
-        "<uuid:pk>/complete/",
+        "transaction/<uuid:pk>/complete/",
         ServiceTransactionCompleteFormView.as_view(),
         name="service_transaction_complete_form",
     ),
     path(
-        "<uuid:pk>/complete-action/",
+        "transaction/<uuid:pk>/complete-action/",
         ServiceTransactionCompleteView.as_view(),
         name="service_transaction_complete",
     ),
     path(
-        "<uuid:pk>/community/",
+        "transaction/<uuid:pk>/community/",
         ServiceTransactionCommunityHoursView.as_view(),
         name="community_service_transaction",
     ),
     path(
-        "<uuid:pk>/community/approve/",
+        "transaction/<uuid:pk>/community/approve/",
         ServiceTransactionCommunityHoursApproveView.as_view(),
         name="community_service_transaction_approve",
     ),
     path(
-        "<uuid:pk>/community/reject/",
+        "transaction/<uuid:pk>/community/reject/",
         ServiceTransactionCommunityHoursRejectView.as_view(),
         name="community_service_transaction_reject",
     ),

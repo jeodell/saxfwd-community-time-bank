@@ -87,13 +87,13 @@
         <div class="md:col-span-2">
           <div class="prose max-w-none">
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Description</h2>
-            <p class="text-gray-600 mb-6">{{ service.description }}</p>
+            <div class="text-gray-600 mb-6 whitespace-pre-line">{{ service.description }}</div>
 
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Availability</h2>
-            <p class="text-gray-600 mb-6">{{ service.availability|default:"No availability specified" }}</p>
+            <div class="text-gray-600 mb-6 whitespace-pre-line">{{ service.availability|default:"No availability specified" }}</div>
 
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Experience</h2>
-            <p class="text-gray-600 mb-6">{{ service.experience|default:"No experience specified" }}</p>
+            <div class="text-gray-600 mb-6 whitespace-pre-line">{{ service.experience|default:"No experience specified" }}</div>
 
             {% if service.max_hours or service.max_hours_per_month %}
               <h2 class="text-xl font-semibold text-gray-900 mb-4">Service Limits</h2>
@@ -130,11 +130,21 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Service Provider</h3>
             <div class="flex items-center space-x-4">
               <div class="flex-shrink-0">
-                <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+                {% if service.provider.image %}
+                  <img
+                    src="{{ service.provider.image.url }}"
+                    alt="Provider Image"
+                    class="w-12 h-12 rounded-full object-cover border-2 border-primary"
+                  />
+                {% else %}
+                  <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+                {% endif %}
               </div>
               <div>
                 <p class="text-sm font-medium text-gray-900">
-                  {{ service.provider.first_name }} {{ service.provider.last_name }}
+                  <a href="{% url 'user' service.provider.id %}" class="hover:text-primary transition-colors duration-200">
+                    {{ service.provider.first_name }} {{ service.provider.last_name }}
+                  </a>
                 </p>
                 <p class="text-sm text-gray-500">Member since {{ service.provider.date_joined|date:"F Y" }}</p>
               </div>

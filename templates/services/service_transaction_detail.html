@@ -1,17 +1,17 @@
 
 {% extends 'base.html' %}
-{% block title %}Request Details - Saxapahaw Timebank{% endblock %}
+{% block title %}Service Transaction Details - Saxapahaw Timebank{% endblock %}
 {% block content %}
   <div class="max-w-7xl mx-auto p-8">
     <div class="bg-white rounded-lg shadow-sm p-8">
     <!-- Back Button -->
       <div class="mb-6">
         <a
-          href="{% url 'request_list' %}"
+          href="{% url 'service_list' %}"
           class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-primary transition-colors duration-200"
         >
           <i class="fas fa-arrow-left mr-2"></i>
-          Back to Requests
+          Back to Services
         </a>
       </div>
 
@@ -31,9 +31,18 @@
                 {{ request.get_status_display }}
               </span>
               <span class="text-sm text-gray-500">
-                <i class="fas fa-user-circle mr-1"></i>
-
-                {{ request.service.provider.first_name }} {{ request.service.provider.last_name }}
+                {% if request.service.provider.image %}
+                  <img
+                    src="{{ request.service.provider.image.url }}"
+                    alt="Provider Image"
+                    class="w-4 h-4 rounded-full object-cover border-2 border-primary mr-2"
+                  />
+                {% else %}
+                  <i class="fas fa-user-circle mr-2"></i>
+                {% endif %}
+                <a href="{% url 'user' request.service.provider.id %}" class="hover:text-primary transition-colors duration-200">
+                  {{ request.service.provider.first_name }} {{ request.service.provider.last_name }}
+                </a>
               </span>
               <span class="text-sm text-gray-500">
                 <i class="fas fa-clock mr-1"></i>
@@ -187,32 +196,43 @@
             <div class="space-y-6">
               <div>
                 <h4 class="text-sm font-medium text-gray-500 mb-2">Requester</h4>
-                <div class="flex items-center space-x-3">
-                  <i class="fas fa-user-circle text-2xl text-gray-400"></i>
+                <div class="flex items-center space-x-2">
+                  {% if request.requester.image %}
+                    <img
+                      src="{{ request.requester.image.url }}"
+                      alt="Requester Image"
+                      class="w-4 h-4 rounded-full object-cover border-2 border-primary"
+                    />
+                  {% else %}
+                    <i class="fas fa-user-circle text-gray-400"></i>
+                  {% endif %}
                   <div>
-                    <p class="text-sm font-medium text-gray-900">
-                      {{ request.requester.first_name }} {{ request.requester.last_name }}
-                    </p>
                     <a href="{% url 'user' request.requester.id %}" class="text-sm text-primary hover:text-primary">
-                      View Account
+                      <p class="text-sm font-medium text-gray-900">
+                        {{ request.requester.first_name }} {{ request.requester.last_name }}
+                      </p>
                     </a>
                   </div>
                 </div>
               </div>
               <div>
                 <h4 class="text-sm font-medium text-gray-500 mb-2">Provider</h4>
-                <div class="flex items-center space-x-3">
-                  <i class="fas fa-user-circle text-2xl text-gray-400"></i>
+                <div class="flex items-center space-x-2">
+                  {% if request.service.provider.image %}
+                    <img
+                      src="{{ request.service.provider.image.url }}"
+                      alt="Provider Image"
+                      class="w-4 h-4 rounded-full object-cover border-2 border-primary"
+                    />
+                  {% else %}
+                    <i class="fas fa-user-circle text-gray-400"></i>
+                  {% endif %}
                   <div>
                     <p class="text-sm font-medium text-gray-900">
-                      {{ request.service.provider.first_name }} {{ request.service.provider.last_name }}
+                      <a href="{% url 'user' request.service.provider.id %}" class="text-sm text-primary hover:text-primary">
+                        {{ request.service.provider.first_name }} {{ request.service.provider.last_name }}
+                      </a>
                     </p>
-                    <a
-                      href="{% url 'user' request.service.provider.id %}"
-                      class="text-sm text-primary hover:text-primary"
-                    >
-                      View Account
-                    </a>
                   </div>
                 </div>
               </div>

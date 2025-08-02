@@ -31,7 +31,7 @@
               href="{% url 'request_list' %}?view=my_requests{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}"
               class="{% if request.GET.view == 'my_requests' %}border-primary text-primary{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
             >
-              <i class="fas fa-user-circle mr-2"></i>
+              <i class="fas fa-user-circle text-gray-400"></i>
               My Requests
             </a>
           </nav>
@@ -124,7 +124,11 @@
                 <div class="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
                   <div class="flex-1">
                     <div class="flex items-center space-x-3 mb-2">
-                      <h3 class="text-xl font-semibold text-gray-900">{{ request.title }}</h3>
+                      <a href="{% url 'request_detail' request.pk %}" class="hover:text-primary transition-colors duration-200">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                          {{ request.title }}
+                        </h3>
+                      </a>
                     </div>
                     <div class="flex flex-wrap gap-2 mb-4">
                       <span
@@ -149,8 +153,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div>
                         <p class="text-gray-500">Requested by</p>
-                        <p class="font-medium text-gray-900">
-                          {{ request.requester.first_name }} {{ request.requester.last_name }}
+                        <p class="font-medium text-gray-900 flex items-center space-x-2">
+                          {% if request.requester.image %}
+                            <img
+                              src="{{ request.requester.image.url }}"
+                              alt="Requester Image"
+                              class="w-4 h-4 rounded-full object-cover border-2 border-primary"
+                            />
+                          {% else %}
+                            <i class="fas fa-user-circle text-gray-400"></i>
+                          {% endif %}
+                          <a href="{% url 'user' request.requester.id %}" class="hover:text-primary transition-colors duration-200">
+                            {{ request.requester.first_name }} {{ request.requester.last_name }}
+                          </a>
                         </p>
                       </div>
                       <div>
