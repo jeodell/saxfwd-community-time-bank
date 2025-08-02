@@ -159,6 +159,11 @@ class ServiceTransactionView(LoginRequiredMixin, CreateView):
     form_class = ServiceTransactionForm
     template_name = "services/service_transaction_form.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["service"] = get_object_or_404(Service, pk=self.kwargs["pk"])

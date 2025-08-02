@@ -135,12 +135,35 @@ class UserDonationView(LoginRequiredMixin, View):
             messages.error(request, "Please enter a valid number of hours.")
             return redirect("user", pk=recipient_id)
 
-        # Check if donor has enough hours
+        # Check if donor has enough hours and won't go below 0 hours
         donor_balance = request.user.time_balance
         if donor_balance < hours:
             messages.error(
                 request, f"You only have {donor_balance} hours available to donate."
             )
+            return redirect("user", pk=recipient_id)
+
+        # Check if donation would put donor below 0 hours
+        if not request.user.can_afford_hours(hours, is_donation=True):
+            effective_balance = request.user.get_effective_balance()
+            pending_hours = request.user.get_pending_hours()
+            new_balance = request.user.get_minimum_balance_after_transaction(hours)
+
+            if pending_hours > 0:
+                messages.error(
+                    request,
+                    f"This donation would put your effective balance at {new_balance} hours, which is below the minimum of 0 hours. "
+                    f"Your current balance is {donor_balance} hours, but you have {pending_hours} hours in pending transactions. "
+                    f"Your effective balance is {effective_balance} hours. "
+                    f"Please reduce the donation amount, complete pending transactions, or earn more hours before making this donation.",
+                )
+            else:
+                messages.error(
+                    request,
+                    f"This donation would put your balance at {new_balance} hours, which is below the minimum of 0 hours. "
+                    f"Your current balance is {donor_balance} hours. "
+                    f"Please reduce the donation amount or earn more hours before making this donation.",
+                )
             return redirect("user", pk=recipient_id)
 
         # Create the donation transaction

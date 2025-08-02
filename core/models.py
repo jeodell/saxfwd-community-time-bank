@@ -120,6 +120,70 @@ class User(AbstractUser):
             service_debits + request_debits + community_donations + user_donation_debits
         )
 
+    def get_pending_hours(self):
+        """
+        Calculate total hours from pending transactions (service and request).
+
+        Returns:
+            Decimal: Total hours from pending transactions
+        """
+        # Get pending service transactions where user is the requester
+        pending_service_hours = ServiceTransaction.objects.filter(
+            requester=self, status__in=["pending", "accepted"]
+        ).aggregate(total=models.Sum("hours_requested"))["total"] or Decimal("0.00")
+
+        # Get pending request transactions where user is the requester
+        pending_request_hours = RequestTransaction.objects.filter(
+            request__requester=self, status__in=["pending", "accepted"]
+        ).aggregate(total=models.Sum("proposed_hours"))["total"] or Decimal("0.00")
+
+        return pending_service_hours + pending_request_hours
+
+    def get_effective_balance(self):
+        """
+        Calculate effective balance by subtracting pending hours from current balance.
+
+        Returns:
+            Decimal: Effective balance (current balance - pending hours)
+        """
+        current_balance = self.time_balance
+        pending_hours = self.get_pending_hours()
+        return current_balance - pending_hours
+
+    def can_afford_hours(self, hours_to_spend, is_donation=False):
+        """
+        Check if user can afford to spend the given hours without going below the limit
+        This includes pending transactions in the calculation.
+
+        Args:
+            hours_to_spend: Decimal, the number of hours to spend
+            is_donation: bool, if True, requires positive balance (no negative allowed)
+
+        Returns:
+            bool: True if user can afford the hours, False otherwise
+        """
+        effective_balance = self.get_effective_balance()
+        new_balance = effective_balance - hours_to_spend
+
+        if is_donation:
+            return new_balance >= Decimal("0.00")
+        else:
+            return new_balance >= Decimal("-3.00")
+
+    def get_minimum_balance_after_transaction(self, hours_to_spend):
+        """
+        Calculate what the user's effective balance would be after spending the given hours.
+        This includes pending transactions in the calculation.
+
+        Args:
+            hours_to_spend: Decimal, the number of hours to spend
+
+        Returns:
+            Decimal: The effective balance after the transaction
+        """
+        effective_balance = self.get_effective_balance()
+        return effective_balance - hours_to_spend
+
     @property
     def total_hours_earned(self):
         """Calculate total hours earned from ledger entries."""
@@ -526,6 +590,24 @@ class ServiceTransaction(models.Model):
             provider = self.service.provider
             requester = self.requester
 
+            # Check if requester can afford the hours before creating ledger entries
+            if not requester.can_afford_hours(hours):
+                effective_balance = requester.get_effective_balance()
+                pending_hours = requester.get_pending_hours()
+                new_balance = requester.get_minimum_balance_after_transaction(hours)
+
+                if pending_hours > 0:
+                    raise ValueError(
+                        f"Cannot complete this transaction. The requester's effective balance would be {new_balance} hours, "
+                        f"which is below the minimum of -3 hours. Current balance: {requester.time_balance} hours, "
+                        f"pending hours: {pending_hours} hours, effective balance: {effective_balance} hours."
+                    )
+                else:
+                    raise ValueError(
+                        f"Cannot complete this transaction. The requester's balance would be {new_balance} hours, "
+                        f"which is below the minimum of -3 hours. Current balance: {requester.time_balance} hours."
+                    )
+
             # Create ledger entries for the transaction
             TimeBankLedger.objects.create(
                 user=provider,
@@ -777,6 +859,24 @@ class RequestTransaction(models.Model):
             )
             provider = self.provider
             requester = self.request.requester
+
+            # Check if requester can afford the hours before creating ledger entries
+            if not requester.can_afford_hours(hours):
+                effective_balance = requester.get_effective_balance()
+                pending_hours = requester.get_pending_hours()
+                new_balance = requester.get_minimum_balance_after_transaction(hours)
+
+                if pending_hours > 0:
+                    raise ValueError(
+                        f"Cannot complete this transaction. The requester's effective balance would be {new_balance} hours, "
+                        f"which is below the minimum of -3 hours. Current balance: {requester.time_balance} hours, "
+                        f"pending hours: {pending_hours} hours, effective balance: {effective_balance} hours."
+                    )
+                else:
+                    raise ValueError(
+                        f"Cannot complete this transaction. The requester's balance would be {new_balance} hours, "
+                        f"which is below the minimum of -3 hours. Current balance: {requester.time_balance} hours."
+                    )
 
             # Create ledger entries for the transaction
             TimeBankLedger.objects.create(

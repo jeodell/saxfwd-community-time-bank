@@ -178,11 +178,75 @@ class ServiceTransactionForm(forms.ModelForm):
         model = ServiceTransaction
         fields = ["requested_date", "hours_requested", "description"]
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+    def clean_hours_requested(self):
+        hours_requested = self.cleaned_data.get("hours_requested")
+
+        if self.user and hours_requested:
+            if not self.user.can_afford_hours(hours_requested):
+                current_balance = self.user.time_balance
+                effective_balance = self.user.get_effective_balance()
+                pending_hours = self.user.get_pending_hours()
+                new_balance = self.user.get_minimum_balance_after_transaction(
+                    hours_requested
+                )
+
+                if pending_hours > 0:
+                    raise forms.ValidationError(
+                        f"This transaction would put your effective balance at {new_balance} hours, which is below the minimum of -3 hours. "
+                        f"Your current balance is {current_balance} hours, but you have {pending_hours} hours in pending transactions. "
+                        f"Your effective balance is {effective_balance} hours. "
+                        f"Please reduce the hours requested, complete pending transactions, or earn more hours before making this request."
+                    )
+                else:
+                    raise forms.ValidationError(
+                        f"This transaction would put your balance at {new_balance} hours, which is below the minimum of -3 hours. "
+                        f"Your current balance is {current_balance} hours. "
+                        f"Please reduce the hours requested or earn more hours before making this request."
+                    )
+
+        return hours_requested
+
 
 class RequestTransactionForm(forms.ModelForm):
     class Meta:
         model = RequestTransaction
         fields = ["proposed_hours", "message"]
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+    def clean_proposed_hours(self):
+        proposed_hours = self.cleaned_data.get("proposed_hours")
+
+        if self.user and proposed_hours:
+            if not self.user.can_afford_hours(proposed_hours):
+                current_balance = self.user.time_balance
+                effective_balance = self.user.get_effective_balance()
+                pending_hours = self.user.get_pending_hours()
+                new_balance = self.user.get_minimum_balance_after_transaction(
+                    proposed_hours
+                )
+
+                if pending_hours > 0:
+                    raise forms.ValidationError(
+                        f"This transaction would put your effective balance at {new_balance} hours, which is below the minimum of -3 hours. "
+                        f"Your current balance is {current_balance} hours, but you have {pending_hours} hours in pending transactions. "
+                        f"Your effective balance is {effective_balance} hours. "
+                        f"Please reduce the hours proposed, complete pending transactions, or earn more hours before making this offer."
+                    )
+                else:
+                    raise forms.ValidationError(
+                        f"This transaction would put your balance at {new_balance} hours, which is below the minimum of -3 hours. "
+                        f"Your current balance is {current_balance} hours. "
+                        f"Please reduce the hours proposed or earn more hours before making this offer."
+                    )
+
+        return proposed_hours
 
 
 class UserForm(forms.ModelForm):

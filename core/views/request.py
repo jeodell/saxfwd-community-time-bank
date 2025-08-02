@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Q, Count, F
+from django.db.models import Count, F, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -13,12 +13,12 @@ from django.views.generic import (
 
 from ..forms import (
     RequestForm,
-    RequestTransactionForm,
-    RequestTransactionCompleteForm,
-    RequestTransactionRejectForm,
     RequestTransactionCancelForm,
+    RequestTransactionCompleteForm,
+    RequestTransactionForm,
+    RequestTransactionRejectForm,
 )
-from ..models import Request, RequestTransaction, ServiceTransaction, ServiceCategory
+from ..models import Request, RequestTransaction, ServiceCategory, ServiceTransaction
 
 
 class UserRequestListView(LoginRequiredMixin, ListView):
@@ -169,14 +169,12 @@ class RequestListView(LoginRequiredMixin, ListView):
 
             # Exclude fully staffed requests for public view
             queryset = queryset.exclude(
-                id__in=Request.objects.filter(
-                    is_active=True,
-                    is_deleted=False
-                ).annotate(
-                    accepted_count=Count('offers', filter=Q(offers__status='accepted'))
-                ).filter(
-                    accepted_count__gte=F('num_users_needed')
-                ).values_list('id', flat=True)
+                id__in=Request.objects.filter(is_active=True, is_deleted=False)
+                .annotate(
+                    accepted_count=Count("offers", filter=Q(offers__status="accepted"))
+                )
+                .filter(accepted_count__gte=F("num_users_needed"))
+                .values_list("id", flat=True)
             )
 
         # Apply category filter if provided
@@ -191,7 +189,7 @@ class RequestListView(LoginRequiredMixin, ListView):
 
         # Annotate with staffing information
         queryset = queryset.annotate(
-            accepted_count=Count('offers', filter=Q(offers__status='accepted'))
+            accepted_count=Count("offers", filter=Q(offers__status="accepted"))
         )
 
         return queryset
@@ -267,6 +265,11 @@ class RequestTransactionView(LoginRequiredMixin, CreateView):
     form_class = RequestTransactionForm
     template_name = "requests/request_transaction_form.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["request"] = get_object_or_404(Request, pk=self.kwargs["pk"])
@@ -319,9 +322,7 @@ class RequestTransactionRejectView(LoginRequiredMixin, View):
             except ValueError as e:
                 messages.error(request, str(e))
         else:
-            messages.error(
-                request, "Please provide a reason for rejecting the offer."
-            )
+            messages.error(request, "Please provide a reason for rejecting the offer.")
 
         return redirect("request_detail", pk=request_transaction.request.pk)
 
@@ -373,9 +374,7 @@ class RequestTransactionCompleteFormView(LoginRequiredMixin, View):
             request.user == request_transaction.provider
             and request_transaction.provider_completed
         ):
-            messages.error(
-                request, "You have already marked this offer as completed."
-            )
+            messages.error(request, "You have already marked this offer as completed.")
             return redirect("request_detail", pk=request_transaction.request.pk)
         if (
             request.user == request_transaction.request.requester
@@ -416,9 +415,7 @@ class RequestTransactionCompleteFormView(LoginRequiredMixin, View):
             request.user == request_transaction.provider
             and request_transaction.provider_completed
         ):
-            messages.error(
-                request, "You have already marked this offer as completed."
-            )
+            messages.error(request, "You have already marked this offer as completed.")
             return redirect("request_detail", pk=request_transaction.request.pk)
         if (
             request.user == request_transaction.request.requester
